@@ -1,9 +1,13 @@
-﻿namespace TeleBot;
+﻿using ParallAI.Infrastructure;
+
+namespace TeleBot;
 
 public static class Program
 {
     public static void Main()
     {
-        Console.WriteLine("Hello, World!");
+        using var bot = new Bot(EnvConfig.Instance.BotToken);
+        Console.Write("Бот запущен. Для остановки нажмите ENTER...");
+        Console.ReadLine();
     }
 }

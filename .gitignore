@@ -44,5 +44,6 @@ CodeCoverage/
 TestResult.xml
 nunit-*.xml
 
+.env
 .idea
 .vscode
