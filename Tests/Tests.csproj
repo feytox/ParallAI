@@ -8,12 +8,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Autofac" Version="8.4.0" />
-      <PackageReference Include="Telegram.Bot" Version="22.7.2" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
+      <PackageReference Include="FakeItEasy" Version="8.3.0" />
+      <PackageReference Include="NUnit" Version="4.4.0" />
     </ItemGroup>
 
 </Project>

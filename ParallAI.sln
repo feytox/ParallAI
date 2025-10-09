@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeleBot", "TeleBot\TeleBot.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{B301F7E6-2B55-4164-B6FF-433148E12B5A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{71A86298-0B2B-42D5-AADD-16D2356A9536}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{B301F7E6-2B55-4164-B6FF-433148E12B5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B301F7E6-2B55-4164-B6FF-433148E12B5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B301F7E6-2B55-4164-B6FF-433148E12B5A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{71A86298-0B2B-42D5-AADD-16D2356A9536}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{71A86298-0B2B-42D5-AADD-16D2356A9536}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{71A86298-0B2B-42D5-AADD-16D2356A9536}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{71A86298-0B2B-42D5-AADD-16D2356A9536}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

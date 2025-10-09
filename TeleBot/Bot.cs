@@ -1,4 +1,5 @@
-﻿using Telegram.Bot;
+﻿using Infrastructure;
+using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
@@ -9,10 +10,10 @@ public class Bot : IDisposable
     private readonly TelegramBotClient bot;
     private readonly CancellationTokenSource cts;
 
-    public Bot(string token)
+    public Bot(IConfig config)
     {
         cts = new CancellationTokenSource();
-        bot = new TelegramBotClient(token, cancellationToken: cts.Token);
+        bot = new TelegramBotClient(config.BotToken, cancellationToken: cts.Token);
         Subscribe();
     }
 
