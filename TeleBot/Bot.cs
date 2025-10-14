@@ -8,7 +8,7 @@ using Telegram.Bot.Types.Enums;
 
 namespace TeleBot;
 
-public class Bot(IConfig config, ILogger<Bot> logger) : IHostedService
+public class Bot(IConfig config, ILogger<Bot> logger, CommandHandler commandHandler) : IHostedService
 {
     public Task StartAsync(CancellationToken cancellationToken)
     {
@@ -33,8 +33,7 @@ public class Bot(IConfig config, ILogger<Bot> logger) : IHostedService
 
     private async Task HandleMessage(ITelegramBotClient bot, Message message)
     {
-        var reply = new ReplyParameters { MessageId = message.MessageId };
-        await bot.SendMessage(message.Chat, "Йоооу, у тебя получилось!", replyParameters: reply);
+        await commandHandler.HandleCommand(message, bot);
         
         // TODO: удалить, когда все настроят себе бота
         logger.LogInformation("Message from @{user}: {msg}", message.Chat.Username, message.Text);
