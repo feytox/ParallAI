@@ -1,25 +1,25 @@
 ﻿using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using Infrastructure;
+using Microsoft.Extensions.Hosting;
 
 namespace TeleBot;
 
 public static class Program
 {
-    public static void Main()
+    public static async Task Main(string[] args)
     {
-        var container = CreateContainer();
-        using var scope = container.BeginLifetimeScope();
-        
-        scope.Resolve<Bot>();
-        Console.Write("Бот запущен. Для остановки нажмите ENTER...");
-        Console.ReadLine();
+        var host = Host.CreateDefaultBuilder(args)
+            .UseServiceProviderFactory(new AutofacServiceProviderFactory())
+            .ConfigureContainer<ContainerBuilder>(ConfigureContainer)
+            .Build();
+
+        await host.RunAsync();
     }
     
-    private static IContainer CreateContainer()
+    private static void ConfigureContainer(ContainerBuilder builder)
     {
-        var builder = new ContainerBuilder();
         builder.Register(_ => EnvConfig.Load()).As<IConfig>().SingleInstance();
-        builder.RegisterType<Bot>().AsSelf().SingleInstance();
-        return builder.Build();
+        builder.RegisterType<Bot>().As<IHostedService>().SingleInstance();
     }
 }
