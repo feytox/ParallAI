@@ -1,14 +1,23 @@
+using System.Reflection;
+using System.Text;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
 namespace TeleBot.Commands;
 
-public class HelpCommand : ICommand
+[Command("/help", "выводит список доступных команд")]
+public class HelpCommand(Lazy<IEnumerable<ICommand>> commands) : ICommand
 {
-    public string Name => "/help";
-    
     public async Task Execute(Message message, ITelegramBotClient bot)
     {
-        await bot.SendMessage(message.Chat, "Мои команды:\n/start\n/help\n");
+        var answer = new StringBuilder();
+        answer.Append("Доступные команды:\n");
+        foreach (var command in commands.Value)
+        {
+            var attr = command.GetType().GetCustomAttribute<CommandAttribute>();
+            if (attr is not null)
+                answer.Append($"{attr.Name} - {attr.Description}\n");
+        }
+        await bot.SendMessage(message.Chat, answer.ToString());
     }
 }

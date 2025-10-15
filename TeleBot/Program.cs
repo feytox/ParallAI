@@ -21,7 +21,7 @@ public static class Program
     {
         builder.Register(_ => EnvConfig.Load()).As<IConfig>().SingleInstance();
         builder.RegisterType<Bot>().As<IHostedService>().SingleInstance();
-        builder.RegisterAssemblyTypes(typeof(ICommand).Assembly).As<ICommand>().SingleInstance();
+        builder.RegisterAssemblyTypes(typeof(ICommand).Assembly).As<ICommand>().InstancePerDependency();
         builder.RegisterType<CommandHandler>().AsSelf().SingleInstance();
     }
 }

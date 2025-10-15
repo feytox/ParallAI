@@ -5,6 +5,5 @@ namespace TeleBot;
 
 public interface ICommand
 {
-    public string Name { get; }
     public Task Execute(Message message, ITelegramBotClient bot);
 }

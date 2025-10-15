@@ -1,3 +1,4 @@
+using System.Reflection;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
@@ -16,7 +17,14 @@ public class CommandHandler(IEnumerable<ICommand> commands)
         }
         
         var commandText = messageText.Split(' ')[0];
-        var command = commands.FirstOrDefault(cm => cm.Name == commandText);
+        var command = commands.FirstOrDefault(cm =>
+        {
+            var attr = cm.GetType().GetCustomAttribute<CommandAttribute>();
+            if (attr is null)
+                return false;
+
+            return attr.Name.Equals(commandText, StringComparison.OrdinalIgnoreCase);
+        });
 
         if (command is null)
         {
