@@ -1,7 +1,7 @@
 namespace Infrastructure;
 
 //на гениалычах скопипастил код из дз ай тигр
-public class Entity<TId> : IEntity<TId>
+public abstract class Entity<TId> : IEntity<TId>
 {
     public TId Id { get; }
 

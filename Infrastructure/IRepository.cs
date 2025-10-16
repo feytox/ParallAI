@@ -1,10 +1,10 @@
 namespace Infrastructure;
 
-interface IRepository<TEntity, TId> where TEntity : IEntity<TId>
+public interface IRepository<TEntity, TId> where TEntity : IEntity<TId>
 {
     Task<IEnumerable<TEntity>> GetAll();
     Task<TEntity> GetById(TId id);
-    void Add(TEntity entity);
+    Task Add(TEntity entity);
     Task Delete(TId id);
-    Task Save();
+    Task Update(TEntity entity);
 }
