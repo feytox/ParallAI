@@ -14,8 +14,8 @@ public class JSONRepository<TEntity, TId> : IRepository<TEntity, TId> where TEnt
 
     public async Task<IEnumerable<TEntity>> GetAll()
     {
-        await using var stream = File.OpenRead(filePath);
-        var entities = await JsonSerializer.DeserializeAsync<IEnumerable<TEntity>>(stream);
+        var json = await File.ReadAllTextAsync(filePath);
+        var entities = JsonSerializer.Deserialize<IEnumerable<TEntity>>(json);
         return entities ?? Enumerable.Empty<TEntity>();
     }
 
@@ -28,22 +28,22 @@ public class JSONRepository<TEntity, TId> : IRepository<TEntity, TId> where TEnt
     public async Task Add(TEntity entity)
     {
         var entities = await GetAll();
-        await using var stream = File.OpenWrite(filePath);
-        await JsonSerializer.SerializeAsync(stream, entities.Append(entity));
+        var json = JsonSerializer.Serialize(entities.Append(entity));
+        await File.WriteAllTextAsync(filePath, json);
     }
 
     public async Task Delete(TId id)
     {
         var entities = await GetAll();
-        await using var stream = File.OpenWrite(filePath);
-        await JsonSerializer.SerializeAsync(stream, entities.Where(e => !e.Id.Equals(id)));
+        var json = JsonSerializer.Serialize(entities.Where(e => !e.Id.Equals(id)));
+        await File.WriteAllTextAsync(filePath, json);
 
     }
 
     public async Task Update(TEntity entity)
     {
         var entities = await GetAll();
-        await using var stream = File.OpenWrite(filePath);
-        await JsonSerializer.SerializeAsync(stream, entities.Select(e => e.Id.Equals(entity.Id) ? e : entity));
+        var json = JsonSerializer.Serialize(entities.Select(e => !e.Id.Equals(entity.Id) ? e : entity));
+        await File.WriteAllTextAsync(filePath, json);
     }
 }
