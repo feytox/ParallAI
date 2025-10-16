@@ -1,6 +1,5 @@
 using Infrastructure;
 using System.Text.Json;
-using dotenv.net.Utilities;
 
 namespace AICore;
 

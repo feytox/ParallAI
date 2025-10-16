@@ -11,6 +11,7 @@ public class EnvConfig : IConfig
     private EnvConfig(string botToken, string usersPath)
     {
         BotToken = botToken;
+        UsersPath = usersPath;
     }
 
     public static EnvConfig Load()
