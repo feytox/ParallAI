@@ -1,65 +1,64 @@
 using Infrastructure;
 using System.Text.Json;
+using Microsoft.Extensions.Hosting;
 
 namespace AICore;
 
-public class JSONRepository<TEntity, TId> : IRepository<TEntity, TId> where TEntity : IEntity<TId>
+public class JSONRepository<TEntity, TId> : IRepository<TEntity, TId>, IHostedService where TEntity : IEntity<TId>
 {
     private FileInfo fileInfo;
+    private Dictionary<TId, TEntity> entities;
     
     public JSONRepository(IConfig config)
     {
         fileInfo = new FileInfo(config.UsersPath);
     }
 
-    public async Task<IEnumerable<TEntity>> GetAll()
+    public Task<IEnumerable<TEntity>> GetAll()
     {
-        var all = await GetAllDictionary();
-        return all.Values;
+        return Task.FromResult<IEnumerable<TEntity>>(entities.Values);
     }
 
-    public async Task<TEntity> GetById(TId id)
+    public Task<TEntity?> GetById(TId id)
     {
-        var entities = await GetAllDictionary();
         entities.TryGetValue(id, out var entity);
-        return entity;
+        return Task.FromResult(entity);
     }
 
-    public async Task Add(TEntity entity)
+    public Task Add(TEntity entity)
     {
-        var entities = await GetAllDictionary();
         if (entities.ContainsKey(entity.Id))
             throw new InvalidOperationException($"Entity with id: {entity.Id} already exists");
         entities.Add(entity.Id, entity);
-        var json = JsonSerializer.Serialize(entities);
-        await File.WriteAllTextAsync(fileInfo.Name, json);
+        return Task.CompletedTask;
     }
 
-    public async Task Delete(TId id)
+    public Task Delete(TId id)
     {
-        var entities = await GetAllDictionary();
         if (!entities.ContainsKey(id))
             throw new InvalidOperationException($"Entity with id: {id} does not exist");
         entities.Remove(id);
-        var json = JsonSerializer.Serialize(entities);
-        await File.WriteAllTextAsync(fileInfo.Name, json);
-
+        return Task.CompletedTask;
     }
 
-    public async Task Update(TEntity entity)
+    public Task Update(TEntity entity)
     {
-        var entities = await GetAllDictionary();
         if (!entities.ContainsKey(entity.Id))
             throw new InvalidOperationException($"Entity with id: {entity.Id} does not exist");
         entities[entity.Id] = entity;
-        var json = JsonSerializer.Serialize(entities);
-        await File.WriteAllTextAsync(fileInfo.Name, json);
+        return Task.CompletedTask;
     }
 
-    private async Task<Dictionary<TId, TEntity>> GetAllDictionary()
+    public async Task StartAsync(CancellationToken cancellationToken)
     {
-        var json = await File.ReadAllTextAsync(fileInfo.Name);
-        var entities = JsonSerializer.Deserialize<Dictionary<TId,TEntity>>(json);
-        return entities ?? new Dictionary<TId, TEntity>();
+        var json = await File.ReadAllTextAsync(fileInfo.Name, cancellationToken);
+        entities = JsonSerializer.Deserialize<Dictionary<TId,TEntity>>(json) 
+                       ?? new Dictionary<TId, TEntity>();
+    }
+
+    public async Task StopAsync(CancellationToken cancellationToken)
+    {
+        var json = JsonSerializer.Serialize(entities);
+        await File.WriteAllTextAsync(fileInfo.Name, json, cancellationToken);
     }
 }
