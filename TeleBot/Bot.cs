@@ -5,10 +5,11 @@ using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using User = AICore.User;
 
 namespace TeleBot;
 
-public class Bot(IConfig config, ILogger<Bot> logger) : IHostedService
+public class Bot(IConfig config, ILogger<Bot> logger, IRepository<User, int> usersRepository) : IHostedService
 {
     public Task StartAsync(CancellationToken cancellationToken)
     {
