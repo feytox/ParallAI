@@ -8,6 +8,6 @@ public class StartCommand : ICommand
 {
     public async Task Execute(Message message, ITelegramBotClient bot)
     {
-        await bot.SendMessage(message.Chat, "Привет! Я ParallAI!");
+        await bot.SendMessage(message.Chat, "Привет, я ParallAI! Пиши /help и я скажу, что умею!");
     }
 }

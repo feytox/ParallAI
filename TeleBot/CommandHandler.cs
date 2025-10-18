@@ -4,8 +4,18 @@ using Telegram.Bot.Types;
 
 namespace TeleBot;
 
-public class CommandHandler(IEnumerable<ICommand> commands)
+public class CommandHandler
 {
+    private readonly Dictionary<string, ICommand> _commandsDict;
+
+    public CommandHandler(IEnumerable<ICommand> commands)
+    {
+        _commandsDict = commands
+            .Select(cmd => (cmd, attr: cmd.GetType().GetCustomAttribute<CommandAttribute>()))
+            .Where(t => t.attr is not null)
+            .ToDictionary(t => t.attr!.Name, t => t.cmd, StringComparer.OrdinalIgnoreCase);
+    }
+    
     public async Task HandleCommand(Message message, ITelegramBotClient bot)
     {
         var messageText = message.Text ?? message.Caption;
@@ -17,21 +27,9 @@ public class CommandHandler(IEnumerable<ICommand> commands)
         }
         
         var commandText = messageText.Split(' ')[0];
-        var command = commands.FirstOrDefault(cm =>
-        {
-            var attr = cm.GetType().GetCustomAttribute<CommandAttribute>();
-            if (attr is null)
-                return false;
-
-            return attr.Name.Equals(commandText, StringComparison.OrdinalIgnoreCase);
-        });
-
-        if (command is null)
-        {
+        if (_commandsDict.TryGetValue(commandText, out var command))
+            await command.Execute(message, bot);
+        else
             await bot.SendMessage(message.Chat, "Я не знаю такой команды");
-            return;
-        }
-        
-        await command.Execute(message, bot);
     }
 }
