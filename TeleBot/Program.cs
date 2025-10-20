@@ -18,16 +18,17 @@ public static class Program
 
         await host.RunAsync();
     }
-    
+
     private static void ConfigureContainer(ContainerBuilder builder)
     {
         builder.Register(_ => EnvConfig.Load()).As<IConfig>().SingleInstance();
         builder.RegisterType<Bot>().As<IHostedService>().SingleInstance();
-        builder.RegisterType<JSONRepository<User, int>>()
-            .As<IRepository<User, int>>()
+        builder.RegisterType<JSONRepository<User, long>>()
+            .As<IRepository<User, long>>()
             .As<IHostedService>()
-            .WithParameter((pi, c) => pi.ParameterType == typeof(string), 
-                    (pi, c) => c.Resolve<IConfig>().UsersPath)
+            .WithParameter(
+                (info, _) => info.ParameterType == typeof(string),
+                (_, ctx) => ctx.Resolve<IConfig>().UsersPath)
             .SingleInstance();
         builder.RegisterAssemblyTypes(typeof(ICommand).Assembly).As<ICommand>().SingleInstance();
         builder.RegisterType<CommandHandler>().AsSelf().SingleInstance();
@@ -36,6 +37,6 @@ public static class Program
                 .Select(r => r.Activator.LimitType)
                 .Where(t => typeof(ICommand).IsAssignableFrom(t))
                 .SelectMany(t => t.GetCustomAttributes<CommandAttribute>())
-            ).As<IEnumerable<CommandAttribute>>().SingleInstance();
+        ).As<IEnumerable<CommandAttribute>>().SingleInstance();
     }
 }

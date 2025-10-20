@@ -1,9 +1,5 @@
 using Infrastructure;
+
 namespace AICore;
 
-public class User : Entity<int>
-{
-    public User(int id) : base(id)
-    {
-    }
-}
+public class User(long id) : Entity<long>(id);

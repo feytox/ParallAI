@@ -3,9 +3,9 @@ using Microsoft.Extensions.Hosting;
 
 namespace Infrastructure;
 
-public class JSONRepository<TEntity, TId> : IRepository<TEntity, TId>, IHostedService where TEntity : IEntity<TId>
+public class JSONRepository<TEntity, TId> : IRepository<TEntity, TId>, IHostedService where TEntity : IEntity<TId> where TId : notnull
 {
-    private FileInfo fileInfo;
+    private readonly FileInfo fileInfo;
     private Dictionary<TId, TEntity> entities;
     
     public JSONRepository(string filePath)
@@ -26,17 +26,15 @@ public class JSONRepository<TEntity, TId> : IRepository<TEntity, TId>, IHostedSe
 
     public Task Add(TEntity entity)
     {
-        if (entities.ContainsKey(entity.Id))
+        if (!entities.TryAdd(entity.Id, entity))
             throw new InvalidOperationException($"Entity with id: {entity.Id} already exists");
-        entities.Add(entity.Id, entity);
         return Task.CompletedTask;
     }
 
     public Task Delete(TId id)
     {
-        if (!entities.ContainsKey(id))
+        if (!entities.Remove(id))
             throw new InvalidOperationException($"Entity with id: {id} does not exist");
-        entities.Remove(id);
         return Task.CompletedTask;
     }
 
@@ -52,12 +50,13 @@ public class JSONRepository<TEntity, TId> : IRepository<TEntity, TId>, IHostedSe
     {
         if (!fileInfo.Exists)
         {
-            await File.WriteAllTextAsync(fileInfo.FullName, "{}", cancellationToken);
-            fileInfo.Refresh();
+            entities = new Dictionary<TId, TEntity>();
+            return;
         }
+        
         var json = await File.ReadAllTextAsync(fileInfo.Name, cancellationToken);
         entities = JsonSerializer.Deserialize<Dictionary<TId,TEntity>>(json) 
-                       ?? new Dictionary<TId, TEntity>();
+                   ?? new Dictionary<TId, TEntity>();
     }
 
     public async Task StopAsync(CancellationToken cancellationToken)
