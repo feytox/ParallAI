@@ -1,8 +1,7 @@
-using Infrastructure;
 using System.Text.Json;
 using Microsoft.Extensions.Hosting;
 
-namespace AICore;
+namespace Infrastructure;
 
 public class JSONRepository<TEntity, TId> : IRepository<TEntity, TId>, IHostedService where TEntity : IEntity<TId>
 {
