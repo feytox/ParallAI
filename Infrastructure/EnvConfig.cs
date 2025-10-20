@@ -21,8 +21,20 @@ public class EnvConfig : IConfig
             .Load();
 
         var botToken = EnvReader.GetStringValue("BOT_TOKEN");
-        var usersPath = EnvReader.GetStringValue("USERS_PATH");
+        var usersPath = SaveGetStringValue("USERS_PATH", "Users.json");
         
         return new EnvConfig(botToken, usersPath);
+    }
+
+    private static string SaveGetStringValue(string key, string defaultValue)
+    {
+        try
+        {
+            return EnvReader.GetStringValue(key);
+        }
+        catch (Exception)
+        {
+            return defaultValue;
+        }
     }
 }

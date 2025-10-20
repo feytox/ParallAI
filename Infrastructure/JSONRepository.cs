@@ -9,9 +9,9 @@ public class JSONRepository<TEntity, TId> : IRepository<TEntity, TId>, IHostedSe
     private FileInfo fileInfo;
     private Dictionary<TId, TEntity> entities;
     
-    public JSONRepository(IConfig config)
+    public JSONRepository(string filePath)
     {
-        fileInfo = new FileInfo(config.UsersPath);
+        fileInfo = new FileInfo(filePath);
     }
 
     public Task<IEnumerable<TEntity>> GetAll()
@@ -51,6 +51,11 @@ public class JSONRepository<TEntity, TId> : IRepository<TEntity, TId>, IHostedSe
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
+        if (!fileInfo.Exists)
+        {
+            await File.WriteAllTextAsync(fileInfo.FullName, "{}", cancellationToken);
+            fileInfo.Refresh();
+        }
         var json = await File.ReadAllTextAsync(fileInfo.Name, cancellationToken);
         entities = JsonSerializer.Deserialize<Dictionary<TId,TEntity>>(json) 
                        ?? new Dictionary<TId, TEntity>();

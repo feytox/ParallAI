@@ -26,6 +26,8 @@ public static class Program
         builder.RegisterType<JSONRepository<User, int>>()
             .As<IRepository<User, int>>()
             .As<IHostedService>()
+            .WithParameter((pi, c) => pi.ParameterType == typeof(string), 
+                    (pi, c) => c.Resolve<IConfig>().UsersPath)
             .SingleInstance();
         builder.RegisterAssemblyTypes(typeof(ICommand).Assembly).As<ICommand>().SingleInstance();
         builder.RegisterType<CommandHandler>().AsSelf().SingleInstance();
