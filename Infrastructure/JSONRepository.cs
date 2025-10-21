@@ -18,32 +18,29 @@ public class JSONRepository<TEntity, TId> : IRepository<TEntity, TId>, IHostedSe
         return Task.FromResult<IEnumerable<TEntity>>(entities.Values);
     }
 
-    public Task<TEntity?> GetById(TId id)
+    public Task<bool> TryGetById(TId id, out TEntity entity)
     {
-        entities.TryGetValue(id, out var entity);
-        return Task.FromResult(entity);
+        var result = entities.TryGetValue(id, out var value);
+        entity = value;
+        return Task.FromResult(result);
     }
 
-    public Task Add(TEntity entity)
+    public Task<bool> TryAdd(TEntity entity)
     {
-        if (!entities.TryAdd(entity.Id, entity))
-            throw new InvalidOperationException($"Entity with id: {entity.Id} already exists");
-        return Task.CompletedTask;
+        return Task.FromResult(entities.TryAdd(entity.Id, entity));
     }
 
-    public Task Delete(TId id)
+    public Task<bool> TryDelete(TId id)
     {
-        if (!entities.Remove(id))
-            throw new InvalidOperationException($"Entity with id: {id} does not exist");
-        return Task.CompletedTask;
+        return Task.FromResult(entities.Remove(id));
     }
 
-    public Task Update(TEntity entity)
+    public Task<bool> TryUpdate(TEntity entity)
     {
         if (!entities.ContainsKey(entity.Id))
-            throw new InvalidOperationException($"Entity with id: {entity.Id} does not exist");
+            return Task.FromResult(false);
         entities[entity.Id] = entity;
-        return Task.CompletedTask;
+        return Task.FromResult(true);
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
