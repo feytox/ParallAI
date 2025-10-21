@@ -11,16 +11,14 @@ public interface IRepository<TEntity, TId> where TEntity : IEntity<TId>
 
 public static class RepositoryExtensions
 {
-    public static async Task<TEntity> GetById<TEntity, TId>(this IRepository<TEntity,TId> repository, TId id) 
+    public static async Task<TEntity> GetOrThrow<TEntity, TId>(this IRepository<TEntity,TId> repository, TId id) 
         where TEntity : IEntity<TId>
     {
         var hasValue = await repository.TryGetById(id, out var entity);
-        if (hasValue)
-            return entity;
-        throw new InvalidOperationException($"{typeof(TEntity).Name} with {id} not found");
+        return hasValue ? entity : throw new InvalidOperationException($"{typeof(TEntity).Name} with {id} not found");
     }
     
-    public static async Task Add<TEntity, TId>(this IRepository<TEntity,TId> repository, TEntity entity) 
+    public static async Task AddOrThrow<TEntity, TId>(this IRepository<TEntity,TId> repository, TEntity entity) 
         where TEntity : IEntity<TId>
     {
         var successAdd = await repository.TryAdd(entity);
@@ -28,7 +26,7 @@ public static class RepositoryExtensions
             throw new InvalidOperationException($"{typeof(TEntity).Name} with {entity.Id} already exists");
     }
 
-    public static async Task Delete<TEntity, TId>(this IRepository<TEntity, TId> repository, TId id)
+    public static async Task DeleteOrThrow<TEntity, TId>(this IRepository<TEntity, TId> repository, TId id)
         where TEntity : IEntity<TId>
     {
         var successDelete = await repository.TryDelete(id);
@@ -36,7 +34,7 @@ public static class RepositoryExtensions
             throw new InvalidOperationException($"{typeof(TEntity).Name} with {id} not found");
     }
 
-    public static async Task Update<TEntity, TId>(this IRepository<TEntity, TId> repository, TEntity entity)
+    public static async Task UpdateOrThrow<TEntity, TId>(this IRepository<TEntity, TId> repository, TEntity entity)
         where TEntity : IEntity<TId>
     {
         var successUpdate = await repository.TryUpdate(entity);

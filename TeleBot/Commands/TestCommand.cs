@@ -13,8 +13,15 @@ public class TestCommand(IRepository<User, long> users, ILogger<TestCommand> log
     public async Task Execute(Message message, ITelegramBotClient bot)
     {
         var userId = message.From!.Id;
+        if (await users.TryGetById(userId, out _))
+        {
+            await bot.SendMessage(message.Chat, $"Юзер {userId} уже в бд");
+            logger.LogInformation($"Юзер {userId} уже в бд");
+            return;
+        }
+        
         var user = new User(userId);
-        await users.Add(user);
+        await users.AddOrThrow(user);
         await bot.SendMessage(message.Chat, $"Юзер {userId} добавлен в бд");
         logger.LogInformation($"Юзер {userId} добавлен в бд");
     }
