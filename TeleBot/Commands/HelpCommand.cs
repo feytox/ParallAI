@@ -15,7 +15,7 @@ public class HelpCommand : SingleCommand
         var answer = new StringBuilder();
         answer.Append("Доступные команды:");
         foreach (var attribute in attributes
-                     .Where(a => a.Type == CommandType.Single))
+                     .Where(a => a.Type == CommandType.Single || a.Type == CommandType.FirstStep))
         {
             answer.Append($"\n{attribute.Name} - {attribute.Description}");
         }

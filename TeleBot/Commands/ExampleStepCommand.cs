@@ -3,7 +3,7 @@ using Telegram.Bot.Types;
 
 namespace TeleBot.Commands;
 
-[Command("/adduser", "Добавить пользователя")]
+[Command("/adduser", "Добавить пользователя", CommandType.FirstStep)]
 public class AddUserStartCommand : ICommand
 {
     public async Task<NextCommandInfo?> Execute(Message message, ITelegramBotClient bot)
