@@ -1,5 +1,6 @@
 ﻿using Infrastructure;
 using Microsoft.Extensions.Logging;
+using TeleBot.Services;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using User = AICore.User;
@@ -8,9 +9,9 @@ using User = AICore.User;
 namespace TeleBot.Commands;
 
 [Command("/test", "тестовая команда для тестов")]
-public class TestCommand(IRepository<User, long> users, ILogger<TestCommand> logger) : ICommand
+public class TestCommand(IRepository<User, long> users, ILogger<TestCommand> logger) : SingleCommand
 {
-    public async Task Execute(Message message, ITelegramBotClient bot)
+    protected override async Task Execute(Message message, ITelegramBotClient bot)
     {
         var userId = message.From!.Id;
         if (await users.TryGetById(userId, out _))

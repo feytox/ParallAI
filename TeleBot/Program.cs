@@ -4,6 +4,8 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Infrastructure;
 using Microsoft.Extensions.Hosting;
+using TeleBot.Commands;
+using TeleBot.Services;
 
 namespace TeleBot;
 
@@ -30,6 +32,7 @@ public static class Program
                 (info, _) => info.ParameterType == typeof(string),
                 (_, ctx) => ctx.Resolve<IConfig>().UsersPath)
             .SingleInstance();
+        builder.RegisterType<UserSessionService>().As<IUserSessionService>().SingleInstance();
         builder.RegisterAssemblyTypes(typeof(ICommand).Assembly).As<ICommand>().SingleInstance();
         builder.RegisterType<CommandHandler>().AsSelf().SingleInstance();
         builder.Register(c =>
