@@ -1,6 +1,5 @@
-namespace Infrastructure;
+namespace AICore.Entities;
 
-//на гениалычах скопипастил код из дз ай тигр
 public abstract class Entity<TId> : IEntity<TId>
 {
     public TId Id { get; }
@@ -18,7 +17,7 @@ public abstract class Entity<TId> : IEntity<TId>
     {
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != this.GetType()) return false;
+        if (obj.GetType() != GetType()) return false;
         return Equals((Entity<TId>)obj);
     }
 

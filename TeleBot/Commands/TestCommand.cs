@@ -1,28 +1,29 @@
-﻿using Infrastructure;
+﻿using AICore;
+using AICore.Repositories;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Types;
-using User = AICore.User;
+using User = AICore.Entities.User;
 
 
 namespace TeleBot.Commands;
 
 [Command("/test", "тестовая команда для тестов")]
-public class TestCommand(IRepository<User, long> users, ILogger<TestCommand> logger) : ICommand
+public class TestCommand(
+    IRepository<User, long> users,
+    IRepository<AiModel, Guid> models,
+    ILogger<TestCommand> logger) : ICommand
 {
     public async Task Execute(Message message, ITelegramBotClient bot)
     {
         var userId = message.From!.Id;
-        if (await users.TryGetById(userId, out _))
-        {
-            await bot.SendMessage(message.Chat, $"Юзер {userId} уже в бд");
-            logger.LogInformation($"Юзер {userId} уже в бд");
-            return;
-        }
+        var user = await users.GetOrCreate(userId);
+        var model = new AiModel(Guid.NewGuid(), "gemini");
+
+        user.AddModel(model);
+        await models.Add(model);
+        await users.Update(user);
         
-        var user = new User(userId);
-        await users.AddOrThrow(user);
-        await bot.SendMessage(message.Chat, $"Юзер {userId} добавлен в бд");
-        logger.LogInformation($"Юзер {userId} добавлен в бд");
+        await bot.SendMessage(message.Chat, $"Модель ({user.Models.Count}) {model} добавлена к {userId}");
     }
 }

@@ -1,4 +1,4 @@
-namespace Infrastructure;
+namespace AICore.Entities;
 
 public interface IEntity<TId>
 {

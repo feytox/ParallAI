@@ -1,9 +1,15 @@
 ﻿using System.Reflection;
 using AICore;
+using AICore.Repositories;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Infrastructure;
+using Infrastructure.Repositories;
+using MapsterMapper;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using User = AICore.Entities.User;
 
 namespace TeleBot;
 
@@ -14,6 +20,7 @@ public static class Program
         var host = Host.CreateDefaultBuilder(args)
             .UseServiceProviderFactory(new AutofacServiceProviderFactory())
             .ConfigureContainer<ContainerBuilder>(ConfigureContainer)
+            .ConfigureServices(ConfigureServices)
             .Build();
 
         await host.RunAsync();
@@ -21,15 +28,12 @@ public static class Program
 
     private static void ConfigureContainer(ContainerBuilder builder)
     {
-        builder.Register(_ => EnvConfig.Load()).As<IConfig>().SingleInstance();
         builder.RegisterType<Bot>().As<IHostedService>().SingleInstance();
-        builder.RegisterType<JSONRepository<User, long>>()
-            .As<IRepository<User, long>>()
-            .As<IHostedService>()
-            .WithParameter(
-                (info, _) => info.ParameterType == typeof(string),
-                (_, ctx) => ctx.Resolve<IConfig>().UsersPath)
-            .SingleInstance();
+        builder.Register(_ => EnvConfig.Load()).As<IConfig>().SingleInstance();
+        builder.RegisterType<UserRepository>().As<IRepository<User, long>>();
+        builder.RegisterType<AiModelRepository>().As<IRepository<AiModel, Guid>>();
+        builder.RegisterType<AppDbContext>().AsSelf().InstancePerLifetimeScope();
+        
         builder.RegisterAssemblyTypes(typeof(ICommand).Assembly).As<ICommand>().SingleInstance();
         builder.RegisterType<CommandHandler>().AsSelf().SingleInstance();
         builder.Register(c =>
@@ -38,5 +42,17 @@ public static class Program
                 .Where(t => typeof(ICommand).IsAssignableFrom(t))
                 .SelectMany(t => t.GetCustomAttributes<CommandAttribute>())
         ).As<IEnumerable<CommandAttribute>>().SingleInstance();
+    }
+
+    private static void ConfigureServices(HostBuilderContext context, IServiceCollection builder)
+    {
+        // TODO: use real database
+        builder.AddDbContextFactory<AppDbContext>(options => options
+            .UseInMemoryDatabase("ParallAIDB")
+        );
+
+        var mapConfig = MappingConfigurator.ConfigureMappings();
+        builder.AddSingleton(mapConfig);
+        builder.AddScoped<IMapper, ServiceMapper>();
     }
 }
