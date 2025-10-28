@@ -18,7 +18,7 @@ public static class MappingConfigurator
         config.NewConfig<AiModelDto, AiModel>()
             .ConstructUsing(dto => new AiModel(dto.Id, dto.Name))
             .TwoWays();
-
+        
         return config;
     }
 }

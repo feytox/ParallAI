@@ -30,9 +30,10 @@ public static class Program
     {
         builder.RegisterType<Bot>().As<IHostedService>().SingleInstance();
         builder.Register(_ => EnvConfig.Load()).As<IConfig>().SingleInstance();
+        builder.RegisterType<AppDbContext>().AsSelf().InstancePerLifetimeScope();
+        
         builder.RegisterType<UserRepository>().As<IRepository<User, long>>();
         builder.RegisterType<AiModelRepository>().As<IRepository<AiModel, Guid>>();
-        builder.RegisterType<AppDbContext>().AsSelf().InstancePerLifetimeScope();
         
         builder.RegisterAssemblyTypes(typeof(ICommand).Assembly).As<ICommand>().SingleInstance();
         builder.RegisterType<CommandHandler>().AsSelf().SingleInstance();

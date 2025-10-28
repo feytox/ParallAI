@@ -30,6 +30,6 @@ public class CommandHandler
         if (_commandsDict.TryGetValue(commandText, out var command))
             await command.Execute(message, bot);
         else
-            await bot.SendMessage(message.Chat, "Я не знаю такой команды");
+            await bot.SendMessage(message.Chat, $"Я не знаю команды `{commandText}`");
     }
 }
