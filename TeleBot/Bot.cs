@@ -29,6 +29,9 @@ public class Bot(
             case UpdateType.Message:
                 await HandleMessage(bot, update.Message!);
                 break;
+            case UpdateType.CallbackQuery:
+                await HandleCallbackQuery(bot, update.CallbackQuery!);
+                break;
             default:
                 throw new ArgumentException($"Unhandled update type: {update.Type}");
         }
@@ -37,6 +40,12 @@ public class Bot(
     private async Task HandleMessage(ITelegramBotClient bot, Message message)
     {
         await commandHandler.HandleCommand(message, bot);
+    }
+
+    private async Task HandleCallbackQuery(ITelegramBotClient bot, CallbackQuery callbackQuery)
+    {
+        // в будущем здесь должна быть логика обработки пресетов и ещё чего-нибудь
+        await commandHandler.HandleCommand(callbackQuery.Message!, bot);
     }
 
     private Task HandleError(ITelegramBotClient bot, Exception exception, CancellationToken cancellationToken)
