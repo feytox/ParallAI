@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories;
 
+// TODO: deduplicate??? (issue #26)
 public class AiModelRepository(AppDbContext context, IMapper mapper) : IRepository<AiModel, Guid>
 {
     public async Task<AiModel?> GetById(Guid id)

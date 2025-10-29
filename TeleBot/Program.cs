@@ -47,7 +47,7 @@ public static class Program
 
     private static void ConfigureServices(HostBuilderContext context, IServiceCollection builder)
     {
-        // TODO: use real database
+        // TODO: use MongoDB (issue #22)
         builder.AddDbContextFactory<AppDbContext>(options => options
             .UseInMemoryDatabase("ParallAIDB")
         );
