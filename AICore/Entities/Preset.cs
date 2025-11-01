@@ -1,6 +1,4 @@
-using AICore.Entities;
-
-namespace AICore;
+namespace AICore.Entities;
 
 public class Preset(Guid id, string name) : Entity<Guid>(id)
 {

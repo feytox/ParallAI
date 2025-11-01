@@ -1,10 +1,13 @@
-using AICore;
+#region
+
 using AICore.Entities;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 
-namespace Infrastructure;
+#endregion
+
+namespace Infrastructure.Mongo;
 
 public static class MongoMappings
 {

@@ -1,24 +1,22 @@
 namespace AICore.Entities;
 
-public abstract class Entity<TId> : IEntity<TId>
+public abstract class Entity<TId>(TId id) : IEntity<TId> where TId : notnull
 {
-    public TId Id { get; }
+    public TId Id { get; } = id;
 
-    public Entity(TId id)
+    private bool Equals(Entity<TId> other)
     {
-        Id = id;
-    }
-    protected bool Equals(Entity<TId> other)
-    {
+        
         return EqualityComparer<TId>.Default.Equals(Id, other.Id);
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
-        if (ReferenceEquals(null, obj)) return false;
-        if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != GetType()) return false;
-        return Equals((Entity<TId>)obj);
+        if (ReferenceEquals(null, obj)) 
+            return false;
+        if (ReferenceEquals(this, obj)) 
+            return true;
+        return obj.GetType() == GetType() && Equals((Entity<TId>)obj);
     }
 
     public override int GetHashCode()

@@ -1,13 +1,17 @@
-﻿using System.Reflection;
+﻿#region
+
+using System.Reflection;
 using AICore.Repositories;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using Infrastructure;
-using Infrastructure.Repositories;
+using Infrastructure.Config;
+using Infrastructure.Mongo;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MongoDB.Driver;
 using User = AICore.Entities.User;
+
+#endregion
 
 namespace TeleBot;
 
@@ -28,7 +32,6 @@ public static class Program
     {
         builder.RegisterType<Bot>().As<IHostedService>().SingleInstance();
         builder.Register(_ => EnvConfig.Load()).As<IConfig>().SingleInstance();
-        //builder.RegisterType<AppDbContext>().AsSelf().InstancePerLifetimeScope();
         builder.Register(c =>new MongoClient(c.Resolve<IConfig>().MongoConnectionString))
             .As<IMongoClient>().SingleInstance();
         builder.Register(c=>c.Resolve<IMongoClient>().GetDatabase("ParallAIDB"))
@@ -37,8 +40,6 @@ public static class Program
             new MongoRepository<User,long>(c.Resolve<IMongoDatabase>(),c.Resolve<IConfig>().UsersCollection))
             .As<IRepository<User, long>>().SingleInstance();
         
-        //builder.RegisterType<UserRepository>().As<IRepository<User, long>>();
-        //builder.RegisterType<AiModelRepository>().As<IRepository<AiModel, Guid>>();
         
         builder.RegisterAssemblyTypes(typeof(ICommand).Assembly).As<ICommand>().SingleInstance();
         builder.RegisterType<CommandHandler>().AsSelf().SingleInstance();
@@ -52,15 +53,6 @@ public static class Program
 
     private static void ConfigureServices(HostBuilderContext context, IServiceCollection builder)
     {
-        
         MongoMappings.Setup();
-        // // TODO: use real database
-        // builder.AddDbContextFactory<AppDbContext>(options => options
-        //     .UseInMemoryDatabase("ParallAIDB")
-        // );
-        //
-        // var mapConfig = MappingConfigurator.ConfigureMappings();
-        // builder.AddSingleton(mapConfig);
-        // builder.AddScoped<IMapper, ServiceMapper>();
     }
 }

@@ -1,9 +1,13 @@
-﻿using AICore;
+﻿#region
+
+using AICore.Entities;
 using AICore.Repositories;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using User = AICore.Entities.User;
+
+#endregion
 
 
 namespace TeleBot.Commands;

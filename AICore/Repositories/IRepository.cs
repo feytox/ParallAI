@@ -1,8 +1,12 @@
-﻿using AICore.Entities;
+﻿#region
+
+using AICore.Entities;
+
+#endregion
 
 namespace AICore.Repositories;
 
-public interface IRepository<TEntity, in TId> where TEntity : IEntity<TId>
+public interface IRepository<TEntity, in TId> where TEntity : IEntity<TId> where TId : notnull
 {
     Task<TEntity?> GetById(TId id);
     Task Add(TEntity entity);

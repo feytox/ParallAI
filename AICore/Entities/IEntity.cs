@@ -1,6 +1,6 @@
 namespace AICore.Entities;
 
-public interface IEntity<TId>
+public interface IEntity<out TId> where TId : notnull
 {
     public TId Id { get; }
 }
