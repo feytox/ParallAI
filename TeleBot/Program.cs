@@ -40,7 +40,6 @@ public static class Program
             new MongoRepository<User,long>(c.Resolve<IMongoDatabase>(),c.Resolve<IConfig>().UsersCollection))
             .As<IRepository<User, long>>().SingleInstance();
         
-        
         builder.RegisterAssemblyTypes(typeof(ICommand).Assembly).As<ICommand>().SingleInstance();
         builder.RegisterType<CommandHandler>().AsSelf().SingleInstance();
         builder.Register(c =>

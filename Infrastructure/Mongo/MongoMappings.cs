@@ -1,6 +1,7 @@
 #region
 
 using AICore.Entities;
+using AICore.ValueTypes;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
@@ -17,14 +18,31 @@ public static class MongoMappings
         
         BsonClassMap.RegisterClassMap<User>(classMap =>
         {
-            classMap.MapCreator(e => new User(e.Id));
             classMap.AutoMap();
+            classMap.MapProperty("models");
         });
 
         BsonClassMap.RegisterClassMap<AiModel>(classMap =>
         {
-            classMap.MapCreator(m => new AiModel(m.Id, m.Name));
             classMap.AutoMap();
+        });
+
+        BsonClassMap.RegisterClassMap<AiProvider>(classMap =>
+        {
+            classMap.AutoMap();
+            classMap.SetIsRootClass(true);
+        });
+        
+        BsonClassMap.RegisterClassMap<OpenAICompatibleProvider>(classMap =>
+        {
+            classMap.AutoMap();
+            classMap.SetDiscriminator("openai_compatible");
+        });
+        
+        BsonClassMap.RegisterClassMap<GeminiProvider>(classMap =>
+        {
+            classMap.AutoMap();
+            classMap.SetDiscriminator("gemini");
         });
     }
 }

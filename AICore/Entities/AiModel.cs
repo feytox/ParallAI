@@ -1,6 +1,10 @@
-﻿namespace AICore.Entities;
+﻿using AICore.ValueTypes;
 
-public class AiModel(Guid id, string name) : Entity<Guid>(id)
+namespace AICore.Entities;
+
+public class AiModel(Guid id, string modelId, string displayName, AiProvider provider) : Entity<Guid>(id)
 {
-    public string Name { get; private set; } = name;
+    public string ModelId { get; private set; } = modelId;
+    public string DisplayName { get; private set; } = displayName;
+    public AiProvider Provider { get; private set; } = provider;
 }
