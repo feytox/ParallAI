@@ -1,6 +1,3 @@
 ﻿namespace AICore.ValueTypes;
 
-public class AiResponse
-{
-    
-}
+public record AiResponse(string Text);

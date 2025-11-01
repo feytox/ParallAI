@@ -1,6 +1,4 @@
 ﻿namespace AICore.ValueTypes;
 
-public class Prompt
-{
-    
-}
+// TODO: add image support
+public record Prompt(string Text);
