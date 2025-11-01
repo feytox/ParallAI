@@ -11,7 +11,6 @@ namespace TeleBot.Commands;
 [Command("/test", "тестовая команда для тестов")]
 public class TestCommand(
     IRepository<User, long> users,
-    IRepository<AiModel, Guid> models,
     ILogger<TestCommand> logger) : ICommand
 {
     public async Task Execute(Message message, ITelegramBotClient bot)
@@ -21,7 +20,6 @@ public class TestCommand(
         var model = new AiModel(Guid.NewGuid(), "gemini");
 
         user.AddModel(model);
-        await models.Add(model);
         await users.Update(user);
         
         await bot.SendMessage(message.Chat, $"Модель ({user.Models.Count}) {model} добавлена к {userId}");
