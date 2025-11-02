@@ -16,7 +16,7 @@ namespace TeleBot.Commands;
 [Command("/showpresets", "вывод пользовательских пресетов")]
 public class ShowPresetsCommand(IRepository<User, long> users, ILogger<ShowPresetsCommand> logger) : ICommand
 {
-    public async Task Execute(Message message, ITelegramBotClient bot)
+    public async Task Execute(Message message, ITelegramBotClient bot, User user)
     {
         var presets = new List<Preset> { new(Guid.NewGuid(), "ask"), new(Guid.NewGuid(), "terver") };
 

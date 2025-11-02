@@ -3,6 +3,7 @@
 using System.Reflection;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using User = AICore.Entities.User;
 
 #endregion
 
@@ -20,7 +21,7 @@ public class CommandHandler
             .ToDictionary(t => t.attr!.Name, t => t.cmd, StringComparer.OrdinalIgnoreCase);
     }
     
-    public async Task HandleCommand(Message message, ITelegramBotClient bot)
+    public async Task HandleCommand(Message message, ITelegramBotClient bot, User user)
     {
         var messageText = message.Text ?? message.Caption;
         
@@ -32,7 +33,7 @@ public class CommandHandler
         
         var commandText = messageText.Split(' ')[0];
         if (_commandsDict.TryGetValue(commandText, out var command))
-            await command.Execute(message, bot);
+            await command.Execute(message, bot, user);
         else
             await bot.SendMessage(message.Chat, $"Я не знаю команды `{commandText}`");
     }

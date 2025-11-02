@@ -1,5 +1,7 @@
 ﻿#region
 
+using AICore.Repositories;
+using User = AICore.Entities.User;
 using Infrastructure.Config;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -15,7 +17,9 @@ namespace TeleBot;
 public class Bot(
     IConfig config,
     ILogger<Bot> logger,
-    CommandHandler commandHandler) : IHostedService
+    IRepository<User, long> userRepository,
+    CommandHandler commandHandler,
+    StateHandler stateHandler) : IHostedService
 {
     public Task StartAsync(CancellationToken cancellationToken)
     {
@@ -43,13 +47,15 @@ public class Bot(
 
     private async Task HandleMessage(ITelegramBotClient bot, Message message)
     {
-        await commandHandler.HandleCommand(message, bot);
+        var user = await userRepository.GetOrCreate(message.Chat.Id);
+        var wasState = await stateHandler.HandleState(message, bot, user);
+        if (!wasState) await commandHandler.HandleCommand(message, bot, user);
+        await userRepository.Update(user);
     }
 
     private async Task HandleCallbackQuery(ITelegramBotClient bot, CallbackQuery callbackQuery)
     {
-        // в будущем здесь должна быть логика обработки пресетов и ещё чего-нибудь
-        await commandHandler.HandleCommand(callbackQuery.Message!, bot);
+        await HandleMessage(bot, callbackQuery.Message!);
     }
 
     private Task HandleError(ITelegramBotClient bot, Exception exception, CancellationToken cancellationToken)

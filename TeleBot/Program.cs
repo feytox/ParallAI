@@ -40,7 +40,6 @@ public static class Program
             new MongoRepository<User,long>(c.Resolve<IMongoDatabase>(),c.Resolve<IConfig>().UsersCollection))
             .As<IRepository<User, long>>().SingleInstance();
         
-        
         builder.RegisterAssemblyTypes(typeof(ICommand).Assembly).As<ICommand>().SingleInstance();
         builder.RegisterType<CommandHandler>().AsSelf().SingleInstance();
         builder.Register(c =>
@@ -49,6 +48,9 @@ public static class Program
                 .Where(t => typeof(ICommand).IsAssignableFrom(t))
                 .SelectMany(t => t.GetCustomAttributes<CommandAttribute>())
         ).As<IEnumerable<CommandAttribute>>().SingleInstance();
+        
+        builder.RegisterAssemblyTypes(typeof(IStateAction).Assembly).As<IStateAction>().SingleInstance();
+        builder.RegisterType<StateHandler>().AsSelf().SingleInstance();
     }
 
     private static void ConfigureServices(HostBuilderContext context, IServiceCollection builder)

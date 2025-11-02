@@ -3,6 +3,7 @@
 using System.Text;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using User = AICore.Entities.User;
 
 #endregion
 
@@ -25,7 +26,7 @@ public class HelpCommand : ICommand
         answer = result.ToString();
     }
 
-    public async Task Execute(Message message, ITelegramBotClient bot)
+    public async Task Execute(Message message, ITelegramBotClient bot, User user)
     {
         await bot.SendMessage(message.Chat, answer);
     }

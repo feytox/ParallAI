@@ -13,7 +13,7 @@ namespace TeleBot.Commands;
 [Command("/start", "стартовая команда")]
 public class StartCommand(IRepository<User, long> users, ILogger<TestCommand> logger) : ICommand
 {
-    public async Task Execute(Message message, ITelegramBotClient bot)
+    public async Task Execute(Message message, ITelegramBotClient bot, User user)
     {
         await bot.SendMessage(message.Chat, "Привет, я ParallAI! Пиши /help и я скажу, что умею!");
     }
