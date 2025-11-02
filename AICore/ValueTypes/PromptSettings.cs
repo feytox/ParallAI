@@ -1,7 +1,7 @@
 ﻿namespace AICore.ValueTypes;
 
-// TODO: maybe add other settings
+// TODO: add thinking budget
 public record PromptSettings(string SystemInstructions, double Temperature)
 {
-    public static PromptSettings Default = new PromptSettings("", 0.7d);
+    public static PromptSettings Default = new("", 0.7d);
 }

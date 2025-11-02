@@ -2,10 +2,13 @@
 
 using System.Reflection;
 using AICore.Repositories;
+using AICore.Services;
+using AICore.ValueTypes;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Infrastructure.Config;
 using Infrastructure.Mongo;
+using Infrastructure.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MongoDB.Driver;
@@ -39,6 +42,11 @@ public static class Program
         builder.Register(c =>
             new MongoRepository<User,long>(c.Resolve<IMongoDatabase>(),c.Resolve<IConfig>().UsersCollection))
             .As<IRepository<User, long>>().SingleInstance();
+
+        builder.RegisterType<GeminiGenerationService>()
+            .As<IAiGenerationService<GeminiProvider>>().SingleInstance();
+        builder.RegisterType<OpenAiGenerationService>()
+            .As<IAiGenerationService<OpenAICompatibleProvider>>().SingleInstance();
         
         builder.RegisterAssemblyTypes(typeof(ICommand).Assembly).As<ICommand>().SingleInstance();
         builder.RegisterType<CommandHandler>().AsSelf().SingleInstance();
@@ -53,5 +61,6 @@ public static class Program
     private static void ConfigureServices(HostBuilderContext context, IServiceCollection builder)
     {
         MongoMappings.Setup();
+        builder.AddHttpClient();
     }
 }
