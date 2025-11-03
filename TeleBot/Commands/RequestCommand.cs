@@ -14,7 +14,7 @@ public class RequestCommand(IRepository<User, long> users, GenerationService gen
     {
         var userId = message.From!.Id;
         var user = await users.GetById(userId);
-        var model = user!.Models.First(aiModel => aiModel.Provider is OpenAICompatibleProvider);
+        var model = user!.Models.First();
 
         var prompt = new Prompt("What is the capital of France?");
         var response = await genService.Generate(model, prompt, PromptSettings.Default);

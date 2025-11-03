@@ -23,7 +23,7 @@ public class TestCommand(
         var userId = message.From!.Id;
         var user = await users.GetOrCreate(userId);
         var provider = new GeminiProvider("TOKEN");
-        var model = new AiModel(Guid.NewGuid(), "gemini-2.5-pro", "Gemini 2.5 Pro", provider);
+        var model = new AiModel(Guid.NewGuid(), "gemini-2.5-flash", "Gemini 2.5 Flash", provider);
 
         user.AddModel(model);
         await users.Update(user);
