@@ -2,6 +2,7 @@
 
 namespace Infrastructure.ValueTypes;
 
+// TODO: use enum for roles
 public record GeminiContent(GeminiContent.Part[] Parts, string? Role = null)
 {
     public string GetTextResponse()

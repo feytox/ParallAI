@@ -3,7 +3,6 @@
 using System.Reflection;
 using AICore.Repositories;
 using AICore.Services;
-using AICore.ValueTypes;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Infrastructure.Config;
@@ -43,10 +42,9 @@ public static class Program
             new MongoRepository<User,long>(c.Resolve<IMongoDatabase>(),c.Resolve<IConfig>().UsersCollection))
             .As<IRepository<User, long>>().SingleInstance();
 
-        builder.RegisterType<GeminiGenerationService>()
-            .As<IAiGenerationService<GeminiProvider>>().SingleInstance();
-        builder.RegisterType<OpenAiGenerationService>()
-            .As<IAiGenerationService<OpenAICompatibleProvider>>().SingleInstance();
+        builder.RegisterType<GeminiGenService>().As<IGenService>().SingleInstance();
+        builder.RegisterType<OpenAiGenService>().As<IGenService>().SingleInstance();
+        builder.RegisterType<GenerationService>().AsSelf().SingleInstance();
         
         builder.RegisterAssemblyTypes(typeof(ICommand).Assembly).As<ICommand>().SingleInstance();
         builder.RegisterType<CommandHandler>().AsSelf().SingleInstance();

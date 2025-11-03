@@ -6,7 +6,7 @@ using Infrastructure.ValueTypes;
 
 namespace Infrastructure.Services;
 
-public class GeminiGenerationService(HttpClient client) : IAiGenerationService<GeminiProvider>
+public class GeminiGenService(HttpClient client) : IProviderGenService<GeminiProvider>
 {
     private const string BaseUrl = "https://generativelanguage.googleapis.com/v1beta/models";
 
@@ -21,6 +21,8 @@ public class GeminiGenerationService(HttpClient client) : IAiGenerationService<G
         request.Content = JsonContent.Create(geminiRequest, options: JsonSerializerOptions.Web);
 
         var result = await client.SendAsync(request);
+        result.EnsureSuccessStatusCode();
+        
         var response = await result.Content.ReadFromJsonAsync<GeminiResponse>(JsonSerializerOptions.Web);
         return response!.ToTextResponse();
     }
