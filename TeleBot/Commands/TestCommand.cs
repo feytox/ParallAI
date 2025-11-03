@@ -4,6 +4,7 @@ using AICore.Entities;
 using AICore.Repositories;
 using AICore.ValueTypes;
 using Microsoft.Extensions.Logging;
+using TeleBot.Commands.Common;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using User = AICore.Entities.User;
@@ -14,20 +15,15 @@ using User = AICore.Entities.User;
 namespace TeleBot.Commands;
 
 [Command("/test", "тестовая команда для тестов")]
-public class TestCommand(
-    IRepository<User, long> users,
-    ILogger<TestCommand> logger) : ICommand
+public class TestCommand(IRepository<User, long> users, ILogger<TestCommand> logger) : UserCommand(users)
 {
-    public async Task Execute(Message message, ITelegramBotClient bot)
+    protected override async Task Execute(Message message, ITelegramBotClient bot, User user)
     {
         var userId = message.From!.Id;
-        var user = await users.GetOrCreate(userId);
         var provider = new GeminiProvider("TOKEN");
         var model = new AiModel(Guid.NewGuid(), "gemini-2.5-flash", "Gemini 2.5 Flash", provider);
 
         user.AddModel(model);
-        await users.Update(user);
-        
-        await bot.SendMessage(message.Chat, $"Модель {model} добавлена к {userId}");
+        await bot.SendMessage(message.Chat, $"Модель ({user.UserModels.Count}) {model} добавлена к {userId}");
     }
 }

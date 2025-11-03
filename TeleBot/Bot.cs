@@ -3,6 +3,8 @@
 using Infrastructure.Config;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using TeleBot.Commands.Common;
+using TeleBot.StateActions.Common;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
@@ -15,7 +17,8 @@ namespace TeleBot;
 public class Bot(
     IConfig config,
     ILogger<Bot> logger,
-    CommandHandler commandHandler) : IHostedService
+    CommandHandler commandHandler,
+    StateHandler stateHandler) : IHostedService
 {
     public Task StartAsync(CancellationToken cancellationToken)
     {
@@ -43,13 +46,13 @@ public class Bot(
 
     private async Task HandleMessage(ITelegramBotClient bot, Message message)
     {
-        await commandHandler.HandleCommand(message, bot);
+        var wasState = await stateHandler.HandleState(message, bot);
+        if (!wasState) await commandHandler.HandleCommand(message, bot);
     }
 
     private async Task HandleCallbackQuery(ITelegramBotClient bot, CallbackQuery callbackQuery)
     {
-        // в будущем здесь должна быть логика обработки пресетов и ещё чего-нибудь
-        await commandHandler.HandleCommand(callbackQuery.Message!, bot);
+        await HandleMessage(bot, callbackQuery.Message!);
     }
 
     private Task HandleError(ITelegramBotClient bot, Exception exception, CancellationToken cancellationToken)

@@ -1,0 +1,29 @@
+#region
+
+using AICore.Repositories;
+using Telegram.Bot;
+using Telegram.Bot.Types;
+using User = AICore.Entities.User;
+
+#endregion
+
+namespace TeleBot.StateActions.Common;
+
+public class StateHandler(IEnumerable<IStateAction> actions, IRepository<User, long> userRepository)
+{
+    public async Task<bool> HandleState(Message message, ITelegramBotClient bot)
+    {
+        var user = await userRepository.GetOrCreate(message.Chat.Id);
+        var state = user.StateMachine.Current;
+        if (state == null) 
+            return false;
+
+        var action = actions.FirstOrDefault(a => a.CanHandle(state));
+        if (action == null)
+            throw new KeyNotFoundException($"Unable to find action for state {state.GetType().Name}");
+
+        await action.Execute(state, message, bot, user);
+        await userRepository.Update(user);
+        return true;
+    }
+}

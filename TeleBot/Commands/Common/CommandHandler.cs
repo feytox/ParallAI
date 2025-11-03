@@ -6,15 +6,15 @@ using Telegram.Bot.Types;
 
 #endregion
 
-namespace TeleBot;
+namespace TeleBot.Commands.Common;
 
 public class CommandHandler
 {
-    private readonly Dictionary<string, ICommand> _commandsDict;
+    private readonly Dictionary<string, ICommand> commandsDict;
 
     public CommandHandler(IEnumerable<ICommand> commands)
     {
-        _commandsDict = commands
+        commandsDict = commands
             .Select(cmd => (cmd, attr: cmd.GetType().GetCustomAttribute<CommandAttribute>()))
             .Where(t => t.attr is not null)
             .ToDictionary(t => t.attr!.Name, t => t.cmd, StringComparer.OrdinalIgnoreCase);
@@ -31,7 +31,7 @@ public class CommandHandler
         }
         
         var commandText = messageText.Split(' ')[0];
-        if (_commandsDict.TryGetValue(commandText, out var command))
+        if (commandsDict.TryGetValue(commandText, out var command))
             await command.Execute(message, bot);
         else
             await bot.SendMessage(message.Chat, $"Я не знаю команды `{commandText}`");

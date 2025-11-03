@@ -5,9 +5,9 @@ using Telegram.Bot.Types;
 
 #endregion
 
-namespace TeleBot;
+namespace TeleBot.Commands.Common;
 
 public interface ICommand
 {
-    public Task Execute(Message message, ITelegramBotClient bot);
+    Task Execute(Message message, ITelegramBotClient bot);
 }

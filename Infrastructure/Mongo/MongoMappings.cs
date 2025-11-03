@@ -1,6 +1,8 @@
 #region
 
+using System.Reflection;
 using AICore.Entities;
+using AICore.States;
 using AICore.ValueTypes;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
@@ -44,5 +46,22 @@ public static class MongoMappings
             classMap.AutoMap();
             classMap.SetDiscriminator("gemini");
         });
+        
+        BsonClassMap.RegisterClassMap<UserStateMachine>(classMap =>
+        {
+            classMap.AutoMap();
+        });
+
+        BsonClassMap.RegisterClassMap<UserState>(classMap =>
+        {
+            classMap.AutoMap();
+            classMap.SetIsRootClass(true); 
+        });
+
+        var types = Assembly.GetAssembly(typeof(UserState))!
+            .GetTypes()
+            .Where(t => !t.IsAbstract && typeof(UserState).IsAssignableFrom(t));
+        foreach (var type in types)
+            BsonClassMap.LookupClassMap(type);
     }
 }
