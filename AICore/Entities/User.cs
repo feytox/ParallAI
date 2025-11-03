@@ -2,6 +2,9 @@ namespace AICore.Entities;
 
 public class User(long id) : Entity<long>(id)
 {
-    public HashSet<AiModel> Models { get; init; } = [];
+    public IReadOnlyCollection<AiModel> UserModels => Models;
+
+    private HashSet<AiModel> Models { get; set; } = [];
+    
     public void AddModel(AiModel model) => Models.Add(model);
 }
