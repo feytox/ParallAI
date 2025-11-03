@@ -2,19 +2,16 @@
 
 namespace Infrastructure.ValueTypes;
 
-public record OpenAiResponse(OpenAiResponse.Choice[] Choices)
+public record OpenAiResponse(OpenAiResponse.Choice[] Choices) : IGenResponse
 {
     public record Choice(OpenAiMessage Message);
-}
 
-public static class OpenAiResponseExt
-{
-    public static AiResponse ToTextResponse(this OpenAiResponse response)
+    public AiResponse ToTextResponse()
     {
-        var choice = response.Choices.SingleOrDefault();
+        var choice = Choices.SingleOrDefault();
         if (choice is null)
             throw new ArgumentException(
-                $"Response should contain exactly 1 response choice. Actual: {response.Choices.Length}");
+                $"Response should contain exactly 1 response choice. Actual: {Choices.Length}");
         
         return new AiResponse(choice.Message.Content);
     }

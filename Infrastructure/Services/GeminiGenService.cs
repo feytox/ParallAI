@@ -1,29 +1,24 @@
-﻿using System.Net.Http.Json;
-using System.Text.Json;
-using AICore.Services;
-using AICore.ValueTypes;
+﻿using AICore.ValueTypes;
 using Infrastructure.ValueTypes;
 
 namespace Infrastructure.Services;
 
-public class GeminiGenService(HttpClient client) : IProviderGenService<GeminiProvider>
+public class GeminiGenService(HttpClient client) : HttpGenService<GeminiProvider, GeminiRequest, GeminiResponse>(client)
 {
     private const string BaseUrl = "https://generativelanguage.googleapis.com/v1beta/models";
 
-    public async Task<AiResponse> Generate(GeminiProvider provider, string modelId,
-        Prompt prompt, PromptSettings promptSettings)
+    protected override Uri GetEndpointUrl(GeminiProvider provider, string modelId)
     {
-        var url = new Uri($"{BaseUrl}/{modelId}:generateContent");
-        using var request = new HttpRequestMessage(HttpMethod.Post, url);
-        var geminiRequest = GeminiRequest.Create(prompt, promptSettings);
+        return new Uri($"{BaseUrl}/{modelId}:generateContent");
+    }
 
+    protected override GeminiRequest CreateAiRequest(string modelId, Prompt prompt, PromptSettings promptSettings)
+    {
+        return GeminiRequest.Create(prompt, promptSettings);
+    }
+
+    protected override void FillHttpRequest(GeminiProvider provider, HttpRequestMessage request)
+    {
         request.Headers.Add("x-goog-api-key", provider.Token);
-        request.Content = JsonContent.Create(geminiRequest, options: JsonSerializerOptions.Web);
-
-        var result = await client.SendAsync(request);
-        result.EnsureSuccessStatusCode();
-        
-        var response = await result.Content.ReadFromJsonAsync<GeminiResponse>(JsonSerializerOptions.Web);
-        return response!.ToTextResponse();
     }
 }

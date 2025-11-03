@@ -1,9 +1,13 @@
-﻿using AICore.ValueTypes;
+﻿using System.Text.Json.Serialization;
+using AICore.ValueTypes;
+using Infrastructure.Util;
 
 namespace Infrastructure.ValueTypes;
 
-// TODO: use enum for roles
-public record GeminiContent(GeminiContent.Part[] Parts, string? Role = null)
+public record GeminiContent(
+    GeminiContent.Part[] Parts,
+    [property: JsonConverter(typeof(JsonWebEnumConverter<GeminiContent.MessageRole>))]
+    GeminiContent.MessageRole Role)
 {
     public string GetTextResponse()
     {
@@ -13,10 +17,16 @@ public record GeminiContent(GeminiContent.Part[] Parts, string? Role = null)
 
         return part.Text;
     }
-    
+
     public static GeminiContent[] CreateFromPrompt(Prompt prompt) => [CreateFromText(prompt.Text)];
 
-    public static GeminiContent CreateFromText(string text) => new([new Part(text)]);
-    
+    public static GeminiContent CreateFromText(string text) => new([new Part(text)], MessageRole.User);
+
     public record Part(string Text);
+
+    public enum MessageRole
+    {
+        User,
+        Model
+    }
 }

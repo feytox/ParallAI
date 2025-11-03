@@ -6,15 +6,7 @@ public record OpenAiRequest(string Model, OpenAiMessage[] Messages, double Tempe
 {
     public static OpenAiRequest Create(string modelId, Prompt prompt, PromptSettings promptSettings)
     {
-        var messages = CreateMessages(prompt, promptSettings).ToArray();
+        var messages = OpenAiMessage.CreateMessages(prompt, promptSettings).ToArray();
         return new OpenAiRequest(modelId, messages, promptSettings.Temperature);
-    }
-
-    private static IEnumerable<OpenAiMessage> CreateMessages(Prompt prompt, PromptSettings promptSettings)
-    {
-        if (promptSettings.HasSystemInstruction)
-            yield return new OpenAiMessage(promptSettings.SystemInstructions, "system");
-
-        yield return new OpenAiMessage(prompt.Text, "user");
     }
 }
