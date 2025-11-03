@@ -1,9 +1,9 @@
 #region
 
 using System.Text;
+using TeleBot.Commands.Common;
 using Telegram.Bot;
 using Telegram.Bot.Types;
-using User = AICore.Entities.User;
 
 #endregion
 

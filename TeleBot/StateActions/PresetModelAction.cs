@@ -1,33 +1,29 @@
 #region
 
 using AICore.States;
+using TeleBot.StateActions.Common;
 using Telegram.Bot;
-using User = AICore.Entities.User;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
+using User = AICore.Entities.User;
 
 #endregion
 
-namespace TeleBot.HandleStateActions;
+namespace TeleBot.StateActions;
 
-public class HandlePresetModelAction : StateAction<PresetState>
+public class PresetModelAction : IStepStateAction<PresetState, PresetStep>
 {
-    public override bool CanHandle(UserState? state)
-    {
-        if (state is not PresetState ps) return false;
-        return ps.Current == PresetStep.Model;
-    }
-
-    public override async Task Execute(Message message, ITelegramBotClient bot, User user)
+    public PresetStep StateStep => PresetStep.Model;
+    
+    public async Task<bool> Execute(PresetState state, Message message, ITelegramBotClient bot, User user)
     {
         if (string.IsNullOrWhiteSpace(message.Text))
         {
             await bot.SendMessage(message.Chat, "Название модели не может быть пустым.");
-            return;
+            return false;
         }
-
-        var presetState = GetState(user.StateMachine.Current!);
-        presetState.Model = message.Text;
-        user.StateMachine.NextStepOrNothing();
+        
+        state.Model = message.Text;
 
         var art = @"
 ⠄⠄⠄⢀⡋⣡⣴⣶⣶⡀⠄⠄⠙⢿⣿⣿⣿⣿⣿⣴⣿⣿⣿⢃⣤⣄⣀⣥⣿⣿⠄
@@ -47,6 +43,7 @@ public class HandlePresetModelAction : StateAction<PresetState>
         await bot.SendMessage(
             chatId: message.Chat.Id,
             text: $"{art}ААААААХХХХ\\! Напиши системный промпт\\.",
-            parseMode: Telegram.Bot.Types.Enums.ParseMode.MarkdownV2);
+            parseMode: ParseMode.MarkdownV2);
+        return true;
     }
 }

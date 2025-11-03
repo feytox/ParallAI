@@ -3,6 +3,7 @@
 using AICore.Entities;
 using AICore.Repositories;
 using Microsoft.Extensions.Logging;
+using TeleBot.Commands.Common;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -14,10 +15,10 @@ namespace TeleBot.Commands;
 
 // временная команда пресетов
 [Command("/showpresets", "вывод пользовательских пресетов")]
-public class ShowPresetsCommand(IRepository<User, long> userRepository, ILogger<TestCommand> logger) 
-    : UserCommand(userRepository)
+public class ShowPresetsCommand(IRepository<User, long> users, ILogger<TestCommand> logger) 
+    : UserCommand(users)
 {
-    public override async Task Execute(Message message, ITelegramBotClient bot, User user)
+    protected override async Task Execute(Message message, ITelegramBotClient bot, User user)
     {
         var presets = new List<Preset> { new(Guid.NewGuid(), "ask"), new(Guid.NewGuid(), "terver") };
 

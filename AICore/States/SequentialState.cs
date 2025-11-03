@@ -1,15 +1,17 @@
 namespace AICore.States;
 
-public abstract class SequentialState<TStep>(TStep[] steps) : UserState, ISequentialState
+public abstract class SequentialState<TStep>(TStep[] steps) : UserState
 {
-    public int index { get; private set; }
-    public TStep Current => steps[index];
-    public override bool IsCompleted => index >= steps.Length;
+    // ReSharper disable once MemberCanBePrivate.Global (used in serialization)
+    public int Index { get; set; }
+    public TStep Current => steps[Index];
+    public override bool IsCompleted => Index >= steps.Length;
 
     public bool Next()
     {
-        if (IsCompleted) return false;
-        index++;
+        if (IsCompleted) 
+            return false;
+        Index++;
         return true;
     }
 }

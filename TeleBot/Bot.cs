@@ -1,10 +1,10 @@
 ﻿#region
 
-using AICore.Repositories;
-using User = AICore.Entities.User;
 using Infrastructure.Config;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using TeleBot.Commands.Common;
+using TeleBot.StateActions.Common;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;

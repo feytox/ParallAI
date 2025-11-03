@@ -1,4 +1,6 @@
-namespace AICore.States;
+using AICore.States;
+
+namespace AICore.Entities;
 
 public class UserStateMachine
 {
@@ -13,26 +15,4 @@ public class UserStateMachine
     {
         Current = null;
     }
-    
-    public bool NextStepOrNothing()
-    {
-        if (Current is null)
-            return false;
-
-        switch (Current)
-        {
-            case ISequentialState seq:
-                var hasNext = seq.Next();
-                if (!hasNext || seq.IsCompleted)
-                    Reset();
-                return hasNext;
-
-            default:
-                Reset();
-                return false;
-        }
-    }
-    
-    public T? TryGetState<T>() where T : UserState
-        => Current as T;
 }
