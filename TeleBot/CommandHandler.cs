@@ -21,7 +21,7 @@ public class CommandHandler
             .ToDictionary(t => t.attr!.Name, t => t.cmd, StringComparer.OrdinalIgnoreCase);
     }
     
-    public async Task HandleCommand(Message message, ITelegramBotClient bot, User user)
+    public async Task HandleCommand(Message message, ITelegramBotClient bot)
     {
         var messageText = message.Text ?? message.Caption;
         
@@ -33,7 +33,7 @@ public class CommandHandler
         
         var commandText = messageText.Split(' ')[0];
         if (_commandsDict.TryGetValue(commandText, out var command))
-            await command.Execute(message, bot, user);
+            await command.Execute(message, bot);
         else
             await bot.SendMessage(message.Chat, $"Я не знаю команды `{commandText}`");
     }

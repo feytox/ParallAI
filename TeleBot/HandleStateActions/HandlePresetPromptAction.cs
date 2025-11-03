@@ -9,11 +9,15 @@ using Telegram.Bot.Types;
 
 namespace TeleBot.HandleStateActions;
 
-public class HandlePresetPromptAction : IStateAction
+public class HandlePresetPromptAction : StateAction<PresetState>
 {
-    public UserStateType HandledState => UserStateType.PresetWaitPrompt;
+    public override bool CanHandle(UserState? state)
+    {
+        if (state is not PresetState ps) return false;
+        return ps.Current == PresetStep.Prompt;
+    }
 
-    public async Task Execute(Message message, User user, ITelegramBotClient bot)
+    public override async Task Execute(Message message, ITelegramBotClient bot, User user)
     {
         if (string.IsNullOrWhiteSpace(message.Text))
         {
@@ -21,9 +25,9 @@ public class HandlePresetPromptAction : IStateAction
             return;
         }
 
-        var state = user.StateMachine.TryGetState<PresetState>();
-        state.Prompt = message.Text;
-        user.StateMachine.MoveNext();
+        var presetState = GetState(user.StateMachine.Current!);
+        presetState.Prompt = message.Text;
+        user.StateMachine.NextStepOrNothing();
         
         await bot.SendMessage(message.Chat, "ПЕРВЫЙ СКИЛ И ТРЕТИЙ БЛЯЯЯТЬ! Укажи температуру.");
     }

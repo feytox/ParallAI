@@ -9,16 +9,20 @@ using Telegram.Bot.Types;
 
 namespace TeleBot.HandleStateActions;
 
-public class HandlePresetNameAction : IStateAction
+public class HandlePresetNameAction : StateAction<PresetState>
 {
-    public UserStateType HandledState => UserStateType.PresetWaitName;
-
-    public async Task Execute(Message message, User user, ITelegramBotClient bot)
+    public override bool CanHandle(UserState? state)
     {
-        var state = user.StateMachine.TryGetState<PresetState>(); // я не знаю как исправить, просто спрятал тупой даун каст
-        state.Name = message.Text;
-        user.StateMachine.MoveNext();
-        
+        if (state is not PresetState ps) return false;
+        return ps.Current == PresetStep.Name;
+    }
+
+    public override async Task Execute(Message message, ITelegramBotClient bot, User user)
+    {
+        var presetState = GetState(user.StateMachine.Current!);
+        presetState.Name = message.Text;
+        user.StateMachine.NextStepOrNothing();
+
         await bot.SendMessage(message.Chat, "Ямете кудасай! Теперь выбери модель.");
     }
 }

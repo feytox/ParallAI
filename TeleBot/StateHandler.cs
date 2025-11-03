@@ -1,37 +1,33 @@
+#region
+
 using AICore.Repositories;
-using AICore.States;
 using Microsoft.Extensions.Logging;
 using User = AICore.Entities.User;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
+#endregion
+
 namespace TeleBot;
 
-public class StateHandler
+public class StateHandler(IEnumerable<IStateAction> actions, ILogger<StateHandler> logger, IRepository<User, long> userRepository)
 {
-    private readonly Dictionary<UserStateType, IStateAction> stateActions;
-    private readonly ILogger<StateHandler> logger;
-
-    public StateHandler(
-        IEnumerable<IStateAction> actions,
-        ILogger<StateHandler> logger)
+    public async Task<bool> HandleState(Message message, ITelegramBotClient bot)
     {
-        stateActions = actions.ToDictionary(a => a.HandledState, a => a);
-        this.logger = logger; 
-    }
-
-    public async Task<bool> HandleState(Message message, ITelegramBotClient bot, User user)
-    {
+        var user = await userRepository.GetOrCreate(message.Chat.Id);
         var state = user.StateMachine.Current;
-        
-        if (state == null || state.CurrentStep == UserStateType.Default)
-            return false;
-        
-        if (!stateActions.TryGetValue(state.CurrentStep, out var action))
-            return false;
+        if (state == null) return false;
 
-        await action.Execute(message, user, bot);
+        var action = actions.FirstOrDefault(a => a.CanHandle(state));
+        if (action == null)
+        {
+            logger.LogWarning("No action for state {State} for user {UserId}", state.GetType().Name, user.Id);
+            return false;
+        }
+
+        await action.Execute(message, bot, user);
+        await userRepository.Update(user);
+        
         return true;
     }
-
 }

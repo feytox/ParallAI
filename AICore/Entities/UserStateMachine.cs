@@ -1,37 +1,38 @@
-using AICore.States;
-
-namespace AICore.Entities;
+namespace AICore.States;
 
 public class UserStateMachine
 {
     public UserState? Current { get; private set; }
     
-    public T? TryGetState<T>() where T : UserState
-        => Current as T;
-
     public void Set(UserState state)
     {
         Current = state;
     }
-
+    
     public void Reset()
     {
         Current = null;
     }
-
-    public bool MoveNext()
+    
+    public bool NextStepOrNothing()
     {
-        if (Current == null) return false;
-
-        var next = Current.Next();
-        if (!next)
-        {
-            Reset();
+        if (Current is null)
             return false;
-        }
-        
-        return true;
-    }
 
-    public bool IsActive => Current != null;
+        switch (Current)
+        {
+            case ISequentialState seq:
+                var hasNext = seq.Next();
+                if (!hasNext || seq.IsCompleted)
+                    Reset();
+                return hasNext;
+
+            default:
+                Reset();
+                return false;
+        }
+    }
+    
+    public T? TryGetState<T>() where T : UserState
+        => Current as T;
 }

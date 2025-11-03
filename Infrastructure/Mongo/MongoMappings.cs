@@ -45,6 +45,5 @@ public static class MongoMappings
             .Where(t => !t.IsAbstract && typeof(UserState).IsAssignableFrom(t));
         foreach (var type in types)
             BsonClassMap.LookupClassMap(type);
-
     }
 }

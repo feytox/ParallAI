@@ -17,7 +17,6 @@ namespace TeleBot;
 public class Bot(
     IConfig config,
     ILogger<Bot> logger,
-    IRepository<User, long> userRepository,
     CommandHandler commandHandler,
     StateHandler stateHandler) : IHostedService
 {
@@ -47,10 +46,8 @@ public class Bot(
 
     private async Task HandleMessage(ITelegramBotClient bot, Message message)
     {
-        var user = await userRepository.GetOrCreate(message.Chat.Id);
-        var wasState = await stateHandler.HandleState(message, bot, user);
-        if (!wasState) await commandHandler.HandleCommand(message, bot, user);
-        await userRepository.Update(user);
+        var wasState = await stateHandler.HandleState(message, bot);
+        if (!wasState) await commandHandler.HandleCommand(message, bot);
     }
 
     private async Task HandleCallbackQuery(ITelegramBotClient bot, CallbackQuery callbackQuery)

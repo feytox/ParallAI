@@ -1,17 +1,16 @@
-using System.Collections.Immutable;
 
 namespace AICore.States;
 
-public class PresetState : UserState
+public enum PresetStep
 {
-    protected override ImmutableArray<UserStateType> steps { get; } =
-    [
-        UserStateType.PresetWaitName,
-        UserStateType.PresetWaitModel,
-        UserStateType.PresetWaitPrompt,
-        UserStateType.PresetWaitTemperature
-    ];
+    Name,
+    Model,
+    Prompt,
+    Temperature
+}
 
+public class PresetState() : SequentialState<PresetStep>(Enum.GetValues<PresetStep>())
+{
     public string? Name { get; set; }
     public string? Model { get; set; }
     public string? Prompt { get; set; }

@@ -26,7 +26,7 @@ public class HelpCommand : ICommand
         answer = result.ToString();
     }
 
-    public async Task Execute(Message message, ITelegramBotClient bot, User user)
+    public async Task Execute(Message message, ITelegramBotClient bot)
     {
         await bot.SendMessage(message.Chat, answer);
     }

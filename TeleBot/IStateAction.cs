@@ -11,6 +11,7 @@ namespace TeleBot;
 
 public interface IStateAction
 {
-    UserStateType HandledState { get; }
-    Task Execute(Message message, User user, ITelegramBotClient bot);
+    bool CanHandle(UserState? state);
+
+    Task Execute(Message message, ITelegramBotClient bot, User user);
 }

@@ -9,11 +9,15 @@ using Telegram.Bot.Types;
 
 namespace TeleBot.HandleStateActions;
 
-public class HandlePresetModelAction : IStateAction
+public class HandlePresetModelAction : StateAction<PresetState>
 {
-    public UserStateType HandledState => UserStateType.PresetWaitModel;
+    public override bool CanHandle(UserState? state)
+    {
+        if (state is not PresetState ps) return false;
+        return ps.Current == PresetStep.Model;
+    }
 
-    public async Task Execute(Message message, User user, ITelegramBotClient bot)
+    public override async Task Execute(Message message, ITelegramBotClient bot, User user)
     {
         if (string.IsNullOrWhiteSpace(message.Text))
         {
@@ -21,9 +25,9 @@ public class HandlePresetModelAction : IStateAction
             return;
         }
 
-        var state = user.StateMachine.TryGetState<PresetState>();
-        state.Model = message.Text;
-        user.StateMachine.MoveNext();
+        var presetState = GetState(user.StateMachine.Current!);
+        presetState.Model = message.Text;
+        user.StateMachine.NextStepOrNothing();
 
         var art = @"
 ⠄⠄⠄⢀⡋⣡⣴⣶⣶⡀⠄⠄⠙⢿⣿⣿⣿⣿⣿⣴⣿⣿⣿⢃⣤⣄⣀⣥⣿⣿⠄
