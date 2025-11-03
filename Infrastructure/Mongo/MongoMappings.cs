@@ -19,7 +19,7 @@ public static class MongoMappings
         BsonClassMap.RegisterClassMap<User>(classMap =>
         {
             classMap.AutoMap();
-            classMap.MapProperty("models");
+            classMap.MapProperty("Models");
         });
 
         BsonClassMap.RegisterClassMap<AiModel>(classMap =>
