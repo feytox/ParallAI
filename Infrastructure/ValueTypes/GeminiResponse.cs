@@ -2,6 +2,9 @@
 
 namespace Infrastructure.ValueTypes;
 
+/// <remarks>
+/// <see href="https://ai.google.dev/api/generate-content#v1beta.GenerateContentResponse">Gemini API Reference</see>
+/// </remarks>
 public record GeminiResponse(GeminiResponse.Candidate[] Candidates) : IGenResponse
 {
     public record Candidate(GeminiContent Content);

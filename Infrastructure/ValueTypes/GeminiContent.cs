@@ -4,6 +4,9 @@ using Infrastructure.Util;
 
 namespace Infrastructure.ValueTypes;
 
+/// <remarks>
+/// <see href="https://ai.google.dev/api/caching#Content">Gemini API Reference</see>
+/// </remarks>
 public record GeminiContent(
     GeminiContent.Part[] Parts,
     [property: JsonConverter(typeof(JsonWebEnumConverter<GeminiContent.MessageRole>))]

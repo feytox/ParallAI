@@ -2,6 +2,9 @@
 
 namespace Infrastructure.ValueTypes;
 
+/// <remarks>
+/// <see href="https://platform.openai.com/docs/api-reference/chat/object">OpenAI API Reference</see>
+/// </remarks>
 public record OpenAiResponse(OpenAiResponse.Choice[] Choices) : IGenResponse
 {
     public record Choice(OpenAiMessage Message);

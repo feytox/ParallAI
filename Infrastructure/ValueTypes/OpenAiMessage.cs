@@ -4,6 +4,9 @@ using Infrastructure.Util;
 
 namespace Infrastructure.ValueTypes;
 
+/// <remarks>
+/// <see href="https://platform.openai.com/docs/api-reference/chat/create#chat_create-messages">OpenAI API Reference</see>
+/// </remarks>
 public record OpenAiMessage(
     string Content,
     [property: JsonConverter(typeof(JsonWebEnumConverter<OpenAiMessage.MessageRole>))]

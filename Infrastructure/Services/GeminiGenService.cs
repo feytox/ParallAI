@@ -3,6 +3,9 @@ using Infrastructure.ValueTypes;
 
 namespace Infrastructure.Services;
 
+/// <remarks>
+/// <see href="https://ai.google.dev/api/generate-content#method:-models.generatecontent">Gemini API Reference</see>
+/// </remarks>
 public class GeminiGenService(HttpClient client) : HttpGenService<GeminiProvider, GeminiRequest, GeminiResponse>(client)
 {
     private const string BaseUrl = "https://generativelanguage.googleapis.com/v1beta/models";
