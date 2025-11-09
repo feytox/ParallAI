@@ -10,7 +10,6 @@ using RichardSzalay.MockHttp;
 
 #endregion
 
-
 namespace Tests;
 
 [TestFixture]
