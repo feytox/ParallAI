@@ -9,6 +9,8 @@ using Infrastructure.ValueTypes;
 using NUnit.Framework;
 using RichardSzalay.MockHttp;
 
+#pragma warning disable CS8618
+
 #endregion
 
 namespace Tests;
@@ -22,25 +24,25 @@ public abstract class HttpGenServiceTests<TService, TProvider, TRequest, TRespon
     protected const string ModelId = "modelId";
     protected const string ValidApiKey = "TEST_API_KEY";
 
-    protected MockHttpMessageHandler mockHttp;
-    protected HttpClient httpClient;
-    protected TService service;
-    
+    protected MockHttpMessageHandler MockHttp;
+    protected TService Service;
+    private HttpClient httpClient;
+
     protected abstract string ExpectedUrl { get; }
-    protected TProvider defaultProvider;
-    protected Prompt defaultPrompt;
-    protected PromptSettings defaultSettings;
+    protected TProvider DefaultProvider;
+    protected Prompt DefaultPrompt;
+    protected PromptSettings DefaultSettings;
 
     [SetUp]
     public void BaseSetUp()
     {
-        mockHttp = new MockHttpMessageHandler();
-        httpClient = mockHttp.ToHttpClient();
-        service = CreateService(httpClient);
+        MockHttp = new MockHttpMessageHandler();
+        httpClient = MockHttp.ToHttpClient();
+        Service = CreateService(httpClient);
         
-        defaultPrompt = new Prompt("prompt");
-        defaultSettings = PromptSettings.Default;
-        defaultProvider = CreateProvider();
+        DefaultPrompt = new Prompt("prompt");
+        DefaultSettings = PromptSettings.Default;
+        DefaultProvider = CreateProvider();
     }
     
     protected abstract TService CreateService(HttpClient client);
@@ -54,10 +56,10 @@ public abstract class HttpGenServiceTests<TService, TProvider, TRequest, TRespon
     [TestCase(HttpStatusCode.InternalServerError)]
     public async Task Generate_WhenApiReturnsError_ThrowsHttpRequestException(HttpStatusCode statusCode)
     {
-        mockHttp.When(HttpMethod.Post, ExpectedUrl)
+        MockHttp.When(HttpMethod.Post, ExpectedUrl)
             .Respond(statusCode);
         
-        await service.Awaiting(s => s.Generate(defaultProvider, ModelId, defaultPrompt, defaultSettings))
+        await Service.Awaiting(s => s.Generate(DefaultProvider, ModelId, DefaultPrompt, DefaultSettings))
             .Should().ThrowAsync<HttpRequestException>();
     }
     
@@ -66,10 +68,10 @@ public abstract class HttpGenServiceTests<TService, TProvider, TRequest, TRespon
     {
         const string malformedJson = "{ \"invalid_json\": ";
 
-        mockHttp.When(HttpMethod.Post, ExpectedUrl)
+        MockHttp.When(HttpMethod.Post, ExpectedUrl)
             .Respond("application/json", malformedJson);
         
-        await service.Awaiting(s => s.Generate(defaultProvider, ModelId, defaultPrompt, defaultSettings))
+        await Service.Awaiting(s => s.Generate(DefaultProvider, ModelId, DefaultPrompt, DefaultSettings))
             .Should().ThrowAsync<JsonException>();
     }
 }

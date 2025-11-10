@@ -13,10 +13,13 @@ using RichardSzalay.MockHttp;
 namespace Tests;
 
 [TestFixture]
-public class GeminiGenServiceTests : HttpGenServiceTests<GeminiGenService, GeminiProvider, GeminiRequest, GeminiResponse>
+public class GeminiGenServiceTests
+    : HttpGenServiceTests<GeminiGenService, GeminiProvider, GeminiRequest, GeminiResponse>
 {
-    protected override string ExpectedUrl => $"https://generativelanguage.googleapis.com/v1beta/models/{ModelId}:generateContent";
-    protected override GeminiGenService CreateService(HttpClient client) => new(httpClient);
+    protected override string ExpectedUrl =>
+        $"https://generativelanguage.googleapis.com/v1beta/models/{ModelId}:generateContent";
+
+    protected override GeminiGenService CreateService(HttpClient client) => new(client);
     protected override GeminiProvider CreateProvider() => new(ValidApiKey);
 
     [Test]
@@ -26,18 +29,18 @@ public class GeminiGenServiceTests : HttpGenServiceTests<GeminiGenService, Gemin
         var responseContent = new GeminiContent([responsePart], GeminiContent.MessageRole.Model);
         var responseCandidate = new GeminiResponse.Candidate(responseContent);
         var fakeApiResponse = new GeminiResponse([responseCandidate]);
-        
-        var expectedAiResponse = fakeApiResponse.ToTextResponse();
-        var expectedRequest = GeminiRequest.Create(defaultPrompt, defaultSettings);
 
-        mockHttp.When(HttpMethod.Post, ExpectedUrl)
+        var expectedAiResponse = fakeApiResponse.ToTextResponse();
+        var expectedRequest = GeminiRequest.Create(DefaultPrompt, DefaultSettings);
+
+        MockHttp.When(HttpMethod.Post, ExpectedUrl)
             .WithHeaders("x-goog-api-key", ValidApiKey)
             .WithContent(JsonSerializer.Serialize(expectedRequest, JsonSerializerOptions.Web))
             .Respond("application/json", JsonSerializer.Serialize(fakeApiResponse));
-        
-        var result = await service.Generate(defaultProvider, ModelId, defaultPrompt, defaultSettings);
-        
-        mockHttp.VerifyNoOutstandingExpectation();
+
+        var result = await Service.Generate(DefaultProvider, ModelId, DefaultPrompt, DefaultSettings);
+
+        MockHttp.VerifyNoOutstandingExpectation();
         result.Should().BeEquivalentTo(expectedAiResponse);
     }
 }

@@ -7,7 +7,8 @@ using RichardSzalay.MockHttp;
 
 namespace Tests;
 
-public class OpenRouterGenServiceTests : HttpGenServiceTests<OpenRouterGenService, OpenRouterProvider, OpenRouterRequest, OpenAiResponse>
+public class OpenRouterGenServiceTests
+    : HttpGenServiceTests<OpenRouterGenService, OpenRouterProvider, OpenRouterRequest, OpenAiResponse>
 {
     protected override string ExpectedUrl => "https://openrouter.ai/api/v1/chat/completions";
     protected override OpenRouterGenService CreateService(HttpClient client) => new(client);
@@ -18,18 +19,18 @@ public class OpenRouterGenServiceTests : HttpGenServiceTests<OpenRouterGenServic
         var fakeResponseMessage = new OpenAiMessage("fake response text", OpenAiMessage.MessageRole.Assistant);
         var fakeResponseChoice = new OpenAiResponse.Choice(fakeResponseMessage);
         var fakeApiResponse = new OpenAiResponse([fakeResponseChoice]);
-        
+
         var expectedAiResponse = fakeApiResponse.ToTextResponse();
-        var expectedRequest = OpenRouterRequest.Create(ModelId, defaultPrompt, defaultSettings);
-        
-        mockHttp.When(HttpMethod.Post, ExpectedUrl)
+        var expectedRequest = OpenRouterRequest.Create(ModelId, DefaultPrompt, DefaultSettings);
+
+        MockHttp.When(HttpMethod.Post, ExpectedUrl)
             .WithHeaders("Authorization", $"Bearer {ValidApiKey}")
             .WithContent(JsonSerializer.Serialize(expectedRequest, JsonSerializerOptions.Web))
             .Respond("application/json", JsonSerializer.Serialize(fakeApiResponse));
-        
-        var result = await service.Generate(defaultProvider, ModelId, defaultPrompt, defaultSettings);
-        
-        mockHttp.VerifyNoOutstandingExpectation();
+
+        var result = await Service.Generate(DefaultProvider, ModelId, DefaultPrompt, DefaultSettings);
+
+        MockHttp.VerifyNoOutstandingExpectation();
         result.Should().BeEquivalentTo(expectedAiResponse);
     }
 }
