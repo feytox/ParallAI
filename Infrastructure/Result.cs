@@ -1,22 +1,25 @@
+using FluentResults;
+
 namespace Infrastructure;
 
 public class Result<TError>
 {
+    private readonly TError? error;
     protected Result()
     {
         IsSuccess = true;
-        Error = default;
+        error = default;
     }
 
     protected Result(TError error)
     {
         IsSuccess = false;
-        Error = error;
+        this.error = error;
     }
 
     public bool IsSuccess { get; }
     
-    public TError? Error { get; }
+    public TError Error => !IsSuccess ? error! : throw new InvalidOperationException("Result is success");
 
     public static implicit operator Result<TError>(TError error) =>
         new(error);
@@ -30,17 +33,18 @@ public class Result<TError>
 
 public class Result<TValue, TError> : Result<TError>
 {
+    private readonly TValue? value;
     private Result(TValue value) : base()
     {
-        Value = value;
+        this.value = value;
     }
 
     private Result(TError error) : base(error)
     { 
-        Value = default;
+        value = default;
     }
 
-    public TValue? Value { get; }
+    public TValue Value => IsSuccess ? value! : throw new InvalidOperationException("Result is not success");
 
     public static implicit operator Result<TValue, TError>(TError error) =>
         new(error);
