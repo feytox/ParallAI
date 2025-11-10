@@ -6,7 +6,6 @@ namespace Infrastructure.Services;
 
 /// <remarks>
 /// <see href="https://platform.openai.com/docs/api-reference/chat/create">OpenAI API Reference</see>
-/// <see href="https://openrouter.ai/docs/quickstart">OpenRouter API Reference</see>
 /// </remarks>
 public class OpenAiGenService(HttpClient client)
     : HttpGenService<OpenAICompatibleProvider, OpenAiRequest, OpenAiResponse>(client)
