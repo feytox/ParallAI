@@ -14,6 +14,7 @@ namespace Infrastructure.Mongo;
 
 public static class MongoMappings
 {
+    // TODO: refactor
     public static void Setup()
     {
         BsonSerializer.RegisterSerializer(typeof(Guid), new GuidSerializer(GuidRepresentation.Standard));
@@ -45,6 +46,12 @@ public static class MongoMappings
         {
             classMap.AutoMap();
             classMap.SetDiscriminator("gemini");
+        });
+        
+        BsonClassMap.RegisterClassMap<OpenRouterProvider>(classMap =>
+        {
+            classMap.AutoMap();
+            classMap.SetDiscriminator("openrouter");
         });
         
         BsonClassMap.RegisterClassMap<UserStateMachine>(classMap =>

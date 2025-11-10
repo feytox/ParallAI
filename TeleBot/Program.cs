@@ -47,6 +47,7 @@ public static class Program
 
         builder.RegisterType<GeminiGenService>().As<IGenService>().SingleInstance();
         builder.RegisterType<OpenAiGenService>().As<IGenService>().SingleInstance();
+        builder.RegisterType<OpenRouterGenService>().As<IGenService>().SingleInstance();
         builder.RegisterType<GenerationService>().AsSelf().SingleInstance();
         
         builder.RegisterAssemblyTypes(typeof(ICommand).Assembly).As<ICommand>().SingleInstance();
