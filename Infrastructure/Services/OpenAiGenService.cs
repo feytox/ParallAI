@@ -16,10 +16,11 @@ public class OpenAiGenService(HttpClient client, ILogger<OpenAiGenService>? logg
         return provider.EndpointUrl;
     }
 
-    protected override OpenAiRequest CreateAiRequest(string modelId, Prompt prompt,
+    protected override Task<OpenAiRequest> CreateAiRequest(string modelId, Prompt prompt,
         PromptSettings promptSettings)
     {
-        return OpenAiRequest.Create(modelId, prompt, promptSettings);
+        var request = OpenAiRequest.Create(modelId, prompt, promptSettings);
+        return Task.FromResult(request);
     }
 
     protected override void FillHttpRequest(OpenAICompatibleProvider provider, HttpRequestMessage request)

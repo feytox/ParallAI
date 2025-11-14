@@ -17,7 +17,8 @@ public class GeminiGenService(HttpClient client, ILogger<GeminiGenService>? logg
         return new Uri($"{BaseUrl}/{modelId}:generateContent");
     }
 
-    protected override GeminiRequest CreateAiRequest(string modelId, Prompt prompt, PromptSettings promptSettings)
+    protected override async Task<GeminiRequest> CreateAiRequest(string modelId, Prompt prompt,
+        PromptSettings promptSettings)
     {
         return GeminiRequest.Create(prompt, promptSettings);
     }

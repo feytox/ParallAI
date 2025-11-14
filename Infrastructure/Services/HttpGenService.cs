@@ -13,7 +13,7 @@ public abstract class HttpGenService<TProvider, TRequest, TResponse>(
     : IProviderGenService<TProvider> where TProvider : AiProvider where TResponse : IGenResponse
 {
     protected abstract Uri GetEndpointUrl(TProvider provider, string modelId);
-    protected abstract TRequest CreateAiRequest(string modelId, Prompt prompt, PromptSettings promptSettings);
+    protected abstract Task<TRequest> CreateAiRequest(string modelId, Prompt prompt, PromptSettings promptSettings);
     protected abstract void FillHttpRequest(TProvider provider, HttpRequestMessage request);
 
     public async Task<AiResponse> Generate(TProvider provider, string modelId,
@@ -21,7 +21,7 @@ public abstract class HttpGenService<TProvider, TRequest, TResponse>(
     {
         var url = GetEndpointUrl(provider, modelId);
         using var request = new HttpRequestMessage(HttpMethod.Post, url);
-        var aiRequest = CreateAiRequest(modelId, prompt, promptSettings);
+        var aiRequest = await CreateAiRequest(modelId, prompt, promptSettings);
 
         FillHttpRequest(provider, request);
         request.Content = JsonContent.Create(aiRequest, options: JsonSerializerOptions.Web);

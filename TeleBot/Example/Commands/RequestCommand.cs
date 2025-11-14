@@ -1,7 +1,6 @@
 ﻿using AICore.Repositories;
-using AICore.Services;
-using AICore.ValueTypes;
 using TeleBot.Commands.Common;
+using TeleBot.Example.States;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using User = AICore.Entities.User;
@@ -9,17 +8,11 @@ using User = AICore.Entities.User;
 namespace TeleBot.Example.Commands;
 
 [Command("/request", "тестовая команда для запросов к модели")]
-public class RequestCommand(IRepository<User, long> users, GenerationService genService) : ICommand
+public class RequestCommand(IRepository<User, long> users) : UserCommand(users)
 {
-    public async Task Execute(Message message, ITelegramBotClient bot)
+    protected override async Task Execute(Message message, ITelegramBotClient bot, User user)
     {
-        var userId = message.From!.Id;
-        var user = await users.GetById(userId);
-        var model = user!.UserModels.First();
-
-        var prompt = new Prompt("What is the capital of France?");
-        var response = await genService.Generate(model, prompt, PromptSettings.Default);
-        
-        await bot.SendMessage(message.Chat, response.Text);
+        user.StateMachine.Set(new RequestState());
+        await bot.SendMessage(message.Chat, "Введи запрос. Также можешь прикрепить файл");
     }
 }
