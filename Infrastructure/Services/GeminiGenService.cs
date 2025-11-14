@@ -1,12 +1,14 @@
 ﻿using AICore.ValueTypes;
 using Infrastructure.ValueTypes;
+using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Services;
 
 /// <remarks>
 /// <see href="https://ai.google.dev/api/generate-content#method:-models.generatecontent">Gemini API Reference</see>
 /// </remarks>
-public class GeminiGenService(HttpClient client) : HttpGenService<GeminiProvider, GeminiRequest, GeminiResponse>(client)
+public class GeminiGenService(HttpClient client, ILogger<GeminiGenService>? logger = null)
+    : HttpGenService<GeminiProvider, GeminiRequest, GeminiResponse>(client, logger)
 {
     private const string BaseUrl = "https://generativelanguage.googleapis.com/v1beta/models";
 
