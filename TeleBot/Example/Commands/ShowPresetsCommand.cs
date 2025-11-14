@@ -7,7 +7,7 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 using User = AICore.Entities.User;
 
-namespace TeleBot.Commands;
+namespace TeleBot.Example.Commands;
 
 // временная команда пресетов
 [Command("/showpresets", "вывод пользовательских пресетов")]

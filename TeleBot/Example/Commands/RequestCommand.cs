@@ -6,7 +6,7 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using User = AICore.Entities.User;
 
-namespace TeleBot.Commands;
+namespace TeleBot.Example.Commands;
 
 [Command("/request", "тестовая команда для запросов к модели")]
 public class RequestCommand(IRepository<User, long> users, GenerationService genService) : ICommand

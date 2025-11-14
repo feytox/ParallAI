@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MongoDB.Driver;
 using TeleBot.Commands.Common;
+using TeleBot.Example.States;
 using TeleBot.StateActions.Common;
 using User = AICore.Entities.User;
 

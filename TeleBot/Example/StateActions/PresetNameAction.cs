@@ -1,10 +1,10 @@
-using AICore.States;
+using TeleBot.Example.States;
 using TeleBot.StateActions.Common;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using User = AICore.Entities.User;
 
-namespace TeleBot.StateActions;
+namespace TeleBot.Example.StateActions;
 
 public class PresetNameAction : IStepStateAction<PresetState, PresetStep>
 {

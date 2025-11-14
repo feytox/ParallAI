@@ -8,7 +8,7 @@ using Telegram.Bot.Types;
 using User = AICore.Entities.User;
 
 
-namespace TeleBot.Commands;
+namespace TeleBot.Example.Commands;
 
 [Command("/test", "тестовая команда для тестов")]
 public class TestCommand(IRepository<User, long> users, ILogger<TestCommand> logger) : UserCommand(users)

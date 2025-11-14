@@ -1,5 +1,6 @@
+using AICore.States;
 
-namespace AICore.States;
+namespace TeleBot.Example.States;
 
 public enum PresetStep
 {
