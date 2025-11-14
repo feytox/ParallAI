@@ -1,6 +1,7 @@
 ﻿#region
 
 using Infrastructure.Config;
+using Infrastructure.Exceptions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using TeleBot.Commands.Common;
@@ -46,8 +47,24 @@ public class Bot(
 
     private async Task HandleMessage(ITelegramBotClient bot, Message message)
     {
-        var wasState = await stateHandler.HandleState(message, bot);
-        if (!wasState) await commandHandler.HandleCommand(message, bot);
+        try
+        {
+            var wasState = await stateHandler.HandleState(message, bot);
+            if (!wasState) await commandHandler.HandleCommand(message, bot);
+        }
+
+        catch (UserCausedException ex)
+        {
+            logger.LogError(ex, ex.ToString());
+            await bot.SendMessage(message.Chat, ex.UserMessage);
+        }
+
+        catch (Exception ex)
+        {
+            logger.LogError(ex, ex.ToString());
+            await bot.SendMessage(message.Chat, $"Упс...произошла непредвиденная ошибка {ex}. Все вопросы к @feytox");
+        }
+            
     }
 
     private async Task HandleCallbackQuery(ITelegramBotClient bot, CallbackQuery callbackQuery)
