@@ -1,6 +1,4 @@
-﻿#region
-
-using System.Reflection;
+﻿using System.Reflection;
 using AICore.Repositories;
 using AICore.Services;
 using AICore.States;
@@ -15,8 +13,6 @@ using MongoDB.Driver;
 using TeleBot.Commands.Common;
 using TeleBot.StateActions.Common;
 using User = AICore.Entities.User;
-
-#endregion
 
 namespace TeleBot;
 

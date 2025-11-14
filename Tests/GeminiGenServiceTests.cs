@@ -1,5 +1,3 @@
-#region
-
 using System.Text.Json;
 using AICore.ValueTypes;
 using FluentAssertions;
@@ -7,8 +5,6 @@ using Infrastructure.Services;
 using Infrastructure.ValueTypes;
 using NUnit.Framework;
 using RichardSzalay.MockHttp;
-
-#endregion
 
 namespace Tests;
 

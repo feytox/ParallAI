@@ -1,10 +1,6 @@
-#region
-
 using AICore.Entities;
 using AICore.Repositories;
 using MongoDB.Driver;
-
-#endregion
 
 namespace Infrastructure.Mongo;
 

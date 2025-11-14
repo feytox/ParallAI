@@ -1,9 +1,5 @@
-﻿#region
-
-using dotenv.net;
+﻿using dotenv.net;
 using dotenv.net.Utilities;
-
-#endregion
 
 namespace Infrastructure.Config;
 

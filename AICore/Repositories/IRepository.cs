@@ -1,8 +1,4 @@
-﻿#region
-
-using AICore.Entities;
-
-#endregion
+﻿using AICore.Entities;
 
 namespace AICore.Repositories;
 

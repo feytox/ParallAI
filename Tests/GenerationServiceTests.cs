@@ -1,5 +1,3 @@
-#region
-
 using AICore.Entities;
 using AICore.Services;
 using AICore.ValueTypes;
@@ -8,8 +6,6 @@ using FluentAssertions;
 using NUnit.Framework;
 
 #pragma warning disable CS8618
-
-#endregion
 
 namespace Tests;
 

@@ -1,5 +1,3 @@
-#region
-
 using System.Reflection;
 using AICore.Entities;
 using AICore.States;
@@ -7,8 +5,6 @@ using AICore.ValueTypes;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
-
-#endregion
 
 namespace Infrastructure.Mongo;
 

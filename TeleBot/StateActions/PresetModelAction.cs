@@ -1,13 +1,9 @@
-#region
-
 using AICore.States;
 using TeleBot.StateActions.Common;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using User = AICore.Entities.User;
-
-#endregion
 
 namespace TeleBot.StateActions;
 

@@ -1,6 +1,4 @@
-﻿#region
-
-using Infrastructure.Config;
+﻿using Infrastructure.Config;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using TeleBot.Commands.Common;
@@ -9,8 +7,6 @@ using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
-
-#endregion
 
 namespace TeleBot;
 

@@ -1,5 +1,3 @@
-#region
-
 using System.Net;
 using System.Text.Json;
 using AICore.ValueTypes;
@@ -10,8 +8,6 @@ using NUnit.Framework;
 using RichardSzalay.MockHttp;
 
 #pragma warning disable CS8618
-
-#endregion
 
 namespace Tests;
 
