@@ -62,7 +62,7 @@ public class Bot(
         catch (Exception ex)
         {
             logger.LogError(ex, ex.ToString());
-            await bot.SendMessage(message.Chat, $"Упс...произошла непредвиденная ошибка {ex}. Все вопросы к @feytox");
+            await bot.SendMessage(message.Chat, $"Упс...произошла непредвиденная ошибка {ex.GetType()}. Все вопросы к @feytox");
         }
             
     }
