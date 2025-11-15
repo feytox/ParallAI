@@ -1,4 +1,5 @@
 using System.Text.Json;
+using AICore.Entities;
 using AICore.ValueTypes;
 using FluentAssertions;
 using Infrastructure.Services;
@@ -9,13 +10,17 @@ using RichardSzalay.MockHttp;
 namespace Tests;
 
 [TestFixture]
-public class GeminiGenServiceTests
-    : HttpGenServiceTests<GeminiGenService, GeminiProvider, GeminiRequest, GeminiResponse>
+public class GeminiGenHandlerTests
+    : HttpGenHandlerTests<GeminiGenHandler, GeminiProvider, GeminiRequest, GeminiResponse>
 {
     protected override string ExpectedUrl =>
         $"https://generativelanguage.googleapis.com/v1beta/models/{ModelId}:generateContent";
+    
+    protected override GeminiGenHandler CreateHandler(HttpClient client, AiModel model, GeminiProvider provider)
+    {
+        return new GeminiGenHandler(provider, model, client, FakeFileService);
+    }
 
-    protected override GeminiGenService CreateService(HttpClient client) => new(client, FakeFileService);
     protected override GeminiProvider CreateProvider() => new(ValidApiKey);
 
     [Test]
@@ -34,7 +39,7 @@ public class GeminiGenServiceTests
             .WithContent(JsonSerializer.Serialize(expectedRequest, JsonSerializerOptions.Web))
             .Respond("application/json", JsonSerializer.Serialize(fakeApiResponse));
 
-        var result = await Service.Generate(DefaultProvider, ModelId, DefaultPrompt, DefaultSettings);
+        var result = await Handler.Generate(DefaultPrompt, DefaultSettings);
 
         MockHttp.VerifyNoOutstandingExpectation();
         result.Should().BeEquivalentTo(expectedAiResponse);

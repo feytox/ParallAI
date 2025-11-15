@@ -12,6 +12,6 @@ public class GenerationService(IEnumerable<IGenService> genServices)
         if (genService is null)
             throw new ArgumentException($"IGenService for {providerType} not found.");
 
-        return await genService.Generate(model.Provider, model.ModelId, prompt, promptSettings);
+        return await genService.Generate(model.Provider, model, prompt, promptSettings);
     }
 }

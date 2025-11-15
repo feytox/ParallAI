@@ -1,4 +1,5 @@
 using System.Text.Json;
+using AICore.Entities;
 using AICore.ValueTypes;
 using FluentAssertions;
 using Infrastructure.Services;
@@ -9,11 +10,16 @@ using RichardSzalay.MockHttp;
 namespace Tests;
 
 [TestFixture]
-public class OpenAiGenServiceTests
-    : HttpGenServiceTests<OpenAiGenService, OpenAICompatibleProvider, OpenAiRequest, OpenAiResponse>
+public class OpenAiGenHandlerTests
+    : HttpGenHandlerTests<OpenAiGenHandler, OpenAICompatibleProvider, OpenAiRequest, OpenAiResponse>
 {
     protected override string ExpectedUrl => "https://api.openai.com/v1/chat/completions";
-    protected override OpenAiGenService CreateService(HttpClient client) => new(client);
+    
+    protected override OpenAiGenHandler CreateHandler(HttpClient client, AiModel model, OpenAICompatibleProvider provider)
+    {
+        return new OpenAiGenHandler(provider, model, client);
+    }
+
     protected override OpenAICompatibleProvider CreateProvider() => new(new Uri(ExpectedUrl), ValidApiKey);
 
     [Test]
@@ -31,7 +37,7 @@ public class OpenAiGenServiceTests
             .WithContent(JsonSerializer.Serialize(expectedRequest, JsonSerializerOptions.Web))
             .Respond("application/json", JsonSerializer.Serialize(fakeApiResponse));
 
-        var result = await Service.Generate(DefaultProvider, ModelId, DefaultPrompt, DefaultSettings);
+        var result = await Handler.Generate(DefaultPrompt, DefaultSettings);
 
         MockHttp.VerifyNoOutstandingExpectation();
         result.Should().BeEquivalentTo(expectedAiResponse);

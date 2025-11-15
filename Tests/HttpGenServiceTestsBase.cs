@@ -1,5 +1,6 @@
 using System.Net;
 using System.Text.Json;
+using AICore.Entities;
 using AICore.ValueTypes;
 using FakeItEasy;
 using FluentAssertions;
@@ -13,21 +14,21 @@ using RichardSzalay.MockHttp;
 namespace Tests;
 
 [TestFixture]
-public abstract class HttpGenServiceTests<TService, TProvider, TRequest, TResponse> 
-    where TService : HttpGenService<TProvider, TRequest, TResponse> 
+public abstract class HttpGenHandlerTests<THandler, TProvider, TRequest, TResponse> 
+    where THandler : HttpGenHandler<TProvider, TRequest, TResponse> 
     where TProvider : AiProvider
     where TResponse : IGenResponse
 {
     protected const string ModelId = "modelId";
     protected const string ValidApiKey = "TEST_API_KEY";
+    private const string ModelName = "Model Name";
 
     protected MockHttpMessageHandler MockHttp;
-    protected TService Service;
+    protected THandler Handler;
     protected IFileService FakeFileService;
     private HttpClient httpClient;
 
     protected abstract string ExpectedUrl { get; }
-    protected TProvider DefaultProvider;
     protected TextPrompt DefaultPrompt;
     protected PromptSettings DefaultSettings;
 
@@ -37,14 +38,17 @@ public abstract class HttpGenServiceTests<TService, TProvider, TRequest, TRespon
         MockHttp = new MockHttpMessageHandler();
         httpClient = MockHttp.ToHttpClient();
         FakeFileService = A.Fake<IFileService>();
-        Service = CreateService(httpClient);
+
+        var provider = CreateProvider();
+        var model = new AiModel(Guid.NewGuid(), ModelId, ModelName, provider);
+        Handler = CreateHandler(httpClient, model, provider);
         
         DefaultPrompt = new TextPrompt("prompt");
         DefaultSettings = PromptSettings.Default;
-        DefaultProvider = CreateProvider();
     }
     
-    protected abstract TService CreateService(HttpClient client);
+    protected abstract THandler CreateHandler(HttpClient client, AiModel model, TProvider provider);
+    
     protected abstract TProvider CreateProvider();
     
     public abstract Task Generate_WhenApiCallIsSuccessful_FormsRequestCorrectlyAndReturnsResponse();
@@ -58,7 +62,7 @@ public abstract class HttpGenServiceTests<TService, TProvider, TRequest, TRespon
         MockHttp.When(HttpMethod.Post, ExpectedUrl)
             .Respond(statusCode);
         
-        await Service.Awaiting(s => s.Generate(DefaultProvider, ModelId, DefaultPrompt, DefaultSettings))
+        await Handler.Awaiting(s => s.Generate(DefaultPrompt, DefaultSettings))
             .Should().ThrowAsync<HttpRequestException>();
     }
     
@@ -70,7 +74,7 @@ public abstract class HttpGenServiceTests<TService, TProvider, TRequest, TRespon
         MockHttp.When(HttpMethod.Post, ExpectedUrl)
             .Respond("application/json", malformedJson);
         
-        await Service.Awaiting(s => s.Generate(DefaultProvider, ModelId, DefaultPrompt, DefaultSettings))
+        await Handler.Awaiting(s => s.Generate(DefaultPrompt, DefaultSettings))
             .Should().ThrowAsync<JsonException>();
     }
 }

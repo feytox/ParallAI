@@ -25,7 +25,7 @@ public record GeminiContent(
 
     public static GeminiContent[] Create(FilePrompt prompt, IEnumerable<Uri> fileUrls)
     {
-        throw new NotImplementedException(); // TODO
+        throw new NotImplementedException();
     }
 
     public static GeminiContent CreateFromText(string text) => new([new Part(text)], MessageRole.User);
