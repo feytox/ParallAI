@@ -27,7 +27,7 @@ public class GeminiGenServiceTests
         var fakeApiResponse = new GeminiResponse([responseCandidate]);
 
         var expectedAiResponse = fakeApiResponse.ToTextResponse();
-        var expectedRequest = GeminiRequest.Create(DefaultPrompt, DefaultSettings);
+        var expectedRequest = GeminiRequest.CreateText(DefaultPrompt, DefaultSettings);
 
         MockHttp.When(HttpMethod.Post, ExpectedUrl)
             .WithHeaders("x-goog-api-key", ValidApiKey)

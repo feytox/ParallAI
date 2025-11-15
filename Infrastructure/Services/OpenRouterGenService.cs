@@ -15,10 +15,12 @@ public class OpenRouterGenService(HttpClient client, ILogger<OpenRouterGenServic
     
     protected override Uri GetEndpointUrl(OpenRouterProvider provider, string modelId) => BaseUrl;
 
-    protected override Task<OpenRouterRequest> CreateAiRequest(string modelId, Prompt prompt, PromptSettings promptSettings)
+    protected override async Task<OpenRouterRequest> CreateAiRequest(string modelId, Prompt prompt, PromptSettings promptSettings)
     {
-        var request = OpenRouterRequest.Create(modelId, prompt, promptSettings);
-        return Task.FromResult(request);
+        if (prompt is TextPrompt textPrompt)
+            return OpenRouterRequest.Create(modelId, textPrompt, promptSettings);
+
+        throw new ArgumentException();
     }
 
     protected override void FillHttpRequest(OpenRouterProvider provider, HttpRequestMessage request)

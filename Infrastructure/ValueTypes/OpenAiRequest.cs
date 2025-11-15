@@ -7,7 +7,7 @@ namespace Infrastructure.ValueTypes;
 /// </remarks>
 public record OpenAiRequest(string Model, OpenAiMessage[] Messages, double Temperature)
 {
-    public static OpenAiRequest Create(string modelId, Prompt prompt, PromptSettings promptSettings)
+    public static OpenAiRequest CreateText(string modelId, TextPrompt prompt, PromptSettings promptSettings)
     {
         var messages = OpenAiMessage.CreateMessages(prompt, promptSettings).ToArray();
         return new OpenAiRequest(modelId, messages, promptSettings.Temperature);

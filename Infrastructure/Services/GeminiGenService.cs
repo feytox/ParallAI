@@ -20,7 +20,9 @@ public class GeminiGenService(HttpClient client, ILogger<GeminiGenService>? logg
     protected override async Task<GeminiRequest> CreateAiRequest(string modelId, Prompt prompt,
         PromptSettings promptSettings)
     {
-        return GeminiRequest.Create(prompt, promptSettings);
+        if (prompt is TextPrompt textPrompt)
+            return GeminiRequest.CreateText(textPrompt, promptSettings);
+        throw new ArgumentException();
     }
 
     protected override void FillHttpRequest(GeminiProvider provider, HttpRequestMessage request)

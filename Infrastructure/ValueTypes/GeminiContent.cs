@@ -21,7 +21,7 @@ public record GeminiContent(
         return part.Text;
     }
 
-    public static GeminiContent[] CreateFromPrompt(Prompt prompt) => [CreateFromText(prompt.Text)];
+    public static GeminiContent[] CreateFromPrompt(TextPrompt prompt) => [CreateFromText(prompt.Text)];
 
     public static GeminiContent CreateFromText(string text) => new([new Part(text)], MessageRole.User);
 

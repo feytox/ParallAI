@@ -12,7 +12,7 @@ public record GeminiRequest(
     GeminiContent SystemInstruction,
     GeminiRequest.GenConfig GenerationConfig)
 {
-    public static GeminiRequest Create(Prompt prompt, PromptSettings settings)
+    public static GeminiRequest CreateText(TextPrompt prompt, PromptSettings settings)
     {
         return new GeminiRequest(
             Contents: GeminiContent.CreateFromPrompt(prompt),

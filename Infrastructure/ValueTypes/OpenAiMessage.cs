@@ -12,7 +12,7 @@ public record OpenAiMessage(
     [property: JsonConverter(typeof(JsonWebEnumConverter<OpenAiMessage.MessageRole>))]
     OpenAiMessage.MessageRole Role)
 {
-    public static IEnumerable<OpenAiMessage> CreateMessages(Prompt prompt, PromptSettings promptSettings)
+    public static IEnumerable<OpenAiMessage> CreateMessages(TextPrompt prompt, PromptSettings promptSettings)
     {
         if (promptSettings.HasSystemInstruction)
             yield return new OpenAiMessage(promptSettings.SystemInstructions, MessageRole.System);

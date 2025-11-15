@@ -26,7 +26,7 @@ public abstract class HttpGenServiceTests<TService, TProvider, TRequest, TRespon
 
     protected abstract string ExpectedUrl { get; }
     protected TProvider DefaultProvider;
-    protected Prompt DefaultPrompt;
+    protected TextPrompt DefaultPrompt;
     protected PromptSettings DefaultSettings;
 
     [SetUp]

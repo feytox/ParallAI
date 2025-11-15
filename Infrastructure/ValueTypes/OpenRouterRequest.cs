@@ -10,7 +10,7 @@ public record OpenRouterRequest(
     double Temperature,
     OpenRouterRequest.ReasoningConfig? Reasoning = null)
 {
-    public static OpenRouterRequest Create(string modelId, Prompt prompt, PromptSettings promptSettings)
+    public static OpenRouterRequest Create(string modelId, TextPrompt prompt, PromptSettings promptSettings)
     {
         var messages = OpenAiMessage.CreateMessages(prompt, promptSettings).ToArray();
         return new OpenRouterRequest(modelId, messages, promptSettings.Temperature);

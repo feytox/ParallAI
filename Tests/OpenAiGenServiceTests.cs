@@ -24,7 +24,7 @@ public class OpenAiGenServiceTests
         var fakeApiResponse = new OpenAiResponse([fakeResponseChoice]);
 
         var expectedAiResponse = fakeApiResponse.ToTextResponse();
-        var expectedRequest = OpenAiRequest.Create(ModelId, DefaultPrompt, DefaultSettings);
+        var expectedRequest = OpenAiRequest.CreateText(ModelId, DefaultPrompt, DefaultSettings);
 
         MockHttp.When(HttpMethod.Post, ExpectedUrl)
             .WithHeaders("Authorization", $"Bearer {ValidApiKey}")
