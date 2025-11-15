@@ -76,16 +76,26 @@ public class GeminiGenHandler(
     private async Task<string> StartUploading(AiFileInfo fileInfo, long fileSize)
     {
         using var request = new HttpRequestMessage(HttpMethod.Post, $"{UploadUrl}?key={Provider.Token}");
+        var mimeType = ToSupportedMimeType(fileInfo.MimeType);
         
         request.Headers.Add("X-Goog-Upload-Protocol", "resumable");
         request.Headers.Add("X-Goog-Upload-Command", "start");
         request.Headers.Add("X-Goog-Upload-Header-Content-Length", fileSize.ToString());
-        request.Headers.Add("X-Goog-Upload-Header-Content-Type", fileInfo.MimeType);
+        request.Headers.Add("X-Goog-Upload-Header-Content-Type", mimeType);
         request.Content = JsonContent.Create(new {file = new {display_name = fileInfo.FileId}});
 
         var response = await Client.SendAsync(request);
         response.EnsureSuccessStatusCode();
         
         return response.Headers.GetValues("x-goog-upload-url").First();
+    }
+
+    // TODO: добавить другие преобразования + возможно, эксепшны
+    private static string ToSupportedMimeType(string mimeType)
+    {
+        if (mimeType.StartsWith("text"))
+            return "text/plain";
+
+        return mimeType;
     }
 }
