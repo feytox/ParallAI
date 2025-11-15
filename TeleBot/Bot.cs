@@ -52,16 +52,14 @@ public class Bot(
             var wasState = await stateHandler.HandleState(message, bot);
             if (!wasState) await commandHandler.HandleCommand(message, bot);
         }
-
-        catch (UserCausedException ex)
+        catch (UserFriendlyException ex)
         {
-            logger.LogError(ex, ex.ToString());
+            logger.LogError(ex.ToString());
             await bot.SendMessage(message.Chat, ex.UserMessage);
         }
-
         catch (Exception ex)
         {
-            logger.LogError(ex, ex.ToString());
+            logger.LogError(ex.ToString());
             await bot.SendMessage(message.Chat, $"Упс...произошла непредвиденная ошибка {ex.GetType()}. Все вопросы к @feytox");
         }
             
