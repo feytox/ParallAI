@@ -38,11 +38,11 @@ public abstract class HttpGenHandler<TProvider, TRequest, TResponse>(
 
         logger?.LogInformation(JsonSerializer.Serialize(aiRequest, JsonSerializerOptions.Web));
 
-        var result = await client.SendAsync(request);
-        result.EnsureSuccessStatusCode();
+        var response = await client.SendAsync(request);
+        response.EnsureSuccessStatusCode();
 
-        var response = await result.Content.ReadFromJsonAsync<TResponse>(JsonSerializerOptions.Web);
-        return response!.ToTextResponse();
+        var providerResponse = await response.Content.ReadFromJsonAsync<TResponse>(JsonSerializerOptions.Web);
+        return providerResponse!.ToTextResponse();
     }
     
     private async Task<TRequest> CreateRequest(Prompt prompt, PromptSettings promptSettings)

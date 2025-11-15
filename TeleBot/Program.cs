@@ -35,7 +35,7 @@ public static class Program
 
     private static void ConfigureContainer(ContainerBuilder builder)
     {
-        builder.RegisterType<Bot>().As<IHostedService>().SingleInstance();
+        builder.RegisterType<Bot>().AsSelf().As<IHostedService>().SingleInstance();
         builder.Register(_ => EnvConfig.Load()).As<IConfig>().SingleInstance();
         builder.Register(c => new MongoClient(c.Resolve<IConfig>().MongoConnectionString))
             .As<IMongoClient>().SingleInstance();

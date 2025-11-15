@@ -1,12 +1,13 @@
 ﻿using Infrastructure.Services;
 using Infrastructure.ValueTypes;
+using Telegram.Bot;
 
 namespace TeleBot.Services;
 
-public class TgFileService : IFileService
+public class TgFileService(Bot bot) : IFileService
 {
-    public async Task<AiFileInfo> DownloadFile(Stream stream)
+    public async Task DownloadFile(AiFileInfo fileInfo, Stream stream)
     {
-        throw new NotImplementedException();
+        await bot.Client.GetInfoAndDownloadFile(fileInfo.FileId, stream);
     }
 }

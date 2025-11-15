@@ -21,7 +21,7 @@ public record GeminiRequest(
         );
     }
 
-    public static GeminiRequest CreateFile(FilePrompt prompt, IEnumerable<Uri> fileUrls, PromptSettings settings)
+    public static GeminiRequest CreateFile(FilePrompt prompt, IEnumerable<string> fileUrls, PromptSettings settings)
     {
         return new GeminiRequest(
             Contents: GeminiContent.Create(prompt, fileUrls),

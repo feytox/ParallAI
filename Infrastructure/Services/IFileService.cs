@@ -4,5 +4,5 @@ namespace Infrastructure.Services;
 
 public interface IFileService
 {
-    Task<AiFileInfo> DownloadFile(Stream stream);
+    Task DownloadFile(AiFileInfo fileInfo, Stream stream);
 }
