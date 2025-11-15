@@ -4,4 +4,4 @@ public abstract record Prompt;
 
 public record TextPrompt(string Text) : Prompt;
 
-public record FilePrompt(string Text, string[] FileIds);
+public record FilePrompt(string Text, string[] FileIds) : Prompt;

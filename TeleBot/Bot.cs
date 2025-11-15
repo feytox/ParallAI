@@ -19,7 +19,7 @@ public class Bot(
     public Task StartAsync(CancellationToken cancellationToken)
     {
         var bot = new TelegramBotClient(config.BotToken, cancellationToken: cancellationToken);
-
+        
         bot.StartReceiving(HandleUpdate, HandleError, cancellationToken: cancellationToken);
         logger.LogInformation("Bot has been started.");
         return Task.CompletedTask;

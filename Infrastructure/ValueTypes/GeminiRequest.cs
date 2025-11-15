@@ -15,13 +15,21 @@ public record GeminiRequest(
     public static GeminiRequest CreateText(TextPrompt prompt, PromptSettings settings)
     {
         return new GeminiRequest(
-            Contents: GeminiContent.CreateFromPrompt(prompt),
+            Contents: GeminiContent.Create(prompt),
             SystemInstruction: GeminiContent.CreateFromText(settings.SystemInstructions),
             GenerationConfig: new GenConfig(settings.Temperature)
         );
     }
 
-    // TODO: add image support
+    public static GeminiRequest CreateFile(FilePrompt prompt, IEnumerable<Uri> fileUrls, PromptSettings settings)
+    {
+        return new GeminiRequest(
+            Contents: GeminiContent.Create(prompt, fileUrls),
+            SystemInstruction: GeminiContent.CreateFromText(settings.SystemInstructions),
+            GenerationConfig: new GenConfig(settings.Temperature)
+        );
+    }
+    
     public record GenConfig(double Temperature, ThinkingConfig? ThinkingConfig = null);
 
     public record ThinkingConfig(int ThinkingBudget);

@@ -1,6 +1,7 @@
 using System.Net;
 using System.Text.Json;
 using AICore.ValueTypes;
+using FakeItEasy;
 using FluentAssertions;
 using Infrastructure.Services;
 using Infrastructure.ValueTypes;
@@ -22,6 +23,7 @@ public abstract class HttpGenServiceTests<TService, TProvider, TRequest, TRespon
 
     protected MockHttpMessageHandler MockHttp;
     protected TService Service;
+    protected IFileService FakeFileService;
     private HttpClient httpClient;
 
     protected abstract string ExpectedUrl { get; }
@@ -30,10 +32,11 @@ public abstract class HttpGenServiceTests<TService, TProvider, TRequest, TRespon
     protected PromptSettings DefaultSettings;
 
     [SetUp]
-    public void BaseSetUp()
+    public virtual void BaseSetUp()
     {
         MockHttp = new MockHttpMessageHandler();
         httpClient = MockHttp.ToHttpClient();
+        FakeFileService = A.Fake<IFileService>();
         Service = CreateService(httpClient);
         
         DefaultPrompt = new TextPrompt("prompt");

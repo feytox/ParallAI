@@ -12,15 +12,20 @@ public class OpenRouterGenService(HttpClient client, ILogger<OpenRouterGenServic
     : HttpGenService<OpenRouterProvider, OpenRouterRequest, OpenAiResponse>(client, logger)
 {
     private static readonly Uri BaseUrl = new("https://openrouter.ai/api/v1/chat/completions");
-    
+
     protected override Uri GetEndpointUrl(OpenRouterProvider provider, string modelId) => BaseUrl;
 
-    protected override async Task<OpenRouterRequest> CreateAiRequest(string modelId, Prompt prompt, PromptSettings promptSettings)
+    protected override Task<OpenRouterRequest> CreateTextRequest(OpenRouterProvider provider, string modelId,
+        TextPrompt prompt, PromptSettings promptSettings)
     {
-        if (prompt is TextPrompt textPrompt)
-            return OpenRouterRequest.Create(modelId, textPrompt, promptSettings);
+        var request = OpenRouterRequest.Create(modelId, prompt, promptSettings);
+        return Task.FromResult(request);
+    }
 
-        throw new ArgumentException();
+    protected override Task<OpenRouterRequest> CreateFileRequest(OpenRouterProvider provider, string modelId,
+        FilePrompt prompt, PromptSettings promptSettings)
+    {
+        throw new NotImplementedException(); // TODO
     }
 
     protected override void FillHttpRequest(OpenRouterProvider provider, HttpRequestMessage request)

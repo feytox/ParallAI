@@ -15,7 +15,7 @@ public class GeminiGenServiceTests
     protected override string ExpectedUrl =>
         $"https://generativelanguage.googleapis.com/v1beta/models/{ModelId}:generateContent";
 
-    protected override GeminiGenService CreateService(HttpClient client) => new(client);
+    protected override GeminiGenService CreateService(HttpClient client) => new(client, FakeFileService);
     protected override GeminiProvider CreateProvider() => new(ValidApiKey);
 
     [Test]

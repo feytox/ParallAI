@@ -16,12 +16,17 @@ public class OpenAiGenService(HttpClient client, ILogger<OpenAiGenService>? logg
         return provider.EndpointUrl;
     }
 
-    protected override async Task<OpenAiRequest> CreateAiRequest(string modelId, Prompt prompt,
-        PromptSettings promptSettings)
+    protected override Task<OpenAiRequest> CreateTextRequest(OpenAICompatibleProvider provider, string modelId, 
+        TextPrompt prompt, PromptSettings promptSettings)
     {
-        if (prompt is TextPrompt textPrompt)
-            return OpenAiRequest.CreateText(modelId, textPrompt, promptSettings);
-        throw new ArgumentException();
+        var request = OpenAiRequest.CreateText(modelId, prompt, promptSettings);
+        return Task.FromResult(request);
+    }
+
+    protected override Task<OpenAiRequest> CreateFileRequest(OpenAICompatibleProvider provider, string modelId, 
+        FilePrompt prompt, PromptSettings promptSettings)
+    {
+        throw new NotImplementedException(); // TODO
     }
 
     protected override void FillHttpRequest(OpenAICompatibleProvider provider, HttpRequestMessage request)
