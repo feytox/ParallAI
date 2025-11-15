@@ -60,6 +60,8 @@ public static class Program
         builder.RegisterType<StateHandler>().AsSelf().SingleInstance();
         
         RegisterSequentialState<PresetState, PresetStep>(builder);
+
+        builder.RegisterType<CallbackQueryHandler>().AsSelf().SingleInstance();
     }
 
     private static void RegisterSequentialState<TState, TStep>(ContainerBuilder builder)

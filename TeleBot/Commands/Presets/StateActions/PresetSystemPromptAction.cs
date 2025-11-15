@@ -6,14 +6,15 @@ using User = AICore.Entities.User;
 
 namespace TeleBot.Example.StateActions;
 
-public class PresetNameAction : IStepStateAction<PresetState, PresetStep>
+public class PresetSystemPromptAction : IStepStateAction<PresetState, PresetStep>
 {
-    public PresetStep StateStep => PresetStep.Name;
+    public PresetStep StateStep => PresetStep.SystemPrompt;
     
     public async Task<bool> Execute(PresetState state, Message message, ITelegramBotClient bot, User user)
     {
-        state.Name = message.Text;
-        await bot.SendMessage(message.Chat, "Ямете кудасай! Теперь выбери модель.");
+        message.Text ??= "";
+        state.SystemPrompt = message.Text;
+        await bot.SendMessage(message.Chat, "Укажи температуру (любое число от 0 до 2)");
         return true;
     }
 }

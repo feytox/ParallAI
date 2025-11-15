@@ -5,6 +5,7 @@ using AICore.ValueTypes;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
+using TeleBot.Example.States;
 
 namespace Infrastructure.Mongo;
 
@@ -19,9 +20,15 @@ public static class MongoMappings
         {
             classMap.AutoMap();
             classMap.MapProperty("Models");
+            classMap.MapProperty("Presets");
         });
 
         BsonClassMap.RegisterClassMap<AiModel>(classMap =>
+        {
+            classMap.AutoMap();
+        });
+        
+        BsonClassMap.RegisterClassMap<Preset>(classMap =>
         {
             classMap.AutoMap();
         });

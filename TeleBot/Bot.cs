@@ -14,7 +14,8 @@ public class Bot(
     IConfig config,
     ILogger<Bot> logger,
     CommandHandler commandHandler,
-    StateHandler stateHandler) : IHostedService
+    StateHandler stateHandler,
+    CallbackQueryHandler callbackQueryHandler) : IHostedService
 {
     public Task StartAsync(CancellationToken cancellationToken)
     {
@@ -48,7 +49,7 @@ public class Bot(
 
     private async Task HandleCallbackQuery(ITelegramBotClient bot, CallbackQuery callbackQuery)
     {
-        await HandleMessage(bot, callbackQuery.Message!);
+        await callbackQueryHandler.HandleCallbackQuery(callbackQuery, bot);
     }
 
     private Task HandleError(ITelegramBotClient bot, Exception exception, CancellationToken cancellationToken)

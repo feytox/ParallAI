@@ -9,4 +9,10 @@ public class User(long id) : Entity<long>(id)
     private HashSet<AiModel> Models { get; set; } = [];
     
     public void AddModel(AiModel model) => Models.Add(model);
+
+    public IReadOnlyCollection<Preset> UserPresets => Presets;
+
+    private HashSet<Preset> Presets { get; set; } = [];
+
+    public void AddPreset(Preset preset) => Presets.Add(preset);
 }

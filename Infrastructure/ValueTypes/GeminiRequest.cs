@@ -17,7 +17,7 @@ public record GeminiRequest(
         return new GeminiRequest(
             Contents: GeminiContent.CreateFromPrompt(prompt),
             SystemInstruction: GeminiContent.CreateFromText(settings.SystemInstructions),
-            GenerationConfig: new GenConfig(settings.Temperature)
+            GenerationConfig: new GenConfig(settings.Temperature, new ThinkingConfig(settings.ThinkingBudget))
         );
     }
 
