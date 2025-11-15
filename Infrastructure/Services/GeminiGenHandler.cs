@@ -49,25 +49,43 @@ public class GeminiGenHandler(
     {
         using var stream = new MemoryStream();
         await fileService.DownloadFile(fileInfo, stream);
-        return await UploadFile(stream, fileInfo);
+        var fileBytes = stream.ToArray();
+        
+        return await UploadFile(fileInfo, fileBytes);
     }
 
-    private async Task<string> UploadFile(Stream fileStream, AiFileInfo fileInfo)
+    private async Task<string> UploadFile(AiFileInfo fileInfo, byte[] fileBytes)
     {
-        using var request = new HttpRequestMessage(HttpMethod.Post, UploadUrl);
-        using var formData = new MultipartFormDataContent();
-        using var streamContent = new StreamContent(fileStream);
+        var uploadUrl = await StartUploading(fileInfo, fileBytes.Length);
+        using var request = new HttpRequestMessage(HttpMethod.Post, uploadUrl);
+        
+        request.Headers.Add("X-Goog-Upload-Offset", "0");
+        request.Headers.Add("X-Goog-Upload-Command", "upload, finalize");
 
-        streamContent.Headers.ContentType = new MediaTypeHeaderValue(fileInfo.MimeType);
-        formData.Add(streamContent, "file", fileInfo.FileId);
+        request.Content = new ByteArrayContent(fileBytes);
+        request.Content.Headers.ContentType = new MediaTypeHeaderValue(fileInfo.MimeType);
 
-        request.Content = formData;
-        FillHttpRequest(request);
-
-        var response = await client.SendAsync(request);
+        var response = await Client.SendAsync(request);
         response.EnsureSuccessStatusCode();
 
-        var file = await response.Content.ReadFromJsonAsync<GeminiFile>(JsonSerializerOptions.Web);
-        return file!.Uri;
+        var responseStream = await response.Content.ReadAsStreamAsync();
+        var json = await JsonDocument.ParseAsync(responseStream);
+        return json.RootElement.GetProperty("file").GetProperty("uri").GetString()!;
+    }
+
+    private async Task<string> StartUploading(AiFileInfo fileInfo, long fileSize)
+    {
+        using var request = new HttpRequestMessage(HttpMethod.Post, $"{UploadUrl}?key={Provider.Token}");
+        
+        request.Headers.Add("X-Goog-Upload-Protocol", "resumable");
+        request.Headers.Add("X-Goog-Upload-Command", "start");
+        request.Headers.Add("X-Goog-Upload-Header-Content-Length", fileSize.ToString());
+        request.Headers.Add("X-Goog-Upload-Header-Content-Type", fileInfo.MimeType);
+        request.Content = JsonContent.Create(new {file = new {display_name = fileInfo.FileId}});
+
+        var response = await Client.SendAsync(request);
+        response.EnsureSuccessStatusCode();
+        
+        return response.Headers.GetValues("x-goog-upload-url").First();
     }
 }

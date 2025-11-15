@@ -18,6 +18,7 @@ public abstract class HttpGenHandler<TProvider, TRequest, TResponse>(
 {
     protected TProvider Provider { get; } = provider;
     protected AiModel Model { get; } = model;
+    protected HttpClient Client { get; } = client;
     
     protected abstract Uri GetEndpointUrl();
     
@@ -38,7 +39,7 @@ public abstract class HttpGenHandler<TProvider, TRequest, TResponse>(
 
         logger?.LogInformation(JsonSerializer.Serialize(aiRequest, JsonSerializerOptions.Web));
 
-        var response = await client.SendAsync(request);
+        var response = await Client.SendAsync(request);
         response.EnsureSuccessStatusCode();
 
         var providerResponse = await response.Content.ReadFromJsonAsync<TResponse>(JsonSerializerOptions.Web);
@@ -50,7 +51,8 @@ public abstract class HttpGenHandler<TProvider, TRequest, TResponse>(
         return prompt switch
         {
             TextPrompt textPrompt => await CreateTextRequest(textPrompt, promptSettings),
-            FilePrompt filePrompt => await CreateFileRequest(filePrompt, promptSettings)
+            FilePrompt filePrompt => await CreateFileRequest(filePrompt, promptSettings),
+            _ => throw new ArgumentOutOfRangeException(nameof(prompt), prompt, null)
         };
     }
 }
