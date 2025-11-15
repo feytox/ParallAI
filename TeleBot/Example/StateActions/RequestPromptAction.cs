@@ -15,7 +15,7 @@ public class RequestPromptAction(GenerationService genService) : IStepStateActio
     public async Task<bool> Execute(RequestState state, Message message, ITelegramBotClient bot, User user)
     {
         var model = user.UserModels.First();
-        var prompt = new Prompt(message.Text!);
+        var prompt = new TextPrompt(message.Text!);
         
         var response = await genService.Generate(model, prompt, PromptSettings.Default);
         await bot.SendMessage(message.Chat, response.Text);

@@ -36,7 +36,7 @@ public abstract class HttpGenServiceTests<TService, TProvider, TRequest, TRespon
         httpClient = MockHttp.ToHttpClient();
         Service = CreateService(httpClient);
         
-        DefaultPrompt = new Prompt("prompt");
+        DefaultPrompt = new TextPrompt("prompt");
         DefaultSettings = PromptSettings.Default;
         DefaultProvider = CreateProvider();
     }

@@ -18,7 +18,7 @@ public class GenerationServiceTests
     private AiResponse fakeGigaChatResponse;
     private AiResponse fakeDuckDuckGoResponse;
 
-    private readonly Prompt prompt = new("Кто ты на самом деле?");
+    private readonly Prompt prompt = new TextPrompt("Кто ты на самом деле?");
     private readonly PromptSettings settings = PromptSettings.Default;
 
     [SetUp]
