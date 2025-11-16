@@ -15,7 +15,7 @@ public record OpenAiMessage(
     public static IEnumerable<OpenAiMessage> CreateMessages(Prompt prompt, PromptSettings promptSettings)
     {
         if (promptSettings.HasSystemInstruction)
-            yield return new OpenAiMessage(promptSettings.SystemInstructions, MessageRole.System);
+            yield return new OpenAiMessage(promptSettings.SystemPrompt, MessageRole.System);
 
         yield return new OpenAiMessage(prompt.Text, MessageRole.User);
     }

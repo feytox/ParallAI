@@ -1,4 +1,5 @@
 using AICore.Entities;
+using AICore.ValueTypes;
 using TeleBot.Example.States;
 using TeleBot.StateActions.Common;
 using Telegram.Bot;
@@ -24,10 +25,8 @@ public class PresetThinkingBudgetAction : IStepStateAction<PresetState, PresetSt
 
         var preset = new Preset(
             Guid.NewGuid(),
-            name: state.Name!,
-            systemPrompt: state.SystemPrompt!,
-            temperature: state.Temperature,
-            thinkingBudget: state.ThinkingBudget);
+            state.Name!,
+            new PromptSettings(state.SystemPrompt, state.Temperature, state.ThinkingBudget));
         user.AddPreset(preset);
         await bot.SendMessage(message.Chat, $"Вы добавили новый пресет {state.Name}");
         return true;

@@ -12,7 +12,8 @@ public class PresetSystemPromptAction : IStepStateAction<PresetState, PresetStep
     
     public async Task<bool> Execute(PresetState state, Message message, ITelegramBotClient bot, User user)
     {
-        message.Text ??= "";
+        if (string.IsNullOrWhiteSpace(message.Text))
+            message.Text = "";
         state.SystemPrompt = message.Text;
         await bot.SendMessage(message.Chat, "Укажи температуру (любое число от 0 до 2)");
         return true;

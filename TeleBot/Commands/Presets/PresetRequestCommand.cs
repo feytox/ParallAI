@@ -34,7 +34,7 @@ public class PresetRequestCommand(IRepository<User, long> users, GenerationServi
         }
         
         var prompt = new Prompt("Какая сейчас погода в Новой Зеландии?");
-        var promptSettings = new PromptSettings(preset.SystemPrompt, preset.Temperature, preset.ThinkingBudget);
+        var promptSettings = preset.PromptSettings;
         var response = await genService.Generate(model, prompt, promptSettings);
 
         await bot.SendMessage(message.Chat, response.Text);
