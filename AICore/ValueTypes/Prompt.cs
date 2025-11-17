@@ -10,8 +10,8 @@ public record FilePrompt(string Text, AiFileInfo[] Files) : TextPrompt(Text)
 {
     private const string DefaultText = "Describe content";
 
-    public static FilePrompt Create(AiFileInfo file, string? text)
+    public static FilePrompt Create(AiFileInfo[] files, string? text)
     {
-        return new FilePrompt(text ?? DefaultText, [file]);
+        return new FilePrompt(text ?? DefaultText, files);
     }
 }

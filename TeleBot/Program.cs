@@ -66,6 +66,8 @@ public static class Program
 
         RegisterSequentialState<PresetState, PresetStep>(builder);
         RegisterSequentialState<RequestState, RequestStep>(builder);
+
+        builder.RegisterType<MediaGroupCollector>().AsSelf().SingleInstance();
     }
 
     private static void RegisterProvider<THandler, TProvider>(ContainerBuilder builder)

@@ -6,17 +6,35 @@ using Telegram.Bot.Types.Enums;
 namespace TeleBot.Util;
 
 public static class MessageExt
-{   
-    // TODO: а как прикрепляются несколько файлов к одному сообщению?
-    public static Prompt CreatePrompt(this Message message)
+{
+    public static bool IsMediaGroup(this Message message)
+    {
+        return message.MediaGroupId is not null;
+    }
+    
+    public static Prompt CreatePrompt(Message[] messages)
+    {
+        if (messages.Length == 1)
+            return CreatePrompt(messages[0]);
+
+        var files = messages
+            .Select(GetFileInfo)
+            .ToArray();
+
+        var caption = messages
+            .Select(message => message.Caption)
+            .FirstOrDefault();
+        return FilePrompt.Create(files, caption);
+    }
+
+    private static Prompt CreatePrompt(Message message)
     {
         return message.Type switch
         {
             MessageType.Text => new TextPrompt(message.Text!),
-            MessageType.Photo or MessageType.Document => FilePrompt.Create(message.GetFileInfo(), message.Caption),
+            MessageType.Photo or MessageType.Document => FilePrompt.Create([message.GetFileInfo()], message.Caption),
             _ => throw new ArgumentOutOfRangeException($"Unsupported message type: {message.Type}")
         };
-
     }
 
     private static AiFileInfo GetFileInfo(this Message message)
