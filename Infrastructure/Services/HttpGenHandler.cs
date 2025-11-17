@@ -50,8 +50,8 @@ public abstract class HttpGenHandler<TProvider, TRequest, TResponse>(
     {
         return prompt switch
         {
-            TextPrompt textPrompt => await CreateTextRequest(textPrompt, promptSettings),
             FilePrompt filePrompt => await CreateFileRequest(filePrompt, promptSettings),
+            TextPrompt textPrompt => await CreateTextRequest(textPrompt, promptSettings),
             _ => throw new ArgumentOutOfRangeException(nameof(prompt), prompt, null)
         };
     }

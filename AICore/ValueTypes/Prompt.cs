@@ -6,7 +6,7 @@ public abstract record Prompt;
 
 public record TextPrompt(string Text) : Prompt;
 
-public record FilePrompt(string Text, AiFileInfo[] Files) : Prompt
+public record FilePrompt(string Text, AiFileInfo[] Files) : TextPrompt(Text)
 {
     private const string DefaultText = "Describe content";
 

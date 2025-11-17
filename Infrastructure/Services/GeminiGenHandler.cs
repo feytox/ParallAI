@@ -35,7 +35,7 @@ public class GeminiGenHandler(
 
     protected override async Task<GeminiRequest> CreateFileRequest(FilePrompt prompt, PromptSettings promptSettings)
     {
-        var fileUrlTasks = prompt.Files.Select(DownloadAndUploadFile);
+        var fileUrlTasks = prompt.Files.Select(async info => await DownloadAndUploadFile(info));
         var fileUrls = await Task.WhenAll(fileUrlTasks);
         return GeminiRequest.CreateFile(prompt, fileUrls, promptSettings);
     }
@@ -47,23 +47,20 @@ public class GeminiGenHandler(
 
     private async Task<string> DownloadAndUploadFile(AiFileInfo fileInfo)
     {
-        using var stream = new MemoryStream();
-        await fileService.DownloadFile(fileInfo, stream);
-        var fileBytes = stream.ToArray();
-        
-        return await UploadFile(fileInfo, fileBytes);
+        var file = await fileService.DownloadFile(fileInfo);
+        return await UploadFile(file);
     }
 
-    private async Task<string> UploadFile(AiFileInfo fileInfo, byte[] fileBytes)
+    private async Task<string> UploadFile(AiFile file)
     {
-        var uploadUrl = await StartUploading(fileInfo, fileBytes.Length);
+        var uploadUrl = await StartUploading(file.Info, file.Content.Length);
         using var request = new HttpRequestMessage(HttpMethod.Post, uploadUrl);
         
         request.Headers.Add("X-Goog-Upload-Offset", "0");
         request.Headers.Add("X-Goog-Upload-Command", "upload, finalize");
 
-        request.Content = new ByteArrayContent(fileBytes);
-        request.Content.Headers.ContentType = new MediaTypeHeaderValue(fileInfo.MimeType);
+        request.Content = new ByteArrayContent(file.Content);
+        request.Content.Headers.ContentType = new MediaTypeHeaderValue(file.Info.MimeType);
 
         var response = await Client.SendAsync(request);
         response.EnsureSuccessStatusCode();

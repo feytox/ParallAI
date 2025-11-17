@@ -12,7 +12,14 @@ public record OpenRouterRequest(
 {
     public static OpenRouterRequest Create(string modelId, TextPrompt prompt, PromptSettings promptSettings)
     {
-        var messages = OpenAiMessage.CreateMessages(prompt, promptSettings).ToArray();
+        var messages = OpenAiMessage.Create(prompt, promptSettings).ToArray();
+        return new OpenRouterRequest(modelId, messages, promptSettings.Temperature);
+    }
+
+    public static OpenRouterRequest Create(string modelId, FilePrompt prompt, IEnumerable<AiFile> files,
+        PromptSettings promptSettings)
+    {
+        var messages = OpenAiMessage.Create(prompt, files, promptSettings).ToArray();
         return new OpenRouterRequest(modelId, messages, promptSettings.Temperature);
     }
     

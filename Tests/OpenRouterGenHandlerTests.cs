@@ -12,17 +12,18 @@ public class OpenRouterGenHandlerTests
     : HttpGenHandlerTests<OpenRouterGenHandler, OpenRouterProvider, OpenRouterRequest, OpenAiResponse>
 {
     protected override string ExpectedUrl => "https://openrouter.ai/api/v1/chat/completions";
-    
+
     protected override OpenRouterGenHandler CreateHandler(HttpClient client, AiModel model, OpenRouterProvider provider)
     {
-        return new OpenRouterGenHandler(provider, model, client);
+        return new OpenRouterGenHandler(provider, model, client, FakeFileService);
     }
 
     protected override OpenRouterProvider CreateProvider() => new(ValidApiKey);
 
     public override async Task Generate_WhenApiCallIsSuccessful_FormsRequestCorrectlyAndReturnsResponse()
     {
-        var fakeResponseMessage = new OpenAiMessage("fake response text", OpenAiMessage.MessageRole.Assistant);
+        var fakeResponseMessage =
+            new OpenAiMessage(OpenAiContent.Create("fake response text"), OpenAiMessage.MessageRole.Assistant);
         var fakeResponseChoice = new OpenAiResponse.Choice(fakeResponseMessage);
         var fakeApiResponse = new OpenAiResponse([fakeResponseChoice]);
 

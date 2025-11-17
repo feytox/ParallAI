@@ -13,6 +13,7 @@ public class OpenRouterGenHandler(
     OpenRouterProvider provider,
     AiModel model,
     HttpClient client,
+    IFileService fileService,
     ILogger<OpenRouterGenHandler>? logger = null)
     : HttpGenHandler<OpenRouterProvider, OpenRouterRequest, OpenAiResponse>(provider, model, client, logger)
 {
@@ -26,9 +27,11 @@ public class OpenRouterGenHandler(
         return Task.FromResult(request);
     }
 
-    protected override Task<OpenRouterRequest> CreateFileRequest(FilePrompt prompt, PromptSettings promptSettings)
+    protected override async Task<OpenRouterRequest> CreateFileRequest(FilePrompt prompt, PromptSettings promptSettings)
     {
-        throw new NotImplementedException();
+        var fileTasks = prompt.Files.Select(async info => await fileService.DownloadFile(info));
+        var files = await Task.WhenAll(fileTasks);
+        return OpenRouterRequest.Create(Model.ModelId, prompt, files, promptSettings);
     }
 
     protected override void FillHttpRequest(HttpRequestMessage request)

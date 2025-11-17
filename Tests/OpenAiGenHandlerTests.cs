@@ -14,10 +14,11 @@ public class OpenAiGenHandlerTests
     : HttpGenHandlerTests<OpenAiGenHandler, OpenAICompatibleProvider, OpenAiRequest, OpenAiResponse>
 {
     protected override string ExpectedUrl => "https://api.openai.com/v1/chat/completions";
-    
-    protected override OpenAiGenHandler CreateHandler(HttpClient client, AiModel model, OpenAICompatibleProvider provider)
+
+    protected override OpenAiGenHandler CreateHandler(HttpClient client, AiModel model,
+        OpenAICompatibleProvider provider)
     {
-        return new OpenAiGenHandler(provider, model, client);
+        return new OpenAiGenHandler(provider, model, client, FakeFileService);
     }
 
     protected override OpenAICompatibleProvider CreateProvider() => new(new Uri(ExpectedUrl), ValidApiKey);
@@ -25,12 +26,13 @@ public class OpenAiGenHandlerTests
     [Test]
     public override async Task Generate_WhenApiCallIsSuccessful_FormsRequestCorrectlyAndReturnsResponse()
     {
-        var fakeResponseMessage = new OpenAiMessage("fake response text", OpenAiMessage.MessageRole.Assistant);
+        var fakeResponseMessage =
+            new OpenAiMessage(OpenAiContent.Create("fake response text"), OpenAiMessage.MessageRole.Assistant);
         var fakeResponseChoice = new OpenAiResponse.Choice(fakeResponseMessage);
         var fakeApiResponse = new OpenAiResponse([fakeResponseChoice]);
 
         var expectedAiResponse = fakeApiResponse.ToTextResponse();
-        var expectedRequest = OpenAiRequest.CreateText(ModelId, DefaultPrompt, DefaultSettings);
+        var expectedRequest = OpenAiRequest.Create(ModelId, DefaultPrompt, DefaultSettings);
 
         MockHttp.When(HttpMethod.Post, ExpectedUrl)
             .WithHeaders("Authorization", $"Bearer {ValidApiKey}")
