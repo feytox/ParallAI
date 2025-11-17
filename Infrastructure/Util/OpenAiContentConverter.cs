@@ -8,11 +8,18 @@ public class OpenAiContentConverter : JsonConverter<OpenAiContent>
 {
     public override OpenAiContent Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        if (reader.TokenType != JsonTokenType.StartArray)
-            throw new JsonException("Unsupported response's OpenAiContent");
-        
-        var items = JsonSerializer.Deserialize<ContentItem[]>(ref reader, options);
-        return new OpenAiContent(items!);
+        switch (reader.TokenType)
+        {
+            case JsonTokenType.String:
+                return OpenAiContent.Create(reader.GetString()!);
+            case JsonTokenType.StartArray:
+            {
+                var items = JsonSerializer.Deserialize<ContentItem[]>(ref reader, options);
+                return new OpenAiContent(items!);
+            }
+            default:
+                throw new JsonException("Unsupported response's OpenAiContent");
+        }
     }
 
     public override void Write(Utf8JsonWriter writer, OpenAiContent value, JsonSerializerOptions options)
