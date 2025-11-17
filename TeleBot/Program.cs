@@ -37,7 +37,7 @@ public static class Program
     {
         builder.RegisterType<Bot>().AsSelf().As<IHostedService>().SingleInstance();
         builder.Register(_ => EnvConfig.Load()).As<IConfig>().SingleInstance();
-        builder.Register(c => new MongoClient(c.Resolve<IConfig>().MongoConnectionString))
+        builder.Register(c => GetMongoClient(c.Resolve<IConfig>()))
             .As<IMongoClient>().SingleInstance();
         builder.Register(c => c.Resolve<IMongoClient>().GetDatabase("ParallAIDB"))
             .As<IMongoDatabase>().SingleInstance();
@@ -102,6 +102,15 @@ public static class Program
         builder.RegisterAssemblyTypes(typeof(IStepStateAction<TState, TStep>).Assembly)
             .As<IStepStateAction<TState, TStep>>()
             .SingleInstance();
+    }
+
+    private static MongoClient GetMongoClient(IConfig config)
+    {
+        var settings = MongoClientSettings.FromConnectionString(config.MongoConnectionString);
+        settings.SocketTimeout = TimeSpan.FromSeconds(5);
+        settings.ConnectTimeout = TimeSpan.FromSeconds(5);
+        settings.ServerSelectionTimeout = TimeSpan.FromSeconds(5);
+        return new MongoClient(settings);
     }
 
     private static void ConfigureServices(HostBuilderContext context, IServiceCollection builder)

@@ -1,4 +1,5 @@
-﻿using Infrastructure.Config;
+using Infrastructure.Config;
+using Infrastructure.Exceptions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using TeleBot.Commands.Common;
@@ -17,13 +18,13 @@ public class Bot(
     StateHandler stateHandler) : IHostedService
 {
     public ITelegramBotClient Client => client ?? throw new NullReferenceException("Bot is not initialized");
-    
+
     private TelegramBotClient? client;
-    
+
     public Task StartAsync(CancellationToken cancellationToken)
     {
         client = new TelegramBotClient(config.BotToken, cancellationToken: cancellationToken);
-        
+
         client.StartReceiving(HandleUpdate, HandleError, cancellationToken: cancellationToken);
         logger.LogInformation("Bot has been started.");
         return Task.CompletedTask;
@@ -46,8 +47,22 @@ public class Bot(
 
     private async Task HandleMessage(ITelegramBotClient bot, Message message)
     {
-        var wasState = await stateHandler.HandleState(message, bot);
-        if (!wasState) await commandHandler.HandleCommand(message, bot);
+        try
+        {
+            var wasState = await stateHandler.HandleState(message, bot);
+            if (!wasState) await commandHandler.HandleCommand(message, bot);
+        }
+        catch (UserFriendlyException ex)
+        {
+            logger.LogError(ex.ToString());
+            await bot.SendMessage(message.Chat, ex.UserMessage);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex.ToString());
+            await bot.SendMessage(message.Chat,
+                $"Упс...произошла непредвиденная ошибка {ex.GetType()}. Все вопросы к @feytox");
+        }
     }
 
     private async Task HandleCallbackQuery(ITelegramBotClient bot, CallbackQuery callbackQuery)
