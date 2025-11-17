@@ -11,12 +11,11 @@ namespace TeleBot.Example.Commands;
 // временная команда для отправки запросоов с выбранным пресетом
 // Ввод: /presetrequest Название пресета
 [Command("/presetrequest", "отправляет запрос с указанным пресетом")]
-public class PresetRequestCommand(IRepository<User, long> users, GenerationService genService) : ICommand
+public class PresetRequestCommand(IRepository<User, long> users, GenerationService genService)
+    : UserCommand(users)
 {
-    public async Task Execute(Message message, ITelegramBotClient bot)
+    protected override async Task Execute(Message message, ITelegramBotClient bot, User user)
     {
-        var userId = message.From!.Id;
-        var user = await users.GetById(userId);
         var model = user!.UserModels.First();
         var presetName = message.Text!.Substring("/presetrequest".Length).Trim(' ');
         if (presetName.Length == 0)

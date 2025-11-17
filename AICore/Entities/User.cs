@@ -15,4 +15,9 @@ public class User(long id) : Entity<long>(id)
     private HashSet<Preset> Presets { get; set; } = [];
 
     public void AddPreset(Preset preset) => Presets.Add(preset);
+
+    public void DeletePreset(Preset preset)
+    {
+        Presets.Remove(preset);
+    }
 }

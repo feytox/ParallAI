@@ -1,6 +1,7 @@
 ﻿using Infrastructure.Config;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using TeleBot.Callback.Common;
 using TeleBot.Commands.Common;
 using TeleBot.StateActions.Common;
 using Telegram.Bot;

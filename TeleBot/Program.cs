@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using AICore.Entities;
 using AICore.Repositories;
 using AICore.Services;
 using AICore.States;
@@ -10,6 +11,7 @@ using Infrastructure.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MongoDB.Driver;
+using TeleBot.Callback.Common;
 using TeleBot.Commands.Common;
 using TeleBot.Example.States;
 using TeleBot.StateActions.Common;
@@ -55,13 +57,20 @@ public static class Program
                 .Where(t => typeof(ICommand).IsAssignableFrom(t))
                 .SelectMany(t => t.GetCustomAttributes<CommandAttribute>())
         ).As<IEnumerable<CommandAttribute>>().SingleInstance();
+        
+        builder.RegisterAssemblyTypes(typeof(ICallbackQuery).Assembly).As<ICallbackQuery>().SingleInstance();
+        builder.RegisterType<CallbackQueryHandler>().AsSelf().SingleInstance();
+        builder.Register(c =>
+            c.ComponentRegistry.Registrations
+                .Select(r => r.Activator.LimitType)
+                .Where(t => typeof(ICallbackQuery).IsAssignableFrom(t))
+                .SelectMany(t => t.GetCustomAttributes<CallbackQueryAttribute>())
+        ).As<IEnumerable<CallbackQueryAttribute>>().SingleInstance();
 
         builder.RegisterAssemblyTypes(typeof(IStateAction).Assembly).As<IStateAction>().SingleInstance();
         builder.RegisterType<StateHandler>().AsSelf().SingleInstance();
         
         RegisterSequentialState<PresetState, PresetStep>(builder);
-
-        builder.RegisterType<CallbackQueryHandler>().AsSelf().SingleInstance();
     }
 
     private static void RegisterSequentialState<TState, TStep>(ContainerBuilder builder)
