@@ -49,8 +49,7 @@ public class Bot(
     {
         try
         {
-            var wasState = await stateHandler.HandleState(message, bot);
-            if (!wasState) await commandHandler.HandleCommand(message, bot);
+            await TryHandleMessage(bot, message);
         }
         catch (UserFriendlyException ex)
         {
@@ -61,8 +60,15 @@ public class Bot(
         {
             logger.LogError(ex.ToString());
             await bot.SendMessage(message.Chat,
-                $"Упс...произошла непредвиденная ошибка {ex.GetType()}. Все вопросы к @feytox");
+                $"Упс...произошла непредвиденная ошибка {ex.GetType().Name}. Все вопросы к @feytox");
         }
+    }
+
+    private async Task TryHandleMessage(ITelegramBotClient bot, Message message)
+    {
+        var wasStateHandled = await stateHandler.HandleState(message, bot);
+        if (!wasStateHandled) 
+            await commandHandler.HandleCommand(message, bot);
     }
 
     private async Task HandleCallbackQuery(ITelegramBotClient bot, CallbackQuery callbackQuery)
