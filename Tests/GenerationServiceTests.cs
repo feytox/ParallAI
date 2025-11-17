@@ -18,7 +18,7 @@ public class GenerationServiceTests
     private AiResponse fakeGigaChatResponse;
     private AiResponse fakeDuckDuckGoResponse;
 
-    private readonly Prompt prompt = new("Кто ты на самом деле?");
+    private readonly Prompt prompt = new TextPrompt("Кто ты на самом деле?");
     private readonly PromptSettings settings = PromptSettings.Default;
 
     [SetUp]
@@ -33,11 +33,11 @@ public class GenerationServiceTests
             .Returns(typeof(GigaChatProvider));
 
         fakeDuckDuckGoResponse = new AiResponse("Ответ ДакДакича: Я на самом деле Юра");
-        A.CallTo(() => fakeDuckDuckGoService.Generate(A<AiProvider>._, A<string>._, A<Prompt>._, A<PromptSettings>._))
+        A.CallTo(() => fakeDuckDuckGoService.Generate(A<AiProvider>._, A<AiModel>._, A<Prompt>._, A<PromptSettings>._))
             .Returns(Task.FromResult(fakeDuckDuckGoResponse));
 
         fakeGigaChatResponse = new AiResponse("Ответ ГигаЧата: Я на самом деле Павел Васильев");
-        A.CallTo(() => fakeGigaChatService.Generate(A<AiProvider>._, A<string>._, A<Prompt>._, A<PromptSettings>._))
+        A.CallTo(() => fakeGigaChatService.Generate(A<AiProvider>._, A<AiModel>._, A<Prompt>._, A<PromptSettings>._))
             .Returns(Task.FromResult(fakeGigaChatResponse));
 
         generationService = new GenerationService(
@@ -55,9 +55,9 @@ public class GenerationServiceTests
 
         actualResponse.Should().Be(fakeGigaChatResponse);
 
-        A.CallTo(() => fakeDuckDuckGoService.Generate(A<AiProvider>._, A<string>._, A<Prompt>._, A<PromptSettings>._))
+        A.CallTo(() => fakeDuckDuckGoService.Generate(A<AiProvider>._, A<AiModel>._, A<Prompt>._, A<PromptSettings>._))
             .MustNotHaveHappened();
-        A.CallTo(() => fakeGigaChatService.Generate(A<AiProvider>._, A<string>._, A<Prompt>._, A<PromptSettings>._))
+        A.CallTo(() => fakeGigaChatService.Generate(A<AiProvider>._, A<AiModel>._, A<Prompt>._, A<PromptSettings>._))
             .MustHaveHappenedOnceExactly();
     }
 

@@ -15,7 +15,13 @@ public record OpenAiResponse(OpenAiResponse.Choice[] Choices) : IGenResponse
         if (choice is null)
             throw new ArgumentException(
                 $"Response should contain exactly 1 response choice. Actual: {Choices.Length}");
+
+        var items = choice.Message.Content.Items;
+        var content = items.SingleOrDefault();
+        if (content is not TextContentItem textContent)
+            throw new ArgumentException(
+                $"Response should contain exactly 1 response text content. Actual: {items.Length}");
         
-        return new AiResponse(choice.Message.Content);
+        return new AiResponse(textContent.Text);
     }
 }

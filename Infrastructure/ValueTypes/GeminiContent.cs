@@ -18,14 +18,30 @@ public record GeminiContent(
         if (part is null)
             throw new ArgumentException($"Content should contain exactly 1 part. Actual: {Parts.Length}");
 
-        return part.Text;
+        return part.Text!;
     }
 
-    public static GeminiContent[] CreateFromPrompt(Prompt prompt) => [CreateFromText(prompt.Text)];
+    public static GeminiContent[] Create(TextPrompt prompt) => [CreateFromText(prompt.Text)];
 
-    public static GeminiContent CreateFromText(string text) => new([new Part(text)], MessageRole.User);
+    public static GeminiContent[] Create(FilePrompt prompt, IEnumerable<string> fileUrls)
+    {
+        var parts = fileUrls
+            .Select(url => new Part(FileData: new FileData(url)))
+            .Append(new Part(prompt.Text))
+            .Reverse()
+            .ToArray();
 
-    public record Part(string Text);
+        return [new GeminiContent(parts, MessageRole.User)];
+    }
+
+    public static GeminiContent CreateFromText(string text)
+    {
+        return new GeminiContent([new Part(Text: text)], MessageRole.User);
+    }
+
+    public record Part(string? Text = null, FileData? FileData = null);
+
+    public record FileData(string FileUri);
 
     public enum MessageRole
     {

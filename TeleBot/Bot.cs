@@ -16,11 +16,15 @@ public class Bot(
     CommandHandler commandHandler,
     StateHandler stateHandler) : IHostedService
 {
+    public ITelegramBotClient Client => client ?? throw new NullReferenceException("Bot is not initialized");
+    
+    private TelegramBotClient? client;
+    
     public Task StartAsync(CancellationToken cancellationToken)
     {
-        var bot = new TelegramBotClient(config.BotToken, cancellationToken: cancellationToken);
-
-        bot.StartReceiving(HandleUpdate, HandleError, cancellationToken: cancellationToken);
+        client = new TelegramBotClient(config.BotToken, cancellationToken: cancellationToken);
+        
+        client.StartReceiving(HandleUpdate, HandleError, cancellationToken: cancellationToken);
         logger.LogInformation("Bot has been started.");
         return Task.CompletedTask;
     }

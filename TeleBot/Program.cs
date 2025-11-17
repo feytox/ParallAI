@@ -1,7 +1,9 @@
 ﻿using System.Reflection;
+using AICore.Entities;
 using AICore.Repositories;
 using AICore.Services;
 using AICore.States;
+using AICore.ValueTypes;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Infrastructure.Config;
@@ -12,6 +14,7 @@ using Microsoft.Extensions.Hosting;
 using MongoDB.Driver;
 using TeleBot.Commands.Common;
 using TeleBot.Example.States;
+using TeleBot.Services;
 using TeleBot.StateActions.Common;
 using User = AICore.Entities.User;
 
@@ -32,7 +35,7 @@ public static class Program
 
     private static void ConfigureContainer(ContainerBuilder builder)
     {
-        builder.RegisterType<Bot>().As<IHostedService>().SingleInstance();
+        builder.RegisterType<Bot>().AsSelf().As<IHostedService>().SingleInstance();
         builder.Register(_ => EnvConfig.Load()).As<IConfig>().SingleInstance();
         builder.Register(c => new MongoClient(c.Resolve<IConfig>().MongoConnectionString))
             .As<IMongoClient>().SingleInstance();
@@ -42,10 +45,12 @@ public static class Program
                 new MongoRepository<User, long>(c.Resolve<IMongoDatabase>(), c.Resolve<IConfig>().UsersCollection))
             .As<IRepository<User, long>>().SingleInstance();
 
-        builder.RegisterType<GeminiGenService>().As<IGenService>().SingleInstance();
-        builder.RegisterType<OpenAiGenService>().As<IGenService>().SingleInstance();
-        builder.RegisterType<OpenRouterGenService>().As<IGenService>().SingleInstance();
         builder.RegisterType<GenerationService>().AsSelf().SingleInstance();
+        RegisterProvider<GeminiGenHandler, GeminiProvider>(builder);
+        RegisterProvider<OpenAiGenHandler, OpenAICompatibleProvider>(builder);
+        RegisterProvider<OpenRouterGenHandler, OpenRouterProvider>(builder);
+
+        builder.RegisterType<TgFileService>().As<IFileService>();
         
         builder.RegisterAssemblyTypes(typeof(ICommand).Assembly).As<ICommand>().SingleInstance();
         builder.RegisterType<CommandHandler>().AsSelf().SingleInstance();
@@ -58,8 +63,33 @@ public static class Program
 
         builder.RegisterAssemblyTypes(typeof(IStateAction).Assembly).As<IStateAction>().SingleInstance();
         builder.RegisterType<StateHandler>().AsSelf().SingleInstance();
-        
+
         RegisterSequentialState<PresetState, PresetStep>(builder);
+        RegisterSequentialState<RequestState, RequestStep>(builder);
+
+        builder.RegisterType<MediaGroupCollector>().AsSelf().SingleInstance();
+    }
+
+    private static void RegisterProvider<THandler, TProvider>(ContainerBuilder builder)
+        where TProvider : AiProvider
+        where THandler : IGenerationHandler
+    {
+        builder
+            .Register<IGenService>(c =>
+            {
+                var context = c.Resolve<IComponentContext>();
+                return new HandledGenService<THandler, TProvider>(HandlerFactory);
+
+                THandler HandlerFactory(TProvider provider, AiModel model)
+                {
+                    return context.Resolve<THandler>(
+                        new TypedParameter(typeof(TProvider), provider),
+                        new TypedParameter(typeof(AiModel), model));
+                }
+            })
+            .SingleInstance();
+
+        builder.RegisterType<THandler>().AsSelf().As<IGenerationHandler>();
     }
 
     private static void RegisterSequentialState<TState, TStep>(ContainerBuilder builder)
