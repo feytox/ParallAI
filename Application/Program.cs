@@ -14,11 +14,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MongoDB.Driver;
 using TeleBot;
-using TeleBot.Callback.Common;
-using TeleBot.Commands.Common;
 using TeleBot.Example.States;
 using TeleBot.Services;
-using TeleBot.StateActions.Common;
+using TeleBotInfr.Callback;
+using TeleBotInfr.Commands;
+using TeleBotInfr.StateActions;
 using User = AICore.Entities.User;
 
 namespace Application;
@@ -53,9 +53,12 @@ public static class Program
         RegisterProvider<OpenAiGenHandler, OpenAICompatibleProvider>(builder);
         RegisterProvider<OpenRouterGenHandler, OpenRouterProvider>(builder);
 
+        var teleBotAssembly = typeof(Bot).Assembly;
+        var infrTeleBotAssembly = typeof(ICommand).Assembly;
+        
         builder.RegisterType<TgFileService>().As<IFileService>();
         
-        builder.RegisterAssemblyTypes(typeof(ICommand).Assembly).As<ICommand>().SingleInstance();
+        builder.RegisterAssemblyTypes(teleBotAssembly).As<ICommand>().SingleInstance();
         builder.RegisterType<CommandHandler>().AsSelf().SingleInstance();
         builder.Register(c =>
             c.ComponentRegistry.Registrations
@@ -64,7 +67,7 @@ public static class Program
                 .SelectMany(t => t.GetCustomAttributes<CommandAttribute>())
         ).As<IEnumerable<CommandAttribute>>().SingleInstance();
         
-        builder.RegisterAssemblyTypes(typeof(ICallbackQuery).Assembly).As<ICallbackQuery>().SingleInstance();
+        builder.RegisterAssemblyTypes(teleBotAssembly).As<ICallbackQuery>().SingleInstance();
         builder.RegisterType<CallbackQueryHandler>().AsSelf().SingleInstance();
         builder.Register(c =>
             c.ComponentRegistry.Registrations
@@ -73,11 +76,11 @@ public static class Program
                 .SelectMany(t => t.GetCustomAttributes<CallbackQueryAttribute>())
         ).As<IEnumerable<CallbackQueryAttribute>>().SingleInstance();
 
-        builder.RegisterAssemblyTypes(typeof(IStateAction).Assembly).As<IStateAction>().SingleInstance();
+        builder.RegisterAssemblyTypes(infrTeleBotAssembly).As<IStateAction>().SingleInstance();
         builder.RegisterType<StateHandler>().AsSelf().SingleInstance();
 
-        RegisterSequentialState<PresetState, PresetStep>(builder);
-        RegisterSequentialState<RequestState, RequestStep>(builder);
+        RegisterSequentialState<PresetState, PresetStep>(builder, teleBotAssembly);
+        RegisterSequentialState<RequestState, RequestStep>(builder, teleBotAssembly);
 
         builder.RegisterType<MediaGroupCollector>().AsSelf().SingleInstance();
     }
@@ -104,14 +107,14 @@ public static class Program
         builder.RegisterType<THandler>().AsSelf().As<IGenerationHandler>();
     }
 
-    private static void RegisterSequentialState<TState, TStep>(ContainerBuilder builder)
+    private static void RegisterSequentialState<TState, TStep>(ContainerBuilder builder,  Assembly stepsAssembly)
         where TState : SequentialState<TStep> where TStep : notnull
     {
         builder.RegisterType<SequentialStateAction<TState, TStep>>()
             .As<IStateAction>()
             .SingleInstance();
 
-        builder.RegisterAssemblyTypes(typeof(IStepStateAction<TState, TStep>).Assembly)
+        builder.RegisterAssemblyTypes(stepsAssembly)
             .As<IStepStateAction<TState, TStep>>()
             .SingleInstance();
     }

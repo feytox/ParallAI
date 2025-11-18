@@ -3,7 +3,7 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using User = AICore.Entities.User;
 
-namespace TeleBot.StateActions.Common;
+namespace TeleBotInfr.StateActions;
 
 public class SequentialStateAction<TState, TStep> : StateAction<TState>
     where TState : SequentialState<TStep> where TStep : notnull

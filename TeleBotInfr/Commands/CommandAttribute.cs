@@ -1,4 +1,4 @@
-namespace TeleBot.Commands.Common;
+namespace TeleBotInfr.Commands;
 
 [AttributeUsage(AttributeTargets.Class)]
 public class CommandAttribute(string name, string description) : Attribute

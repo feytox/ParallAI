@@ -3,7 +3,7 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using User = AICore.Entities.User;
 
-namespace TeleBot.Commands.Common;
+namespace TeleBotInfr.Commands;
 
 public abstract class UserCommand(IRepository<User, long> users) : ICommand
 {

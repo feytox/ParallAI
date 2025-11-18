@@ -2,7 +2,7 @@ using System.Reflection;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
-namespace TeleBot.Commands.Common;
+namespace TeleBotInfr.Commands;
 
 public class CommandHandler
 {

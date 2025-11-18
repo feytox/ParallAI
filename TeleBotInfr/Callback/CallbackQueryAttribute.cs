@@ -1,4 +1,4 @@
-namespace TeleBot.Callback.Common;
+namespace TeleBotInfr.Callback;
 
 [AttributeUsage(AttributeTargets.Class)]
 public class CallbackQueryAttribute(string key) : Attribute

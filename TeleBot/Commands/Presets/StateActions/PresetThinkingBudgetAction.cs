@@ -1,7 +1,7 @@
 using AICore.Entities;
 using AICore.States;
 using AICore.ValueTypes;
-using TeleBot.StateActions.Common;
+using TeleBotInfr.StateActions;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using User = AICore.Entities.User;

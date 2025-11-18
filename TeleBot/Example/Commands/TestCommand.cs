@@ -2,7 +2,7 @@
 using AICore.Repositories;
 using AICore.ValueTypes;
 using Microsoft.Extensions.Logging;
-using TeleBot.Commands.Common;
+using TeleBotInfr.Commands;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using User = AICore.Entities.User;

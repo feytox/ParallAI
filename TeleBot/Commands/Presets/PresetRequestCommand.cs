@@ -1,7 +1,7 @@
 using AICore.Repositories;
 using AICore.Services;
 using AICore.ValueTypes;
-using TeleBot.Commands.Common;
+using TeleBotInfr.Commands;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using User = AICore.Entities.User;

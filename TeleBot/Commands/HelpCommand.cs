@@ -1,5 +1,5 @@
 using System.Text;
-using TeleBot.Commands.Common;
+using TeleBotInfr.Commands;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 

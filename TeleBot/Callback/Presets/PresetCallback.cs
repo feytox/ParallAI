@@ -1,6 +1,6 @@
 using AICore.Entities;
 using AICore.Repositories;
-using TeleBot.Callback.Common;
+using TeleBotInfr.Callback;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;

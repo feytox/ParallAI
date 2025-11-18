@@ -1,7 +1,7 @@
 using AICore.Repositories;
 using Microsoft.Extensions.Logging;
-using TeleBot.Commands.Common;
 using TeleBot.Example.Commands;
+using TeleBotInfr.Commands;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;

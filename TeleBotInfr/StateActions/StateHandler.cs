@@ -3,7 +3,7 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using User = AICore.Entities.User;
 
-namespace TeleBot.StateActions.Common;
+namespace TeleBotInfr.StateActions;
 
 public class StateHandler(IEnumerable<IStateAction> actions, IRepository<User, long> userRepository)
 {
