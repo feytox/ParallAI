@@ -30,7 +30,7 @@ public record GeminiRequest(
         );
     }
     
-    public record GenConfig(double Temperature, ThinkingConfig? ThinkingConfig = null);
+    public record GenConfig(decimal Temperature, ThinkingConfig? ThinkingConfig = null);
 
     public record ThinkingConfig(int ThinkingBudget);
 }

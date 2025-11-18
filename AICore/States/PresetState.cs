@@ -12,7 +12,7 @@ public class PresetState() : SequentialState<PresetStep>(Enum.GetValues<PresetSt
 {
     public string? Name { get; set; }
     public string? SystemPrompt { get; set; }
-    public float Temperature { get; set; }
+    public decimal Temperature { get; set; }
     
     public int ThinkingBudget { get; set; }
 }

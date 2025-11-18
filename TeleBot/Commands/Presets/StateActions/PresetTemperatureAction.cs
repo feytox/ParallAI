@@ -12,7 +12,8 @@ public class PresetTemperatureAction : IStepStateAction<PresetState, PresetStep>
     
     public async Task<bool> Execute(PresetState state, Message message, ITelegramBotClient bot, User user)
     {
-        if (!float.TryParse(message.Text?.Replace('.', ','), out var temperature)
+        // TODO: fix
+        if (!decimal.TryParse(message.Text?.Replace('.', ','), out var temperature)
             || temperature < 0
             || temperature > 2)
         {
@@ -23,7 +24,7 @@ public class PresetTemperatureAction : IStepStateAction<PresetState, PresetStep>
         
         state.Temperature = temperature;
         
-        await bot.SendMessage(message.Chat, $"Укажи бюджет размышлений");
+        await bot.SendMessage(message.Chat, "Укажи бюджет размышлений");
         return true;
     }
 }

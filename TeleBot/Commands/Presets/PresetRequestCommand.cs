@@ -16,7 +16,7 @@ public class PresetRequestCommand(IRepository<User, long> users, GenerationServi
 {
     protected override async Task Execute(Message message, ITelegramBotClient bot, User user)
     {
-        var model = user!.UserModels.First();
+        var model = user.UserModels.First();
         var presetName = message.Text!.Substring("/presetrequest".Length).Trim(' ');
         if (presetName.Length == 0)
         {

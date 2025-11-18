@@ -7,7 +7,7 @@ namespace Infrastructure.ValueTypes;
 public record OpenRouterRequest(
     string Model,
     OpenAiMessage[] Messages,
-    double Temperature,
+    decimal Temperature,
     OpenRouterRequest.ReasoningConfig? Reasoning = null)
 {
     public static OpenRouterRequest Create(string modelId, TextPrompt prompt, PromptSettings promptSettings)
