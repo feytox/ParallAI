@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using TeleBot.Callback.Common;
 using TeleBot.Commands.Common;
 using TeleBot.StateActions.Common;
+using TeleBot.Util;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
@@ -34,6 +35,25 @@ public class Bot(
 
     private async Task HandleUpdate(ITelegramBotClient bot, Update update, CancellationToken cancellationToken)
     {
+        try
+        {
+            await HandleUpdateOrThrow(bot, update);
+        }
+        catch (UserFriendlyException ex)
+        {
+            logger.LogError(ex.ToString());
+            await TrySendMessage(bot, update, ex.UserMessage);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex.ToString());
+            await TrySendMessage(bot, update,
+                $"Упс...произошла непредвиденная ошибка {ex.GetType().Name}. Все вопросы к @feytox");
+        }
+    }
+
+    private async Task HandleUpdateOrThrow(ITelegramBotClient bot, Update update)
+    {
         switch (update.Type)
         {
             case UpdateType.Message:
@@ -49,27 +69,8 @@ public class Bot(
 
     private async Task HandleMessage(ITelegramBotClient bot, Message message)
     {
-        try
-        {
-            await TryHandleMessage(bot, message);
-        }
-        catch (UserFriendlyException ex)
-        {
-            logger.LogError(ex.ToString());
-            await bot.SendMessage(message.Chat, ex.UserMessage);
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex.ToString());
-            await bot.SendMessage(message.Chat,
-                $"Упс...произошла непредвиденная ошибка {ex.GetType().Name}. Все вопросы к @feytox");
-        }
-    }
-
-    private async Task TryHandleMessage(ITelegramBotClient bot, Message message)
-    {
         var wasStateHandled = await stateHandler.HandleState(message, bot);
-        if (!wasStateHandled) 
+        if (!wasStateHandled)
             await commandHandler.HandleCommand(message, bot);
     }
 
@@ -88,6 +89,13 @@ public class Bot(
 
         logger.LogError(errorMessage);
         return Task.CompletedTask;
+    }
+
+    private static async Task TrySendMessage(ITelegramBotClient bot, Update update, string message)
+    {
+        var chatId = update.GetChatId();
+        if (chatId is not null)
+            await bot.SendMessage(chatId, message);
     }
 
     public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;

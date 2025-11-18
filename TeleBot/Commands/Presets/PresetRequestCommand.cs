@@ -32,7 +32,7 @@ public class PresetRequestCommand(IRepository<User, long> users, GenerationServi
             return;
         }
         
-        var prompt = new Prompt("Какая сейчас погода в Новой Зеландии?");
+        var prompt = new TextPrompt("Какая сейчас погода в Новой Зеландии?");
         var promptSettings = preset.PromptSettings;
         var response = await genService.Generate(model, prompt, promptSettings);
 

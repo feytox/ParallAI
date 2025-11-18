@@ -26,6 +26,7 @@ public class ChangePresetCallback(IRepository<User, long> users) : PresetCallbac
             InlineKeyboardButton.WithCallbackData(
                 "Бюджет размышлений", $"changepresetthinkingbudget:{preset.Id}")
         }.Chunk(1);
+        
         await bot.SendMessage(
             callbackQuery.From.Id, "Выберите параметр для изменения:",
             replyMarkup: new InlineKeyboardMarkup(presetChanges));
