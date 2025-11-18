@@ -5,7 +5,7 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using User = AICore.Entities.User;
 
-namespace TeleBot.Callback;
+namespace TeleBot.Callback.Presets;
 
 public abstract class PresetCallbackQuery(IRepository<User, long> users) : UserCallbackQuery(users)
 {
@@ -22,6 +22,6 @@ public abstract class PresetCallbackQuery(IRepository<User, long> users) : UserC
             return;
         }
         await Handle(callbackQuery, bot, user, preset);
-        await users.Update(user);
+        await Users.Update(user);
     }
 }

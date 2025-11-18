@@ -5,7 +5,6 @@ using AICore.ValueTypes;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
-using TeleBot.Example.States;
 
 namespace Infrastructure.Mongo;
 

@@ -6,16 +6,16 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 using User = AICore.Entities.User;
 
-namespace TeleBot.Callback;
+namespace TeleBot.Callback.Presets;
 
-// нужно будет переделать
+// TODO: нужно будет переделать
 [CallbackQuery("changepreset")]
 public class ChangePresetCallback(IRepository<User, long> users) : PresetCallbackQuery(users)
 {
     protected override async Task Handle(CallbackQuery callbackQuery, ITelegramBotClient bot, User user, Preset preset)
     {
-        // нужно будет отрефакторить, когда будем добавлять другие параметры
-        var presetChanges = new InlineKeyboardButton[]
+        // TODO: нужно будет отрефакторить, когда будем добавлять другие параметры
+        var presetChanges = new[]
         {
             InlineKeyboardButton.WithCallbackData(
                 "Название", $"changepresetname:{preset.Id}"),

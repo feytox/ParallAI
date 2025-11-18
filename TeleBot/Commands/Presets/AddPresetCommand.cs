@@ -1,12 +1,12 @@
 using AICore.Repositories;
+using AICore.States;
 using TeleBot.Commands.Common;
-using TeleBot.Example.States;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using User = AICore.Entities.User;
 
 
-namespace TeleBot.Example.Commands;
+namespace TeleBot.Commands.Presets;
 
 [Command("/addpreset", "добавить пресет")]
 public class AddPresetCommand(IRepository<User, long> users) 

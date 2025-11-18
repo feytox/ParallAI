@@ -6,7 +6,7 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using User = AICore.Entities.User;
 
-namespace TeleBot.Example.Commands;
+namespace TeleBot.Commands.Presets;
 
 // временная команда для отправки запросоов с выбранным пресетом
 // Ввод: /presetrequest Название пресета

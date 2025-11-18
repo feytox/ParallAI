@@ -5,7 +5,7 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using User = AICore.Entities.User;
 
-namespace TeleBot.Callback;
+namespace TeleBot.Callback.Presets;
 
 // временно
 [CallbackQuery("selectpreset")]

@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using AICore.Entities;
 using AICore.Repositories;
 using AICore.Services;
 using AICore.States;
@@ -13,7 +12,6 @@ using Microsoft.Extensions.Hosting;
 using MongoDB.Driver;
 using TeleBot.Callback.Common;
 using TeleBot.Commands.Common;
-using TeleBot.Example.States;
 using TeleBot.StateActions.Common;
 using User = AICore.Entities.User;
 

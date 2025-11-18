@@ -1,13 +1,13 @@
-using AICore.Entities;
 using AICore.Repositories;
 using Microsoft.Extensions.Logging;
 using TeleBot.Commands.Common;
+using TeleBot.Example.Commands;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 using User = AICore.Entities.User;
 
-namespace TeleBot.Example.Commands;
+namespace TeleBot.Commands.Presets;
 
 [Command("/showpresets", "вывод пользовательских пресетов")]
 public class ShowPresetsCommand(IRepository<User, long> users, ILogger<TestCommand> logger) 

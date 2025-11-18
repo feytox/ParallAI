@@ -1,13 +1,12 @@
 using AICore.Entities;
+using AICore.States;
 using AICore.ValueTypes;
-using TeleBot.Example.States;
 using TeleBot.StateActions.Common;
 using Telegram.Bot;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
 using User = AICore.Entities.User;
 
-namespace TeleBot.Example.StateActions;
+namespace TeleBot.Commands.Presets.StateActions;
 
 public class PresetThinkingBudgetAction : IStepStateAction<PresetState, PresetStep>
 {
