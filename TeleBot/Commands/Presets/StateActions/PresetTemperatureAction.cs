@@ -1,3 +1,4 @@
+using System.Globalization;
 using AICore.States;
 using TeleBot.StateActions.Common;
 using Telegram.Bot;
@@ -12,8 +13,11 @@ public class PresetTemperatureAction : IStepStateAction<PresetState, PresetStep>
     
     public async Task<bool> Execute(PresetState state, Message message, ITelegramBotClient bot, User user)
     {
-        // TODO: fix
-        if (!decimal.TryParse(message.Text?.Replace('.', ','), out var temperature)
+        if (!decimal.TryParse(
+                message.Text?.Replace(',', '.'),
+                NumberStyles.Any,
+                CultureInfo.InvariantCulture,
+                out var temperature)
             || temperature < 0
             || temperature > 2)
         {
