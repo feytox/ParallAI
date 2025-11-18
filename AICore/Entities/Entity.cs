@@ -6,7 +6,6 @@ public abstract class Entity<TId>(TId id) : IEntity<TId> where TId : notnull
 
     private bool Equals(Entity<TId> other)
     {
-        
         return EqualityComparer<TId>.Default.Equals(Id, other.Id);
     }
 

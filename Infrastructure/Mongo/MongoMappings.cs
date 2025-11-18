@@ -19,9 +19,15 @@ public static class MongoMappings
         {
             classMap.AutoMap();
             classMap.MapProperty("Models");
+            classMap.MapProperty("Presets");
         });
 
         BsonClassMap.RegisterClassMap<AiModel>(classMap =>
+        {
+            classMap.AutoMap();
+        });
+        
+        BsonClassMap.RegisterClassMap<Preset>(classMap =>
         {
             classMap.AutoMap();
         });

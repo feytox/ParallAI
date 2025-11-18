@@ -16,8 +16,8 @@ public record GeminiRequest(
     {
         return new GeminiRequest(
             Contents: GeminiContent.Create(prompt),
-            SystemInstruction: GeminiContent.CreateFromText(settings.SystemInstructions),
-            GenerationConfig: new GenConfig(settings.Temperature)
+            SystemInstruction: GeminiContent.CreateFromText(settings.SystemPrompt),
+            GenerationConfig: new GenConfig(settings.Temperature, new ThinkingConfig(settings.ThinkingBudget))
         );
     }
 
@@ -25,7 +25,7 @@ public record GeminiRequest(
     {
         return new GeminiRequest(
             Contents: GeminiContent.Create(prompt, fileUrls),
-            SystemInstruction: GeminiContent.CreateFromText(settings.SystemInstructions),
+            SystemInstruction: GeminiContent.CreateFromText(settings.SystemPrompt),
             GenerationConfig: new GenConfig(settings.Temperature)
         );
     }

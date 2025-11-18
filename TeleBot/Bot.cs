@@ -2,6 +2,7 @@ using Infrastructure.Config;
 using Infrastructure.Exceptions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using TeleBot.Callback.Common;
 using TeleBot.Commands.Common;
 using TeleBot.StateActions.Common;
 using Telegram.Bot;
@@ -15,7 +16,8 @@ public class Bot(
     IConfig config,
     ILogger<Bot> logger,
     CommandHandler commandHandler,
-    StateHandler stateHandler) : IHostedService
+    StateHandler stateHandler,
+    CallbackQueryHandler callbackQueryHandler) : IHostedService
 {
     public ITelegramBotClient Client => client ?? throw new NullReferenceException("Bot is not initialized");
 
@@ -73,7 +75,7 @@ public class Bot(
 
     private async Task HandleCallbackQuery(ITelegramBotClient bot, CallbackQuery callbackQuery)
     {
-        await HandleMessage(bot, callbackQuery.Message!);
+        await callbackQueryHandler.HandleCallbackQuery(callbackQuery, bot);
     }
 
     private Task HandleError(ITelegramBotClient bot, Exception exception, CancellationToken cancellationToken)

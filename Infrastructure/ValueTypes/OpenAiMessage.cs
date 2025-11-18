@@ -28,7 +28,7 @@ public record OpenAiMessage(OpenAiContent Content, OpenAiMessage.MessageRole Rol
 
     private static OpenAiMessage CreateSystemInstruction(PromptSettings promptSettings)
     {
-        return new OpenAiMessage(OpenAiContent.Create(promptSettings.SystemInstructions), MessageRole.System);
+        return new OpenAiMessage(OpenAiContent.Create(promptSettings.SystemPrompt), MessageRole.System);
     }
 
     [JsonConverter(typeof(JsonWebEnumConverter<MessageRole>))]
