@@ -1,5 +1,5 @@
-using Infrastructure.Config;
-using Infrastructure.Exceptions;
+using AICore;
+using AICore.Exceptions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using TeleBot.Callback.Common;

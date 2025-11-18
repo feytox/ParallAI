@@ -1,11 +1,7 @@
-﻿using Infrastructure.ValueTypes;
+using AICore;
+using AICore.ValueTypes;
 
 namespace Infrastructure.Services;
-
-public interface IFileService
-{
-    Task DownloadFile(AiFileInfo fileInfo, Stream stream);
-}
 
 public static class FileServiceExt
 {

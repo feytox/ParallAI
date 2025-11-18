@@ -1,4 +1,5 @@
-﻿using dotenv.net;
+﻿using AICore;
+using dotenv.net;
 using dotenv.net.Utilities;
 
 namespace Infrastructure.Config;

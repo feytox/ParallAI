@@ -1,5 +1,6 @@
 using System.Net;
 using System.Text.Json;
+using AICore;
 using AICore.Entities;
 using AICore.ValueTypes;
 using FakeItEasy;

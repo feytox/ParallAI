@@ -1,4 +1,4 @@
-namespace Infrastructure.Exceptions;
+namespace AICore.Exceptions;
 
 public class ParallAIException : Exception
 {

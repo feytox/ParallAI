@@ -1,4 +1,4 @@
-﻿namespace Infrastructure.Config;
+﻿namespace AICore;
 
 public interface IConfig
 {

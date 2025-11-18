@@ -1,5 +1,5 @@
-﻿using Infrastructure.Services;
-using Infrastructure.ValueTypes;
+﻿using AICore;
+using AICore.ValueTypes;
 using Telegram.Bot;
 
 namespace TeleBot.Services;

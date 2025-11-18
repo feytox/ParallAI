@@ -1,6 +1,4 @@
-﻿using Infrastructure.ValueTypes;
-
-namespace AICore.ValueTypes;
+﻿namespace AICore.ValueTypes;
 
 public abstract record Prompt;
 

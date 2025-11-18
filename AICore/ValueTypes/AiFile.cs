@@ -1,4 +1,4 @@
-﻿namespace Infrastructure.ValueTypes;
+﻿namespace AICore.ValueTypes;
 
 
 public record AiFile(byte[] Content, AiFileInfo Info)

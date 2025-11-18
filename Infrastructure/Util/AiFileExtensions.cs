@@ -1,4 +1,5 @@
-﻿using Infrastructure.ValueTypes;
+﻿using AICore.ValueTypes;
+using Infrastructure.ValueTypes;
 
 namespace Infrastructure.Util;
 

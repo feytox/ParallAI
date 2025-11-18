@@ -1,5 +1,4 @@
 ﻿using AICore.ValueTypes;
-using Infrastructure.ValueTypes;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 

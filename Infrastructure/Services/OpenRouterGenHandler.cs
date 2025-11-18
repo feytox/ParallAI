@@ -1,4 +1,5 @@
 ﻿using System.Net.Http.Headers;
+using AICore;
 using AICore.Entities;
 using AICore.ValueTypes;
 using Infrastructure.ValueTypes;

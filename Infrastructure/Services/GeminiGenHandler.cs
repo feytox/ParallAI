@@ -1,6 +1,7 @@
 ﻿using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
+using AICore;
 using AICore.Entities;
 using AICore.ValueTypes;
 using Infrastructure.ValueTypes;

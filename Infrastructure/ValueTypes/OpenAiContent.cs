@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using AICore.ValueTypes;
 using Infrastructure.Util;
 
 namespace Infrastructure.ValueTypes;
