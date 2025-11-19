@@ -18,8 +18,4 @@
       <ProjectReference Include="..\ParallAI.TeleBot.Core\ParallAI.TeleBot.Core.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="StateActions\" />
-    </ItemGroup>
-
 </Project>

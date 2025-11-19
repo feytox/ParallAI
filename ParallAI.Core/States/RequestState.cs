@@ -1,6 +1,4 @@
-﻿using ParallAI.Core.States;
-
-namespace TeleBot.Example.States;
+﻿namespace ParallAI.Core.States;
 
 public enum RequestStep
 {

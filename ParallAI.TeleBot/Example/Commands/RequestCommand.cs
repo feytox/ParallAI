@@ -1,6 +1,6 @@
 ﻿using ParallAI.Core.Repositories;
+using ParallAI.Core.States;
 using ParallAI.TeleBot.Core.Commands;
-using TeleBot.Example.States;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using User = ParallAI.Core.Entities.User;
