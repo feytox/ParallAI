@@ -18,13 +18,13 @@ public record GeminiContent(GeminiContent.Part[] Parts, GeminiContent.MessageRol
         return part.Text!;
     }
 
-    public static GeminiContent[] Create(TextPrompt prompt) => [CreateFromText(prompt.Text)];
+    public static GeminiContent[] Create(TextMessage message) => [CreateFromText(message.Text)];
 
-    public static GeminiContent[] Create(FilePrompt prompt, IEnumerable<string> fileUrls)
+    public static GeminiContent[] Create(FileMessage message, IEnumerable<string> fileUrls)
     {
         var parts = fileUrls
             .Select(url => new Part(FileData: new FileData(url)))
-            .Append(new Part(prompt.Text))
+            .Append(new Part(message.Text))
             .Reverse()
             .ToArray();
 

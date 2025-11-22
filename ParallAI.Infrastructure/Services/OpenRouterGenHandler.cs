@@ -23,17 +23,17 @@ public class OpenRouterGenHandler(
 
     protected override Uri GetEndpointUrl() => BaseUrl;
 
-    protected override Task<OpenRouterRequest> CreateTextRequest(TextPrompt prompt, PromptSettings promptSettings)
+    protected override Task<OpenRouterRequest> CreateTextRequest(TextMessage message, PromptSettings promptSettings)
     {
-        var request = OpenRouterRequest.Create(Model.ModelId, prompt, promptSettings);
+        var request = OpenRouterRequest.Create(Model.ModelId, message, promptSettings);
         return Task.FromResult(request);
     }
 
-    protected override async Task<OpenRouterRequest> CreateFileRequest(FilePrompt prompt, PromptSettings promptSettings)
+    protected override async Task<OpenRouterRequest> CreateFileRequest(FileMessage message, PromptSettings promptSettings)
     {
-        var fileTasks = prompt.Files.Select(async info => await fileService.DownloadFile(info));
+        var fileTasks = message.Files.Select(async info => await fileService.DownloadFile(info));
         var files = await Task.WhenAll(fileTasks);
-        return OpenRouterRequest.Create(Model.ModelId, prompt, files, promptSettings);
+        return OpenRouterRequest.Create(Model.ModelId, message, files, promptSettings);
     }
 
     protected override void FillHttpRequest(HttpRequestMessage request)

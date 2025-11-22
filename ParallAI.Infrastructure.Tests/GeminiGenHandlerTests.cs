@@ -32,14 +32,14 @@ public class GeminiGenHandlerTests
         var fakeApiResponse = new GeminiResponse([responseCandidate]);
 
         var expectedAiResponse = fakeApiResponse.ToTextResponse();
-        var expectedRequest = GeminiRequest.CreateText(DefaultPrompt, DefaultSettings);
+        var expectedRequest = GeminiRequest.CreateText(DefaultMessage, DefaultSettings);
 
         MockHttp.When(HttpMethod.Post, ExpectedUrl)
             .WithHeaders("x-goog-api-key", ValidApiKey)
             .WithContent(JsonSerializer.Serialize(expectedRequest, JsonSerializerOptions.Web))
             .Respond("application/json", JsonSerializer.Serialize(fakeApiResponse));
 
-        var result = await Handler.Generate(DefaultPrompt, DefaultSettings);
+        var result = await Handler.Generate(DefaultMessage, DefaultSettings);
 
         MockHttp.VerifyNoOutstandingExpectation();
         result.Should().BeEquivalentTo(expectedAiResponse);

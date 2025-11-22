@@ -22,17 +22,17 @@ public abstract class HttpGenHandler<TProvider, TRequest, TResponse>(
     
     protected abstract Uri GetEndpointUrl();
     
-    protected abstract Task<TRequest> CreateTextRequest(TextPrompt prompt, PromptSettings promptSettings);
+    protected abstract Task<TRequest> CreateTextRequest(TextMessage message, PromptSettings promptSettings);
 
-    protected abstract Task<TRequest> CreateFileRequest(FilePrompt prompt, PromptSettings promptSettings);
+    protected abstract Task<TRequest> CreateFileRequest(FileMessage message, PromptSettings promptSettings);
 
     protected abstract void FillHttpRequest(HttpRequestMessage request);
     
-    public async Task<AiResponse> Generate(Prompt prompt, PromptSettings promptSettings)
+    public async Task<AiResponse> Generate(AiMessage aiMessage, PromptSettings promptSettings)
     {
         var url = GetEndpointUrl();
         using var request = new HttpRequestMessage(HttpMethod.Post, url);
-        var aiRequest = await CreateRequest(prompt, promptSettings);
+        var aiRequest = await CreateRequest(aiMessage, promptSettings);
 
         FillHttpRequest(request);
         request.Content = JsonContent.Create(aiRequest, options: JsonSerializerOptions.Web);
@@ -46,13 +46,13 @@ public abstract class HttpGenHandler<TProvider, TRequest, TResponse>(
         return providerResponse!.ToTextResponse();
     }
     
-    private async Task<TRequest> CreateRequest(Prompt prompt, PromptSettings promptSettings)
+    private async Task<TRequest> CreateRequest(AiMessage aiMessage, PromptSettings promptSettings)
     {
-        return prompt switch
+        return aiMessage switch
         {
-            FilePrompt filePrompt => await CreateFileRequest(filePrompt, promptSettings),
-            TextPrompt textPrompt => await CreateTextRequest(textPrompt, promptSettings),
-            _ => throw new ArgumentOutOfRangeException(nameof(prompt), prompt, null)
+            FileMessage filePrompt => await CreateFileRequest(filePrompt, promptSettings),
+            TextMessage textPrompt => await CreateTextRequest(textPrompt, promptSettings),
+            _ => throw new ArgumentOutOfRangeException(nameof(aiMessage), aiMessage, null)
         };
     }
 }

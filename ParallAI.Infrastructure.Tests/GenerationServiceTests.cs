@@ -18,7 +18,7 @@ public class GenerationServiceTests
     private AiResponse fakeGigaChatResponse;
     private AiResponse fakeDuckDuckGoResponse;
 
-    private readonly Prompt prompt = new TextPrompt("Кто ты на самом деле?");
+    private readonly AiMessage _aiMessage = new TextMessage("Кто ты на самом деле?");
     private readonly PromptSettings settings = PromptSettings.Default;
 
     [SetUp]
@@ -33,11 +33,11 @@ public class GenerationServiceTests
             .Returns(typeof(GigaChatProvider));
 
         fakeDuckDuckGoResponse = new AiResponse("Ответ ДакДакича: Я на самом деле Юра");
-        A.CallTo(() => fakeDuckDuckGoService.Generate(A<AiProvider>._, A<AiModel>._, A<Prompt>._, A<PromptSettings>._))
+        A.CallTo(() => fakeDuckDuckGoService.Generate(A<AiProvider>._, A<AiModel>._, A<AiMessage>._, A<PromptSettings>._))
             .Returns(Task.FromResult(fakeDuckDuckGoResponse));
 
         fakeGigaChatResponse = new AiResponse("Ответ ГигаЧата: Я на самом деле Павел Васильев");
-        A.CallTo(() => fakeGigaChatService.Generate(A<AiProvider>._, A<AiModel>._, A<Prompt>._, A<PromptSettings>._))
+        A.CallTo(() => fakeGigaChatService.Generate(A<AiProvider>._, A<AiModel>._, A<AiMessage>._, A<PromptSettings>._))
             .Returns(Task.FromResult(fakeGigaChatResponse));
 
         generationService = new GenerationService(
@@ -51,13 +51,13 @@ public class GenerationServiceTests
         var gigaChatProvider = new GigaChatProvider();
         var model = new AiModel(Guid.NewGuid(), "giga-chat-model", "Test GigaChat", gigaChatProvider);
 
-        var actualResponse = await generationService.Generate(model, prompt, settings);
+        var actualResponse = await generationService.Generate(model, _aiMessage, settings);
 
         actualResponse.Should().Be(fakeGigaChatResponse);
 
-        A.CallTo(() => fakeDuckDuckGoService.Generate(A<AiProvider>._, A<AiModel>._, A<Prompt>._, A<PromptSettings>._))
+        A.CallTo(() => fakeDuckDuckGoService.Generate(A<AiProvider>._, A<AiModel>._, A<AiMessage>._, A<PromptSettings>._))
             .MustNotHaveHappened();
-        A.CallTo(() => fakeGigaChatService.Generate(A<AiProvider>._, A<AiModel>._, A<Prompt>._, A<PromptSettings>._))
+        A.CallTo(() => fakeGigaChatService.Generate(A<AiProvider>._, A<AiModel>._, A<AiMessage>._, A<PromptSettings>._))
             .MustHaveHappenedOnceExactly();
     }
 
@@ -67,7 +67,7 @@ public class GenerationServiceTests
         var unknownProvider = new UnknownProvider();
         var modelWithUnknownProvider = new AiModel(Guid.NewGuid(), "unknown-model", "Unknown", unknownProvider);
 
-        await generationService.Awaiting(s => s.Generate(modelWithUnknownProvider, prompt, settings))
+        await generationService.Awaiting(s => s.Generate(modelWithUnknownProvider, _aiMessage, settings))
             .Should().ThrowAsync<ArgumentException>()
             .WithMessage($"*{typeof(UnknownProvider)}*");
     }
@@ -81,7 +81,7 @@ public class GenerationServiceTests
         var model = new AiModel(Guid.NewGuid(), "any-model", "Any Model", provider);
 
 
-        await serviceWithNoProviders.Awaiting(s => s.Generate(model, prompt, settings))
+        await serviceWithNoProviders.Awaiting(s => s.Generate(model, _aiMessage, settings))
             .Should().ThrowAsync<ArgumentException>()
             .WithMessage($"*{typeof(GigaChatProvider)}*");
     }

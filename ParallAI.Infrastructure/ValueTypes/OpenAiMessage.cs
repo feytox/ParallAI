@@ -9,21 +9,21 @@ namespace ParallAI.Infrastructure.ValueTypes;
 /// </remarks>
 public record OpenAiMessage(OpenAiContent Content, OpenAiMessage.MessageRole Role)
 {
-    public static IEnumerable<OpenAiMessage> Create(TextPrompt prompt, PromptSettings promptSettings)
+    public static IEnumerable<OpenAiMessage> Create(TextMessage message, PromptSettings promptSettings)
     {
         if (promptSettings.HasSystemInstruction)
             yield return CreateSystemInstruction(promptSettings);
 
-        yield return new OpenAiMessage(OpenAiContent.Create(prompt.Text), MessageRole.User);
+        yield return new OpenAiMessage(OpenAiContent.Create(message.Text), MessageRole.User);
     }
 
-    public static IEnumerable<OpenAiMessage> Create(FilePrompt prompt, IEnumerable<AiFile> files,
+    public static IEnumerable<OpenAiMessage> Create(FileMessage message, IEnumerable<AiFile> files,
         PromptSettings promptSettings)
     {
         if (promptSettings.HasSystemInstruction)
             yield return CreateSystemInstruction(promptSettings);
 
-        yield return new OpenAiMessage(OpenAiContent.Create(prompt.Text, files), MessageRole.User);
+        yield return new OpenAiMessage(OpenAiContent.Create(message.Text, files), MessageRole.User);
     }
 
     private static OpenAiMessage CreateSystemInstruction(PromptSettings promptSettings)

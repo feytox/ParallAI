@@ -9,18 +9,18 @@ public record OpenRouterRequest(
     decimal Temperature,
     OpenRouterRequest.ReasoningConfig? Reasoning = null)
 {
-    public static OpenRouterRequest Create(string modelId, TextPrompt prompt, PromptSettings promptSettings)
+    public static OpenRouterRequest Create(string modelId, TextMessage message, PromptSettings promptSettings)
     {
-        var messages = OpenAiMessage.Create(prompt, promptSettings).ToArray();
+        var messages = OpenAiMessage.Create(message, promptSettings).ToArray();
         var effort = promptSettings.ThinkingBudget.ToOpenAi();
         var reasoning = new EffortReasoning(effort);
         return new OpenRouterRequest(modelId, messages, promptSettings.Temperature, reasoning);
     }
 
-    public static OpenRouterRequest Create(string modelId, FilePrompt prompt, IEnumerable<AiFile> files,
+    public static OpenRouterRequest Create(string modelId, FileMessage message, IEnumerable<AiFile> files,
         PromptSettings promptSettings)
     {
-        var messages = OpenAiMessage.Create(prompt, files, promptSettings).ToArray();
+        var messages = OpenAiMessage.Create(message, files, promptSettings).ToArray();
         var effort = promptSettings.ThinkingBudget.ToOpenAi();
         var reasoning = new EffortReasoning(effort);
         return new OpenRouterRequest(modelId, messages, promptSettings.Temperature, reasoning);

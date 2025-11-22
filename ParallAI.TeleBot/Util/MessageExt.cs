@@ -11,7 +11,7 @@ public static class MessageExt
         return message.MediaGroupId is not null;
     }
     
-    public static Prompt CreatePrompt(Message[] messages)
+    public static AiMessage CreatePrompt(Message[] messages)
     {
         if (messages.Length == 1)
             return CreatePrompt(messages[0]);
@@ -23,15 +23,15 @@ public static class MessageExt
         var caption = messages
             .Select(message => message.Caption)
             .FirstOrDefault();
-        return FilePrompt.Create(files, caption);
+        return FileMessage.Create(files, caption);
     }
 
-    private static Prompt CreatePrompt(Message message)
+    private static AiMessage CreatePrompt(Message message)
     {
         return message.Type switch
         {
-            MessageType.Text => new TextPrompt(message.Text!),
-            MessageType.Photo or MessageType.Document => FilePrompt.Create([message.GetFileInfo()], message.Caption),
+            MessageType.Text => new TextMessage(message.Text!),
+            MessageType.Photo or MessageType.Document => FileMessage.Create([message.GetFileInfo()], message.Caption),
             _ => throw new ArgumentOutOfRangeException($"Unsupported message type: {message.Type}")
         };
     }

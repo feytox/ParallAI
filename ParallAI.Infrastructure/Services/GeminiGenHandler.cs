@@ -29,17 +29,17 @@ public class GeminiGenHandler(
         return new Uri($"{BaseUrl}/{Model.ModelId}:generateContent");
     }
 
-    protected override Task<GeminiRequest> CreateTextRequest(TextPrompt prompt, PromptSettings promptSettings)
+    protected override Task<GeminiRequest> CreateTextRequest(TextMessage message, PromptSettings promptSettings)
     {
-        var request = GeminiRequest.CreateText(prompt, promptSettings);
+        var request = GeminiRequest.CreateText(message, promptSettings);
         return Task.FromResult(request);
     }
 
-    protected override async Task<GeminiRequest> CreateFileRequest(FilePrompt prompt, PromptSettings promptSettings)
+    protected override async Task<GeminiRequest> CreateFileRequest(FileMessage message, PromptSettings promptSettings)
     {
-        var fileUrlTasks = prompt.Files.Select(async info => await DownloadAndUploadFile(info));
+        var fileUrlTasks = message.Files.Select(async info => await DownloadAndUploadFile(info));
         var fileUrls = await Task.WhenAll(fileUrlTasks);
-        return GeminiRequest.CreateFile(prompt, fileUrls, promptSettings);
+        return GeminiRequest.CreateFile(message, fileUrls, promptSettings);
     }
 
     protected override void FillHttpRequest(HttpRequestMessage request)
