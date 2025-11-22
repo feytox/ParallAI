@@ -1,6 +1,5 @@
 ﻿using System.Text.Json.Serialization;
 using ParallAI.Core.ValueTypes;
-using ParallAI.Infrastructure.Util;
 
 namespace ParallAI.Infrastructure.ValueTypes;
 
@@ -13,30 +12,25 @@ public record OpenRouterRequest(
     public static OpenRouterRequest Create(string modelId, TextPrompt prompt, PromptSettings promptSettings)
     {
         var messages = OpenAiMessage.Create(prompt, promptSettings).ToArray();
-        return new OpenRouterRequest(modelId, messages, promptSettings.Temperature);
+        var effort = promptSettings.ThinkingBudget.ToOpenAi();
+        var reasoning = new EffortReasoning(effort);
+        return new OpenRouterRequest(modelId, messages, promptSettings.Temperature, reasoning);
     }
 
     public static OpenRouterRequest Create(string modelId, FilePrompt prompt, IEnumerable<AiFile> files,
         PromptSettings promptSettings)
     {
         var messages = OpenAiMessage.Create(prompt, files, promptSettings).ToArray();
-        return new OpenRouterRequest(modelId, messages, promptSettings.Temperature);
+        var effort = promptSettings.ThinkingBudget.ToOpenAi();
+        var reasoning = new EffortReasoning(effort);
+        return new OpenRouterRequest(modelId, messages, promptSettings.Temperature, reasoning);
     }
     
+    [JsonDerivedType(typeof(MaxTokensReasoning))]
+    [JsonDerivedType(typeof(EffortReasoning))]
     public abstract record ReasoningConfig;
 
-    public record MaxTokensReasoning(
-        [property: JsonPropertyName("max_tokens")]
-        int MaxTokens);
+    public record MaxTokensReasoning([property: JsonPropertyName("max_tokens")] int MaxTokens) : ReasoningConfig;
 
-    public record EffortReasoning(
-        [property: JsonConverter(typeof(JsonWebEnumConverter<GeminiContent.MessageRole>))]
-        Effort Effort);
-
-    public enum Effort
-    {
-        Low,
-        Medium,
-        High
-    }
+    public record EffortReasoning(OpenAiReasoningEffort Effort) : ReasoningConfig;
 }

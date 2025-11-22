@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using ParallAI.Core;
 using ParallAI.Core.Entities;
+using ParallAI.Core.Providers;
 using ParallAI.Core.ValueTypes;
 using ParallAI.Infrastructure.ValueTypes;
 

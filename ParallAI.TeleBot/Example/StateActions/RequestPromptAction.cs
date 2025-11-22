@@ -23,8 +23,9 @@ public class RequestPromptAction(GenerationService genService, MediaGroupCollect
         
         var model = user.UserModels.First();
         var prompt = MessageExt.CreatePrompt(messages);
+        var settings = PromptSettings.Default with { ThinkingBudget = ThinkingBudget.High };
 
-        var response = await genService.Generate(model, prompt, PromptSettings.Default);
+        var response = await genService.Generate(model, prompt, settings);
         await bot.SendMessage(message.Chat, response.Text);
         return true;
     }

@@ -3,6 +3,7 @@ using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 using ParallAI.Core.Entities;
+using ParallAI.Core.Providers;
 using ParallAI.Core.States;
 using ParallAI.Core.ValueTypes;
 
