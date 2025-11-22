@@ -5,7 +5,7 @@ namespace ParallAI.Core.Services;
 
 public class GenerationService(IEnumerable<IGenService> genServices)
 {
-    public async Task<AiResponse> Generate(AiModel model, AiMessage aiMessage, PromptSettings promptSettings)
+    public async Task<AiResponse> Generate(AiModel model, AiMessage[] aiMessage, PromptSettings promptSettings)
     {
         var providerType = model.Provider.GetType();
         var genService = genServices.FirstOrDefault(service => service.ProviderType.IsAssignableFrom(providerType));

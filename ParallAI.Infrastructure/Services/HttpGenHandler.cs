@@ -7,11 +7,11 @@ using ParallAI.Infrastructure.ValueTypes;
 
 namespace ParallAI.Infrastructure.Services;
 
-public abstract class HttpGenHandler<TProvider, TRequest, TResponse>(
+public abstract class HttpGenHandler<TProvider, TRequest, TMessage, TResponse>(
     TProvider provider,
     AiModel model,
     HttpClient client,
-    ILogger<HttpGenHandler<TProvider, TRequest, TResponse>>? logger) 
+    ILogger<HttpGenHandler<TProvider, TRequest, TMessage, TResponse>>? logger) 
     : IGenerationHandler
     where TProvider : AiProvider
     where TResponse : IGenResponse
@@ -22,17 +22,20 @@ public abstract class HttpGenHandler<TProvider, TRequest, TResponse>(
     
     protected abstract Uri GetEndpointUrl();
     
-    protected abstract Task<TRequest> CreateTextRequest(TextMessage message, PromptSettings promptSettings);
+    protected abstract Task<TMessage> CreateTextMessage(TextMessage message, PromptSettings promptSettings);
 
-    protected abstract Task<TRequest> CreateFileRequest(FileMessage message, PromptSettings promptSettings);
+    protected abstract Task<TMessage> CreateFileMessage(FileMessage message, PromptSettings promptSettings);
+    
+    protected abstract Task<TRequest> CreateRequest(IEnumerable<TMessage> messages);
 
     protected abstract void FillHttpRequest(HttpRequestMessage request);
     
-    public async Task<AiResponse> Generate(AiMessage aiMessage, PromptSettings promptSettings)
+    public async Task<AiResponse> Generate(AiMessage[] aiMessages, PromptSettings promptSettings)
     {
         var url = GetEndpointUrl();
         using var request = new HttpRequestMessage(HttpMethod.Post, url);
-        var aiRequest = await CreateRequest(aiMessage, promptSettings);
+        var messageTasks = aiMessages.Select(m => CreateMessage(m, promptSettings));
+        var aiRequest = await CreateRequest(await Task.WhenAll(messageTasks));
 
         FillHttpRequest(request);
         request.Content = JsonContent.Create(aiRequest, options: JsonSerializerOptions.Web);
@@ -46,12 +49,12 @@ public abstract class HttpGenHandler<TProvider, TRequest, TResponse>(
         return providerResponse!.ToTextResponse();
     }
     
-    private async Task<TRequest> CreateRequest(AiMessage aiMessage, PromptSettings promptSettings)
+    private async Task<TMessage> CreateMessage(AiMessage aiMessage, PromptSettings promptSettings)
     {
         return aiMessage switch
         {
-            FileMessage filePrompt => await CreateFileRequest(filePrompt, promptSettings),
-            TextMessage textPrompt => await CreateTextRequest(textPrompt, promptSettings),
+            FileMessage filePrompt => await CreateFileMessage(filePrompt, promptSettings),
+            TextMessage textPrompt => await CreateTextMessage(textPrompt, promptSettings),
             _ => throw new ArgumentOutOfRangeException(nameof(aiMessage), aiMessage, null)
         };
     }

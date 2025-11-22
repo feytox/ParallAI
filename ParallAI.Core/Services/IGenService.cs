@@ -6,5 +6,5 @@ namespace ParallAI.Core.Services;
 public interface IGenService
 {
     public Type ProviderType { get; }
-    public Task<AiResponse> Generate(AiProvider provider, AiModel model, AiMessage aiMessage, PromptSettings promptSettings);
+    public Task<AiResponse> Generate(AiProvider provider, AiModel model, AiMessage[] aiMessage, PromptSettings promptSettings);
 }
