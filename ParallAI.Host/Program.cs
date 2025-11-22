@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 using MongoDB.Driver;
 using ParallAI.Core;
 using ParallAI.Core.Entities;
+using ParallAI.Core.Providers;
 using ParallAI.Core.Repositories;
 using ParallAI.Core.Services;
 using ParallAI.Core.States;

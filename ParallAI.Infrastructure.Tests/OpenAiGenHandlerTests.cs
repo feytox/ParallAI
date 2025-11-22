@@ -2,7 +2,7 @@ using System.Text.Json;
 using FluentAssertions;
 using NUnit.Framework;
 using ParallAI.Core.Entities;
-using ParallAI.Core.ValueTypes;
+using ParallAI.Core.Providers;
 using ParallAI.Infrastructure.Services;
 using ParallAI.Infrastructure.ValueTypes;
 using RichardSzalay.MockHttp;
