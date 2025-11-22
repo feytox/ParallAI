@@ -1,5 +1,7 @@
 using System.Globalization;
+using ParallAI.Core.Entities;
 using ParallAI.Core.States;
+using ParallAI.Core.ValueTypes;
 using ParallAI.TeleBot.Core.StateActions;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -28,7 +30,12 @@ public class PresetTemperatureAction : IStepStateAction<PresetState, PresetStep>
         
         state.Temperature = temperature;
         
-        await bot.SendMessage(message.Chat, "Укажи бюджет размышлений");
+        var preset = new Preset(
+            Guid.NewGuid(),
+            state.Name!,
+            new PromptSettings(state.SystemPrompt, state.Temperature));
+        user.AddPreset(preset);
+        await bot.SendMessage(message.Chat, $"Вы добавили новый пресет {state.Name}");
         return true;
     }
 }

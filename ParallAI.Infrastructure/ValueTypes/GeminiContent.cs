@@ -7,10 +7,7 @@ namespace ParallAI.Infrastructure.ValueTypes;
 /// <remarks>
 /// <see href="https://ai.google.dev/api/caching#Content">Gemini API Reference</see>
 /// </remarks>
-public record GeminiContent(
-    GeminiContent.Part[] Parts,
-    [property: JsonConverter(typeof(JsonWebEnumConverter<GeminiContent.MessageRole>))]
-    GeminiContent.MessageRole Role)
+public record GeminiContent(GeminiContent.Part[] Parts, GeminiContent.MessageRole Role)
 {
     public string GetTextResponse()
     {
@@ -42,7 +39,8 @@ public record GeminiContent(
     public record Part(string? Text = null, FileData? FileData = null);
 
     public record FileData(string FileUri);
-
+    
+    [JsonConverter(typeof(JsonWebEnumConverter<MessageRole>))]
     public enum MessageRole
     {
         User,

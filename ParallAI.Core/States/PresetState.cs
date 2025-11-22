@@ -4,8 +4,7 @@ public enum PresetStep
 {
     Name,
     SystemPrompt,
-    Temperature,
-    ThinkingBudget
+    Temperature
 }
 
 public class PresetState() : SequentialState<PresetStep>(Enum.GetValues<PresetStep>())

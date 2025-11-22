@@ -1,9 +1,8 @@
 ﻿namespace ParallAI.Core.ValueTypes;
 
-// TODO: add thinking budget
-public record PromptSettings(string SystemPrompt, decimal Temperature, int ThinkingBudget)
+public record PromptSettings(string SystemPrompt, decimal Temperature, ThinkingBudget? ThinkingBudget = null)
 {
-    public static readonly PromptSettings Default = new("", new decimal(0.7), 2048);
+    public static readonly PromptSettings Default = new("", new decimal(0.7));
 
     public bool HasSystemInstruction => !string.IsNullOrEmpty(SystemPrompt);
 }

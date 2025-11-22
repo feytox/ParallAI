@@ -1,22 +1,31 @@
-﻿using ParallAI.Core.ValueTypes;
+﻿using System.Text.Json.Serialization;
+using ParallAI.Core.ValueTypes;
 
 namespace ParallAI.Infrastructure.ValueTypes;
 
 /// <remarks>
 /// <see href="https://platform.openai.com/docs/api-reference/chat/create">OpenAI API Reference</see>
 /// </remarks>
-public record OpenAiRequest(string Model, OpenAiMessage[] Messages, decimal Temperature)
+public record OpenAiRequest(
+    string Model,
+    OpenAiMessage[] Messages,
+    decimal Temperature,
+    [property: JsonPropertyName("reasoning_effort")]
+    OpenAiReasoningEffort ReasoningEffort
+)
 {
     public static OpenAiRequest Create(string modelId, TextPrompt prompt, PromptSettings promptSettings)
     {
         var messages = OpenAiMessage.Create(prompt, promptSettings).ToArray();
-        return new OpenAiRequest(modelId, messages, promptSettings.Temperature);
+        var effort = promptSettings.ThinkingBudget.ToOpenAi();
+        return new OpenAiRequest(modelId, messages, promptSettings.Temperature, effort);
     }
 
     public static OpenAiRequest Create(string modelId, FilePrompt prompt, IEnumerable<AiFile> files,
         PromptSettings promptSettings)
     {
         var messages = OpenAiMessage.Create(prompt, files, promptSettings).ToArray();
-        return new OpenAiRequest(modelId, messages, promptSettings.Temperature);
+        var effort = promptSettings.ThinkingBudget.ToOpenAi();
+        return new OpenAiRequest(modelId, messages, promptSettings.Temperature, effort);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 using ParallAI.Core.ValueTypes;
+using static ParallAI.Core.ValueTypes.ThinkingBudget;
 
 namespace ParallAI.Infrastructure.ValueTypes;
 
@@ -14,23 +15,38 @@ public record GeminiRequest(
 {
     public static GeminiRequest CreateText(TextPrompt prompt, PromptSettings settings)
     {
+        var thinkingConfig = ThinkingConfig.Create(settings.ThinkingBudget);
         return new GeminiRequest(
             Contents: GeminiContent.Create(prompt),
             SystemInstruction: GeminiContent.CreateFromText(settings.SystemPrompt),
-            GenerationConfig: new GenConfig(settings.Temperature, new ThinkingConfig(settings.ThinkingBudget))
+            GenerationConfig: new GenConfig(settings.Temperature, thinkingConfig)
         );
     }
 
     public static GeminiRequest CreateFile(FilePrompt prompt, IEnumerable<string> fileUrls, PromptSettings settings)
     {
+        var thinkingConfig = ThinkingConfig.Create(settings.ThinkingBudget);
         return new GeminiRequest(
             Contents: GeminiContent.Create(prompt, fileUrls),
             SystemInstruction: GeminiContent.CreateFromText(settings.SystemPrompt),
-            GenerationConfig: new GenConfig(settings.Temperature)
+            GenerationConfig: new GenConfig(settings.Temperature, thinkingConfig)
         );
     }
-    
+
     public record GenConfig(decimal Temperature, ThinkingConfig? ThinkingConfig = null);
 
-    public record ThinkingConfig(int ThinkingBudget);
+    public record ThinkingConfig(int ThinkingBudget)
+    {
+        public static ThinkingConfig? Create(ThinkingBudget? thinkingBudget)
+        {
+            if (thinkingBudget is null)
+                return null;
+
+            if (thinkingBudget == Dynamic)
+                return new ThinkingConfig(-1);
+
+            var budget = thinkingBudget.Value.ToThinkingTokens();
+            return new ThinkingConfig(budget);
+        }
+    }
 }
