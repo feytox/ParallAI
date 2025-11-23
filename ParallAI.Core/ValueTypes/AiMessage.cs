@@ -1,13 +1,10 @@
 ﻿namespace ParallAI.Core.ValueTypes;
 
-public abstract record AiMessage(Role role = Role.User)
-{
-    public Role Role { get; init; } = role;
-}
+public abstract record AiMessage(Role Role = Role.User);
 
-public record TextMessage(string Text, Role role = Role.User) : AiMessage(role);
+public record TextMessage(string Text, Role Role = Role.User) : AiMessage(Role);
 
-public record FileMessage(string Text, AiFileInfo[] Files, Role role) : TextMessage(Text, role)
+public record FileMessage(string Text, AiFileInfo[] Files, Role Role) : TextMessage(Text, Role)
 {
     private const string DefaultText = "Describe content";
 

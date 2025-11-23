@@ -17,24 +17,29 @@ public class OpenAiGenHandler(
     HttpClient client,
     IFileService fileService,
     ILogger<OpenAiGenHandler>? logger = null)
-    : HttpGenHandler<OpenAICompatibleProvider, OpenAiRequest, OpenAiResponse>(provider, model, client, logger)
+    : HttpGenHandler<OpenAICompatibleProvider, OpenAiRequest, OpenAiMessage, OpenAiResponse>(provider, model, client, logger)
 {
     protected override Uri GetEndpointUrl()
     {
         return Provider.EndpointUrl;
     }
 
-    protected override Task<OpenAiRequest> CreateTextRequest(TextMessage message, PromptSettings promptSettings)
+    protected override Task<OpenAiMessage> CreateTextMessage(TextMessage message)
     {
-        var request = OpenAiRequest.Create(Model.ModelId, message, promptSettings);
-        return Task.FromResult(request);
+        var content = message.ToOpenAiMessage();
+        return Task.FromResult(content);
     }
 
-    protected override async Task<OpenAiRequest> CreateFileRequest(FileMessage message, PromptSettings promptSettings)
+    protected override async Task<OpenAiMessage> CreateFileMessage(FileMessage message)
     {
         var fileTasks = message.Files.Select(async info => await fileService.DownloadFile(info));
         var files = await Task.WhenAll(fileTasks);
-        return OpenAiRequest.Create(Model.ModelId, message, files, promptSettings);
+        return message.ToOpenAiMessage(files);
+    }
+
+    protected override OpenAiRequest CreateRequest(IEnumerable<OpenAiMessage> messages, PromptSettings promptSettings)
+    {
+        return OpenAiRequest.Create(Model.ModelId, messages, promptSettings);
     }
 
     protected override void FillHttpRequest(HttpRequestMessage request)

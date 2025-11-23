@@ -9,24 +9,7 @@ namespace ParallAI.Infrastructure.ValueTypes;
 /// </remarks>
 public record OpenAiMessage(OpenAiContent Content, OpenAiMessage.MessageRole Role)
 {
-    public static IEnumerable<OpenAiMessage> Create(TextMessage message, PromptSettings promptSettings)
-    {
-        if (promptSettings.HasSystemInstruction)
-            yield return CreateSystemInstruction(promptSettings);
-
-        yield return new OpenAiMessage(OpenAiContent.Create(message.Text), MessageRole.User);
-    }
-
-    public static IEnumerable<OpenAiMessage> Create(FileMessage message, IEnumerable<AiFile> files,
-        PromptSettings promptSettings)
-    {
-        if (promptSettings.HasSystemInstruction)
-            yield return CreateSystemInstruction(promptSettings);
-
-        yield return new OpenAiMessage(OpenAiContent.Create(message.Text, files), MessageRole.User);
-    }
-
-    private static OpenAiMessage CreateSystemInstruction(PromptSettings promptSettings)
+    public static OpenAiMessage CreateSystemInstruction(PromptSettings promptSettings)
     {
         return new OpenAiMessage(OpenAiContent.Create(promptSettings.SystemPrompt), MessageRole.System);
     }
@@ -38,4 +21,23 @@ public record OpenAiMessage(OpenAiContent Content, OpenAiMessage.MessageRole Rol
         Assistant,
         System
     }
+}
+
+public static class OpenAiMappings
+{
+    private static OpenAiMessage.MessageRole ToOpenAiRole(this Role role)
+    {
+        return role switch
+        {
+            Role.User => OpenAiMessage.MessageRole.User,
+            Role.Assistant => OpenAiMessage.MessageRole.Assistant,
+            _ => throw new ArgumentException($"Unknown role: {role}")
+        };
+    }
+    
+    public static OpenAiMessage ToOpenAiMessage(this TextMessage message) 
+        => new OpenAiMessage(OpenAiContent.Create(message.Text), message.Role.ToOpenAiRole());
+    
+    public static OpenAiMessage ToOpenAiMessage(this FileMessage message, IEnumerable<AiFile> files) =>
+        new OpenAiMessage(OpenAiContent.Create(message.Text, files), message.Role.ToOpenAiRole());
 }
