@@ -35,21 +35,24 @@ public class Bot(
 
     private async Task HandleUpdate(ITelegramBotClient bot, Update update, CancellationToken cancellationToken)
     {
-        try
+        _ = Task.Run(async () =>
         {
-            await HandleUpdateOrThrow(bot, update);
-        }
-        catch (UserFriendlyException ex)
-        {
-            logger.LogError(ex.ToString());
-            await TrySendMessage(bot, update, ex.UserMessage);
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex.ToString());
-            await TrySendMessage(bot, update,
-                $"Упс...произошла непредвиденная ошибка {ex.GetType().Name}. Все вопросы к @feytox");
-        }
+            try
+            {
+                await HandleUpdateOrThrow(bot, update);
+            }
+            catch (UserFriendlyException ex)
+            {
+                logger.LogError(ex.ToString());
+                await TrySendMessage(bot, update, ex.UserMessage);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex.ToString());
+                await TrySendMessage(bot, update,
+                    $"Упс...произошла непредвиденная ошибка {ex.GetType().Name}. Все вопросы к @feytox");
+            }
+        }, cancellationToken);
     }
 
     private async Task HandleUpdateOrThrow(ITelegramBotClient bot, Update update)
