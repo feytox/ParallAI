@@ -34,7 +34,7 @@ public abstract class HttpGenHandler<TProvider, TRequest, TMessage, TResponse>(
     {
         var url = GetEndpointUrl();
         using var request = new HttpRequestMessage(HttpMethod.Post, url);
-        var messageTasks = aiMessages.Select(m => CreateMessage(m));
+        var messageTasks = aiMessages.Select(async m => await CreateMessage(m));
         var aiRequest = CreateRequest(await Task.WhenAll(messageTasks), promptSettings);
 
         FillHttpRequest(request);
