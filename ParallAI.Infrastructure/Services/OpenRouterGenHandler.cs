@@ -17,23 +17,28 @@ public class OpenRouterGenHandler(
     HttpClient client,
     IFileService fileService,
     ILogger<OpenRouterGenHandler>? logger = null)
-    : HttpGenHandler<OpenRouterProvider, OpenRouterRequest, OpenAiResponse>(provider, model, client, logger)
+    : HttpGenHandler<OpenRouterProvider, OpenRouterRequest, OpenAiMessage, OpenAiResponse>(provider, model, client, logger)
 {
     private static readonly Uri BaseUrl = new("https://openrouter.ai/api/v1/chat/completions");
 
     protected override Uri GetEndpointUrl() => BaseUrl;
-
-    protected override Task<OpenRouterRequest> CreateTextRequest(TextMessage message, PromptSettings promptSettings)
+    
+    protected override Task<OpenAiMessage> CreateTextMessage(TextMessage message)
     {
-        var request = OpenRouterRequest.Create(Model.ModelId, message, promptSettings);
-        return Task.FromResult(request);
+        var content = message.ToOpenAiMessage();
+        return Task.FromResult(content);
     }
 
-    protected override async Task<OpenRouterRequest> CreateFileRequest(FileMessage message, PromptSettings promptSettings)
+    protected override async Task<OpenAiMessage> CreateFileMessage(FileMessage message)
     {
         var fileTasks = message.Files.Select(async info => await fileService.DownloadFile(info));
         var files = await Task.WhenAll(fileTasks);
-        return OpenRouterRequest.Create(Model.ModelId, message, files, promptSettings);
+        return message.ToOpenAiMessage(files);
+    }
+
+    protected override OpenRouterRequest CreateRequest(IEnumerable<OpenAiMessage> messages, PromptSettings promptSettings)
+    {
+        return OpenRouterRequest.Create(Model.ModelId, messages, promptSettings);
     }
 
     protected override void FillHttpRequest(HttpRequestMessage request)

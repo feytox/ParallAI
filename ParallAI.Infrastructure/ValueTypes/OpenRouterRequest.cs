@@ -9,21 +9,14 @@ public record OpenRouterRequest(
     decimal Temperature,
     OpenRouterRequest.ReasoningConfig? Reasoning = null)
 {
-    public static OpenRouterRequest Create(string modelId, TextMessage message, PromptSettings promptSettings)
-    {
-        var messages = OpenAiMessage.Create(message, promptSettings).ToArray();
-        var effort = promptSettings.ThinkingBudget.ToOpenAi();
-        var reasoning = new EffortReasoning(effort);
-        return new OpenRouterRequest(modelId, messages, promptSettings.Temperature, reasoning);
-    }
-
-    public static OpenRouterRequest Create(string modelId, FileMessage message, IEnumerable<AiFile> files,
+    public static OpenRouterRequest Create(string modelId, IEnumerable<OpenAiMessage> messages,
         PromptSettings promptSettings)
     {
-        var messages = OpenAiMessage.Create(message, files, promptSettings).ToArray();
+        if (promptSettings.HasSystemInstruction)
+            messages = new [] {OpenAiMessage.CreateSystemInstruction(promptSettings)}.Concat(messages);
         var effort = promptSettings.ThinkingBudget.ToOpenAi();
         var reasoning = new EffortReasoning(effort);
-        return new OpenRouterRequest(modelId, messages, promptSettings.Temperature, reasoning);
+        return new OpenRouterRequest(modelId, messages.ToArray(), promptSettings.Temperature, reasoning);
     }
     
     [JsonDerivedType(typeof(MaxTokensReasoning))]
