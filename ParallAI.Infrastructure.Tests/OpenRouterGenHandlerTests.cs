@@ -9,7 +9,7 @@ using RichardSzalay.MockHttp;
 namespace ParallAI.Infrastructure.Tests;
 
 public class OpenRouterGenHandlerTests
-    : HttpGenHandlerTests<OpenRouterGenHandler, OpenRouterProvider, OpenRouterRequest, OpenAiResponse>
+    : HttpGenHandlerTests<OpenRouterGenHandler, OpenRouterProvider, OpenRouterRequest, OpenAiMessage, OpenAiResponse>
 {
     protected override string ExpectedUrl => "https://openrouter.ai/api/v1/chat/completions";
 
@@ -28,14 +28,14 @@ public class OpenRouterGenHandlerTests
         var fakeApiResponse = new OpenAiResponse([fakeResponseChoice]);
 
         var expectedAiResponse = fakeApiResponse.ToTextResponse();
-        var expectedRequest = OpenRouterRequest.Create(ModelId, DefaultMessage, DefaultSettings);
+        var expectedRequest = OpenRouterRequest.Create(ModelId, [DefaultMessage.ToOpenAiMessage()], DefaultSettings);
 
         MockHttp.When(HttpMethod.Post, ExpectedUrl)
             .WithHeaders("Authorization", $"Bearer {ValidApiKey}")
             .WithContent(JsonSerializer.Serialize(expectedRequest, JsonSerializerOptions.Web))
             .Respond("application/json", JsonSerializer.Serialize(fakeApiResponse));
 
-        var result = await Handler.Generate(DefaultMessage, DefaultSettings);
+        var result = await Handler.Generate([DefaultMessage], DefaultSettings);
 
         MockHttp.VerifyNoOutstandingExpectation();
         result.Should().BeEquivalentTo(expectedAiResponse);

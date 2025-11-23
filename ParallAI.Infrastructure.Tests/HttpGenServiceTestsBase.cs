@@ -15,8 +15,8 @@ using RichardSzalay.MockHttp;
 namespace ParallAI.Infrastructure.Tests;
 
 [TestFixture]
-public abstract class HttpGenHandlerTests<THandler, TProvider, TRequest, TResponse> 
-    where THandler : HttpGenHandler<TProvider, TRequest, TResponse> 
+public abstract class HttpGenHandlerTests<THandler, TProvider, TRequest, TMessage, TResponse> 
+    where THandler : HttpGenHandler<TProvider, TRequest, TMessage, TResponse> 
     where TProvider : AiProvider
     where TResponse : IGenResponse
 {
@@ -63,7 +63,7 @@ public abstract class HttpGenHandlerTests<THandler, TProvider, TRequest, TRespon
         MockHttp.When(HttpMethod.Post, ExpectedUrl)
             .Respond(statusCode);
         
-        await Handler.Awaiting(s => s.Generate(DefaultMessage, DefaultSettings))
+        await Handler.Awaiting(s => s.Generate([DefaultMessage], DefaultSettings))
             .Should().ThrowAsync<HttpRequestException>();
     }
     
@@ -75,7 +75,7 @@ public abstract class HttpGenHandlerTests<THandler, TProvider, TRequest, TRespon
         MockHttp.When(HttpMethod.Post, ExpectedUrl)
             .Respond("application/json", malformedJson);
         
-        await Handler.Awaiting(s => s.Generate(DefaultMessage, DefaultSettings))
+        await Handler.Awaiting(s => s.Generate([DefaultMessage], DefaultSettings))
             .Should().ThrowAsync<JsonException>();
     }
 }
