@@ -18,22 +18,9 @@ public record GeminiContent(GeminiContent.Part[] Parts, GeminiContent.MessageRol
         return part.Text!;
     }
 
-    public static GeminiContent[] Create(TextMessage message) => [CreateFromText(message.Text)];
-
-    public static GeminiContent[] Create(FileMessage message, IEnumerable<string> fileUrls)
+    public static GeminiContent CreateFromText(string text, MessageRole role)
     {
-        var parts = fileUrls
-            .Select(url => new Part(FileData: new FileData(url)))
-            .Append(new Part(message.Text))
-            .Reverse()
-            .ToArray();
-
-        return [new GeminiContent(parts, MessageRole.User)];
-    }
-
-    public static GeminiContent CreateFromText(string text)
-    {
-        return new GeminiContent([new Part(Text: text)], MessageRole.User);
+        return new GeminiContent([new Part(Text: text)], role);
     }
 
     public record Part(string? Text = null, FileData? FileData = null);
@@ -45,5 +32,30 @@ public record GeminiContent(GeminiContent.Part[] Parts, GeminiContent.MessageRol
     {
         User,
         Model
+    }
+}
+public static class GeminiContentMappings
+{
+    private static GeminiContent.MessageRole ToGeminiRole(this Role role)
+    {
+        return role switch
+        {
+            Role.User => GeminiContent.MessageRole.User,
+            Role.Assistant => GeminiContent.MessageRole.Model,
+            _ => throw new ArgumentException($"Unknown role: {role}")
+        };
+    }
+    public static GeminiContent ToGeminiContent(this TextMessage message) => 
+        GeminiContent.CreateFromText(message.Text, message.Role.ToGeminiRole());
+    
+    public static GeminiContent ToGeminiContent(this FileMessage message, IEnumerable<string> fileUrls)
+    {
+        var parts = fileUrls
+            .Select(url => new GeminiContent.Part(FileData: new GeminiContent.FileData(url)))
+            .Append(new GeminiContent.Part(message.Text))
+            .Reverse()
+            .ToArray();
+
+        return new GeminiContent(parts, message.Role.ToGeminiRole());
     }
 }

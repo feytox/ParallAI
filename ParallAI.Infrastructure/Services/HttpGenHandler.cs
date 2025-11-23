@@ -22,11 +22,11 @@ public abstract class HttpGenHandler<TProvider, TRequest, TMessage, TResponse>(
     
     protected abstract Uri GetEndpointUrl();
     
-    protected abstract Task<TMessage> CreateTextMessage(TextMessage message, PromptSettings promptSettings);
+    protected abstract Task<TMessage> CreateTextMessage(TextMessage message);
 
-    protected abstract Task<TMessage> CreateFileMessage(FileMessage message, PromptSettings promptSettings);
+    protected abstract Task<TMessage> CreateFileMessage(FileMessage message);
     
-    protected abstract Task<TRequest> CreateRequest(IEnumerable<TMessage> messages);
+    protected abstract TRequest CreateRequest(IEnumerable<TMessage> messages, PromptSettings promptSettings);
 
     protected abstract void FillHttpRequest(HttpRequestMessage request);
     
@@ -34,8 +34,8 @@ public abstract class HttpGenHandler<TProvider, TRequest, TMessage, TResponse>(
     {
         var url = GetEndpointUrl();
         using var request = new HttpRequestMessage(HttpMethod.Post, url);
-        var messageTasks = aiMessages.Select(m => CreateMessage(m, promptSettings));
-        var aiRequest = await CreateRequest(await Task.WhenAll(messageTasks));
+        var messageTasks = aiMessages.Select(m => CreateMessage(m));
+        var aiRequest = CreateRequest(await Task.WhenAll(messageTasks), promptSettings);
 
         FillHttpRequest(request);
         request.Content = JsonContent.Create(aiRequest, options: JsonSerializerOptions.Web);
@@ -49,12 +49,12 @@ public abstract class HttpGenHandler<TProvider, TRequest, TMessage, TResponse>(
         return providerResponse!.ToTextResponse();
     }
     
-    private async Task<TMessage> CreateMessage(AiMessage aiMessage, PromptSettings promptSettings)
+    private async Task<TMessage> CreateMessage(AiMessage aiMessage)
     {
         return aiMessage switch
         {
-            FileMessage filePrompt => await CreateFileMessage(filePrompt, promptSettings),
-            TextMessage textPrompt => await CreateTextMessage(textPrompt, promptSettings),
+            FileMessage filePrompt => await CreateFileMessage(filePrompt),
+            TextMessage textPrompt => await CreateTextMessage(textPrompt),
             _ => throw new ArgumentOutOfRangeException(nameof(aiMessage), aiMessage, null)
         };
     }
