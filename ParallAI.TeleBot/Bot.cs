@@ -51,7 +51,7 @@ public class Bot(
             {
                 logger.LogError(ex.ToString());
                 await TrySendMessage(bot, update,
-                    $"Упс...произошла непредвиденная ошибка {ex.GetType().Name}. Все вопросы к @feytox");
+                    $"Упс...произошла непредвиденная ошибка {ex.GetType().Name}");
             }
         }, cancellationToken);
         return Task.CompletedTask;
