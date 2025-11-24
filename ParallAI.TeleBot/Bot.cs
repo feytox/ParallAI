@@ -33,9 +33,10 @@ public class Bot(
         return Task.CompletedTask;
     }
 
-    private async Task HandleUpdate(ITelegramBotClient bot, Update update, CancellationToken cancellationToken)
+    private Task HandleUpdate(ITelegramBotClient bot, Update update, CancellationToken cancellationToken)
     {
-        _ = Task.Run(async () =>
+        // TODO: maybe change (issue #48)
+        Task.Run(async () =>
         {
             try
             {
@@ -53,6 +54,7 @@ public class Bot(
                     $"Упс...произошла непредвиденная ошибка {ex.GetType().Name}. Все вопросы к @feytox");
             }
         }, cancellationToken);
+        return Task.CompletedTask;
     }
 
     private async Task HandleUpdateOrThrow(ITelegramBotClient bot, Update update)
