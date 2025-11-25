@@ -22,7 +22,7 @@ public class RequestPromptAction(GenerationService genService, MediaGroupCollect
             return false;
         
         var model = user.UserModels.First();
-        var prompt = MessageExt.CreatePrompt(messages);
+        var prompt = AiMessageHelper.CreateAiMessage(messages);
         var settings = PromptSettings.Default with { ThinkingBudget = ThinkingBudget.High };
 
         var response = await genService.Generate(model, [prompt], settings);

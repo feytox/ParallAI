@@ -13,7 +13,7 @@ public record OpenRouterRequest(
         PromptSettings promptSettings)
     {
         if (promptSettings.HasSystemInstruction)
-            messages = new [] {OpenAiMessage.CreateSystemInstruction(promptSettings)}.Concat(messages);
+            messages = messages.Prepend(OpenAiMessage.CreateSystemInstruction(promptSettings));
         var effort = promptSettings.ThinkingBudget.ToOpenAi();
         var reasoning = new EffortReasoning(effort);
         return new OpenRouterRequest(modelId, messages.ToArray(), promptSettings.Temperature, reasoning);

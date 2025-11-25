@@ -26,7 +26,7 @@ public record GeminiContent(GeminiContent.Part[] Parts, GeminiContent.MessageRol
     public record Part(string? Text = null, FileData? FileData = null);
 
     public record FileData(string FileUri);
-    
+
     [JsonConverter(typeof(JsonWebEnumConverter<MessageRole>))]
     public enum MessageRole
     {
@@ -34,6 +34,7 @@ public record GeminiContent(GeminiContent.Part[] Parts, GeminiContent.MessageRol
         Model
     }
 }
+
 public static class GeminiContentMappings
 {
     private static GeminiContent.MessageRole ToGeminiRole(this Role role)
@@ -45,9 +46,10 @@ public static class GeminiContentMappings
             _ => throw new ArgumentException($"Unknown role: {role}")
         };
     }
-    public static GeminiContent ToGeminiContent(this TextMessage message) => 
+
+    public static GeminiContent ToGeminiContent(this TextMessage message) =>
         GeminiContent.CreateFromText(message.Text, message.Role.ToGeminiRole());
-    
+
     public static GeminiContent ToGeminiContent(this FileMessage message, IEnumerable<string> fileUrls)
     {
         var parts = fileUrls

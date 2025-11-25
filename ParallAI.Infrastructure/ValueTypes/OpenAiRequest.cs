@@ -18,7 +18,7 @@ public record OpenAiRequest(
         PromptSettings promptSettings)
     {
         if (promptSettings.HasSystemInstruction)
-            messages = new [] {OpenAiMessage.CreateSystemInstruction(promptSettings)}.Concat(messages);
+            messages = messages.Prepend(OpenAiMessage.CreateSystemInstruction(promptSettings));
         var effort = promptSettings.ThinkingBudget.ToOpenAi();
         return new OpenAiRequest(modelId, messages.ToArray(), promptSettings.Temperature, effort);
     }
