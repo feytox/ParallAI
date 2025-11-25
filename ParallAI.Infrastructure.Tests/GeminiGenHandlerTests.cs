@@ -11,7 +11,7 @@ namespace ParallAI.Infrastructure.Tests;
 
 [TestFixture]
 public class GeminiGenHandlerTests
-    : HttpGenHandlerTests<GeminiGenHandler, GeminiProvider, GeminiRequest, GeminiResponse>
+    : HttpGenHandlerTests<GeminiGenHandler, GeminiProvider, GeminiRequest, GeminiContent, GeminiResponse>
 {
     protected override string ExpectedUrl =>
         $"https://generativelanguage.googleapis.com/v1beta/models/{ModelId}:generateContent";
@@ -32,14 +32,14 @@ public class GeminiGenHandlerTests
         var fakeApiResponse = new GeminiResponse([responseCandidate]);
 
         var expectedAiResponse = fakeApiResponse.ToTextResponse();
-        var expectedRequest = GeminiRequest.CreateText(DefaultPrompt, DefaultSettings);
+        var expectedRequest = GeminiRequest.Create([DefaultMessage.ToGeminiContent()], DefaultSettings);
 
         MockHttp.When(HttpMethod.Post, ExpectedUrl)
             .WithHeaders("x-goog-api-key", ValidApiKey)
             .WithContent(JsonSerializer.Serialize(expectedRequest, JsonSerializerOptions.Web))
             .Respond("application/json", JsonSerializer.Serialize(fakeApiResponse));
 
-        var result = await Handler.Generate(DefaultPrompt, DefaultSettings);
+        var result = await Handler.Generate([DefaultMessage], DefaultSettings);
 
         MockHttp.VerifyNoOutstandingExpectation();
         result.Should().BeEquivalentTo(expectedAiResponse);

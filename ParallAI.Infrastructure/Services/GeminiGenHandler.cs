@@ -19,7 +19,7 @@ public class GeminiGenHandler(
     HttpClient client,
     IFileService fileService,
     ILogger<GeminiGenHandler>? logger = null)
-    : HttpGenHandler<GeminiProvider, GeminiRequest, GeminiResponse>(provider, model, client, logger)
+    : HttpGenHandler<GeminiProvider, GeminiRequest, GeminiContent, GeminiResponse>(provider, model, client, logger)
 {
     private const string BaseUrl = "https://generativelanguage.googleapis.com/v1beta/models";
     private const string UploadUrl = "https://generativelanguage.googleapis.com/upload/v1beta/files";
@@ -29,17 +29,22 @@ public class GeminiGenHandler(
         return new Uri($"{BaseUrl}/{Model.ModelId}:generateContent");
     }
 
-    protected override Task<GeminiRequest> CreateTextRequest(TextPrompt prompt, PromptSettings promptSettings)
+    protected override Task<GeminiContent> CreateTextMessage(TextMessage message)
     {
-        var request = GeminiRequest.CreateText(prompt, promptSettings);
-        return Task.FromResult(request);
+        var content = message.ToGeminiContent();
+        return Task.FromResult(content);
     }
 
-    protected override async Task<GeminiRequest> CreateFileRequest(FilePrompt prompt, PromptSettings promptSettings)
+    protected override async Task<GeminiContent> CreateFileMessage(FileMessage message)
     {
-        var fileUrlTasks = prompt.Files.Select(async info => await DownloadAndUploadFile(info));
+        var fileUrlTasks = message.Files.Select(async info => await DownloadAndUploadFile(info));
         var fileUrls = await Task.WhenAll(fileUrlTasks);
-        return GeminiRequest.CreateFile(prompt, fileUrls, promptSettings);
+        return message.ToGeminiContent(fileUrls);
+    }
+
+    protected override GeminiRequest CreateRequest(IEnumerable<GeminiContent> messages, PromptSettings promptSettings)
+    {
+        return GeminiRequest.Create(messages, promptSettings);
     }
 
     protected override void FillHttpRequest(HttpRequestMessage request)

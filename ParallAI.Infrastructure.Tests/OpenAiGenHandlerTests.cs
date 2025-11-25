@@ -11,7 +11,7 @@ namespace ParallAI.Infrastructure.Tests;
 
 [TestFixture]
 public class OpenAiGenHandlerTests
-    : HttpGenHandlerTests<OpenAiGenHandler, OpenAICompatibleProvider, OpenAiRequest, OpenAiResponse>
+    : HttpGenHandlerTests<OpenAiGenHandler, OpenAICompatibleProvider, OpenAiRequest, OpenAiMessage, OpenAiResponse>
 {
     protected override string ExpectedUrl => "https://api.openai.com/v1/chat/completions";
 
@@ -32,14 +32,14 @@ public class OpenAiGenHandlerTests
         var fakeApiResponse = new OpenAiResponse([fakeResponseChoice]);
 
         var expectedAiResponse = fakeApiResponse.ToTextResponse();
-        var expectedRequest = OpenAiRequest.Create(ModelId, DefaultPrompt, DefaultSettings);
+        var expectedRequest = OpenAiRequest.Create(ModelId, [DefaultMessage.ToOpenAiMessage()], DefaultSettings);
 
         MockHttp.When(HttpMethod.Post, ExpectedUrl)
             .WithHeaders("Authorization", $"Bearer {ValidApiKey}")
             .WithContent(JsonSerializer.Serialize(expectedRequest, JsonSerializerOptions.Web))
             .Respond("application/json", JsonSerializer.Serialize(fakeApiResponse));
 
-        var result = await Handler.Generate(DefaultPrompt, DefaultSettings);
+        var result = await Handler.Generate([DefaultMessage], DefaultSettings);
 
         MockHttp.VerifyNoOutstandingExpectation();
         result.Should().BeEquivalentTo(expectedAiResponse);

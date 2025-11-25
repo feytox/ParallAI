@@ -10,9 +10,9 @@ public class HandledGenService<THandler, TProvider>(Func<TProvider, AiModel, THa
     where TProvider : AiProvider
 {
     public async Task<AiResponse> Generate(TProvider provider, AiModel model, 
-        Prompt prompt, PromptSettings promptSettings)
+        AiMessage[] aiMessages, PromptSettings promptSettings)
     {
         var handler = handlerFactory(provider, model);
-        return await handler.Generate(prompt, promptSettings);
+        return await handler.Generate(aiMessages, promptSettings);
     }
 }

@@ -7,11 +7,11 @@ using ParallAI.Infrastructure.ValueTypes;
 
 namespace ParallAI.Infrastructure.Services;
 
-public abstract class HttpGenHandler<TProvider, TRequest, TResponse>(
+public abstract class HttpGenHandler<TProvider, TRequest, TMessage, TResponse>(
     TProvider provider,
     AiModel model,
     HttpClient client,
-    ILogger<HttpGenHandler<TProvider, TRequest, TResponse>>? logger) 
+    ILogger<HttpGenHandler<TProvider, TRequest, TMessage, TResponse>>? logger) 
     : IGenerationHandler
     where TProvider : AiProvider
     where TResponse : IGenResponse
@@ -22,17 +22,20 @@ public abstract class HttpGenHandler<TProvider, TRequest, TResponse>(
     
     protected abstract Uri GetEndpointUrl();
     
-    protected abstract Task<TRequest> CreateTextRequest(TextPrompt prompt, PromptSettings promptSettings);
+    protected abstract Task<TMessage> CreateTextMessage(TextMessage message);
 
-    protected abstract Task<TRequest> CreateFileRequest(FilePrompt prompt, PromptSettings promptSettings);
+    protected abstract Task<TMessage> CreateFileMessage(FileMessage message);
+    
+    protected abstract TRequest CreateRequest(IEnumerable<TMessage> messages, PromptSettings promptSettings);
 
     protected abstract void FillHttpRequest(HttpRequestMessage request);
     
-    public async Task<AiResponse> Generate(Prompt prompt, PromptSettings promptSettings)
+    public async Task<AiResponse> Generate(AiMessage[] aiMessages, PromptSettings promptSettings)
     {
         var url = GetEndpointUrl();
         using var request = new HttpRequestMessage(HttpMethod.Post, url);
-        var aiRequest = await CreateRequest(prompt, promptSettings);
+        var messageTasks = aiMessages.Select(async m => await CreateMessage(m));
+        var aiRequest = CreateRequest(await Task.WhenAll(messageTasks), promptSettings);
 
         FillHttpRequest(request);
         request.Content = JsonContent.Create(aiRequest, options: JsonSerializerOptions.Web);
@@ -46,13 +49,13 @@ public abstract class HttpGenHandler<TProvider, TRequest, TResponse>(
         return providerResponse!.ToTextResponse();
     }
     
-    private async Task<TRequest> CreateRequest(Prompt prompt, PromptSettings promptSettings)
+    private async Task<TMessage> CreateMessage(AiMessage aiMessage)
     {
-        return prompt switch
+        return aiMessage switch
         {
-            FilePrompt filePrompt => await CreateFileRequest(filePrompt, promptSettings),
-            TextPrompt textPrompt => await CreateTextRequest(textPrompt, promptSettings),
-            _ => throw new ArgumentOutOfRangeException(nameof(prompt), prompt, null)
+            FileMessage filePrompt => await CreateFileMessage(filePrompt),
+            TextMessage textPrompt => await CreateTextMessage(textPrompt),
+            _ => throw new ArgumentOutOfRangeException(nameof(aiMessage), aiMessage, null)
         };
     }
 }

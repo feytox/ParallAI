@@ -15,8 +15,8 @@ using RichardSzalay.MockHttp;
 namespace ParallAI.Infrastructure.Tests;
 
 [TestFixture]
-public abstract class HttpGenHandlerTests<THandler, TProvider, TRequest, TResponse> 
-    where THandler : HttpGenHandler<TProvider, TRequest, TResponse> 
+public abstract class HttpGenHandlerTests<THandler, TProvider, TRequest, TMessage, TResponse> 
+    where THandler : HttpGenHandler<TProvider, TRequest, TMessage, TResponse> 
     where TProvider : AiProvider
     where TResponse : IGenResponse
 {
@@ -30,7 +30,7 @@ public abstract class HttpGenHandlerTests<THandler, TProvider, TRequest, TRespon
     private HttpClient httpClient;
 
     protected abstract string ExpectedUrl { get; }
-    protected TextPrompt DefaultPrompt;
+    protected TextMessage DefaultMessage;
     protected PromptSettings DefaultSettings;
 
     [SetUp]
@@ -44,7 +44,7 @@ public abstract class HttpGenHandlerTests<THandler, TProvider, TRequest, TRespon
         var model = new AiModel(Guid.NewGuid(), ModelId, ModelName, provider);
         Handler = CreateHandler(httpClient, model, provider);
         
-        DefaultPrompt = new TextPrompt("prompt");
+        DefaultMessage = new TextMessage("prompt");
         DefaultSettings = PromptSettings.Default;
     }
     
@@ -63,7 +63,7 @@ public abstract class HttpGenHandlerTests<THandler, TProvider, TRequest, TRespon
         MockHttp.When(HttpMethod.Post, ExpectedUrl)
             .Respond(statusCode);
         
-        await Handler.Awaiting(s => s.Generate(DefaultPrompt, DefaultSettings))
+        await Handler.Awaiting(s => s.Generate([DefaultMessage], DefaultSettings))
             .Should().ThrowAsync<HttpRequestException>();
     }
     
@@ -75,7 +75,7 @@ public abstract class HttpGenHandlerTests<THandler, TProvider, TRequest, TRespon
         MockHttp.When(HttpMethod.Post, ExpectedUrl)
             .Respond("application/json", malformedJson);
         
-        await Handler.Awaiting(s => s.Generate(DefaultPrompt, DefaultSettings))
+        await Handler.Awaiting(s => s.Generate([DefaultMessage], DefaultSettings))
             .Should().ThrowAsync<JsonException>();
     }
 }

@@ -13,22 +13,12 @@ public record GeminiRequest(
     GeminiContent SystemInstruction,
     GeminiRequest.GenConfig GenerationConfig)
 {
-    public static GeminiRequest CreateText(TextPrompt prompt, PromptSettings settings)
+    public static GeminiRequest Create(IEnumerable<GeminiContent> messages, PromptSettings settings)
     {
         var thinkingConfig = ThinkingConfig.Create(settings.ThinkingBudget);
         return new GeminiRequest(
-            Contents: GeminiContent.Create(prompt),
-            SystemInstruction: GeminiContent.CreateFromText(settings.SystemPrompt),
-            GenerationConfig: new GenConfig(settings.Temperature, thinkingConfig)
-        );
-    }
-
-    public static GeminiRequest CreateFile(FilePrompt prompt, IEnumerable<string> fileUrls, PromptSettings settings)
-    {
-        var thinkingConfig = ThinkingConfig.Create(settings.ThinkingBudget);
-        return new GeminiRequest(
-            Contents: GeminiContent.Create(prompt, fileUrls),
-            SystemInstruction: GeminiContent.CreateFromText(settings.SystemPrompt),
+            Contents: messages.ToArray(),
+            SystemInstruction: GeminiContent.CreateFromText(settings.SystemPrompt, GeminiContent.MessageRole.User),
             GenerationConfig: new GenConfig(settings.Temperature, thinkingConfig)
         );
     }

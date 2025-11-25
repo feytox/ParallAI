@@ -14,18 +14,12 @@ public record OpenAiRequest(
     OpenAiReasoningEffort ReasoningEffort
 )
 {
-    public static OpenAiRequest Create(string modelId, TextPrompt prompt, PromptSettings promptSettings)
-    {
-        var messages = OpenAiMessage.Create(prompt, promptSettings).ToArray();
-        var effort = promptSettings.ThinkingBudget.ToOpenAi();
-        return new OpenAiRequest(modelId, messages, promptSettings.Temperature, effort);
-    }
-
-    public static OpenAiRequest Create(string modelId, FilePrompt prompt, IEnumerable<AiFile> files,
+    public static OpenAiRequest Create(string modelId, IEnumerable<OpenAiMessage> messages,
         PromptSettings promptSettings)
     {
-        var messages = OpenAiMessage.Create(prompt, files, promptSettings).ToArray();
+        if (promptSettings.HasSystemInstruction)
+            messages = messages.Prepend(OpenAiMessage.CreateSystemInstruction(promptSettings));
         var effort = promptSettings.ThinkingBudget.ToOpenAi();
-        return new OpenAiRequest(modelId, messages, promptSettings.Temperature, effort);
+        return new OpenAiRequest(modelId, messages.ToArray(), promptSettings.Temperature, effort);
     }
 }
