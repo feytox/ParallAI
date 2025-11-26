@@ -11,7 +11,6 @@ namespace ParallAI.Infrastructure.Mongo;
 
 public static class MongoMappings
 {
-    // TODO: refactor
     public static void Setup()
     {
         BsonSerializer.RegisterSerializer(typeof(Guid), new GuidSerializer(GuidRepresentation.Standard));
@@ -22,56 +21,57 @@ public static class MongoMappings
             classMap.MapProperty("Models");
             classMap.MapProperty("Presets");
         });
+        
+        RegisterAutoMaps(typeof(AiModel), typeof(Preset), typeof(UserStateMachine));
+        
+        RegisterProviders();
+        RegisterStates();
+    }
 
-        BsonClassMap.RegisterClassMap<AiModel>(classMap =>
+    private static void RegisterProviders()
+    {
+        BsonClassMap.RegisterClassMap<AiProvider>(cm =>
         {
-            classMap.AutoMap();
+            cm.AutoMap();
+            cm.SetIsRootClass(true);
         });
         
-        BsonClassMap.RegisterClassMap<Preset>(classMap =>
-        {
-            classMap.AutoMap();
-        });
+        RegisterDiscriminator<OpenAICompatibleProvider>("openai_compatible");
+        RegisterDiscriminator<GeminiProvider>("gemini");
+        RegisterDiscriminator<OpenRouterProvider>("openrouter");
+    }
 
-        BsonClassMap.RegisterClassMap<AiProvider>(classMap =>
+    private static void RegisterStates()
+    {
+        BsonClassMap.RegisterClassMap<UserState>(cm =>
         {
-            classMap.AutoMap();
-            classMap.SetIsRootClass(true);
+            cm.AutoMap();
+            cm.SetIsRootClass(true);
         });
         
-        BsonClassMap.RegisterClassMap<OpenAICompatibleProvider>(classMap =>
-        {
-            classMap.AutoMap();
-            classMap.SetDiscriminator("openai_compatible");
-        });
-        
-        BsonClassMap.RegisterClassMap<GeminiProvider>(classMap =>
-        {
-            classMap.AutoMap();
-            classMap.SetDiscriminator("gemini");
-        });
-        
-        BsonClassMap.RegisterClassMap<OpenRouterProvider>(classMap =>
-        {
-            classMap.AutoMap();
-            classMap.SetDiscriminator("openrouter");
-        });
-        
-        BsonClassMap.RegisterClassMap<UserStateMachine>(classMap =>
-        {
-            classMap.AutoMap();
-        });
-
-        BsonClassMap.RegisterClassMap<UserState>(classMap =>
-        {
-            classMap.AutoMap();
-            classMap.SetIsRootClass(true); 
-        });
-
-        var types = Assembly.GetAssembly(typeof(UserState))!
-            .GetTypes()
+        var stateTypes = typeof(UserState).Assembly.GetTypes()
             .Where(t => !t.IsAbstract && typeof(UserState).IsAssignableFrom(t));
-        foreach (var type in types)
+        foreach (var type in stateTypes)
             BsonClassMap.LookupClassMap(type);
+    }
+    
+    private static void RegisterAutoMaps(params Type[] types)
+    {
+        foreach (var type in types)
+        {
+            if (BsonClassMap.IsClassMapRegistered(type)) continue;
+            var cm = new BsonClassMap(type);
+            cm.AutoMap();
+            BsonClassMap.RegisterClassMap(cm);
+        }
+    }
+    
+    private static void RegisterDiscriminator<T>(string discriminator)
+    {
+        BsonClassMap.RegisterClassMap<T>(cm =>
+        {
+            cm.AutoMap();
+            cm.SetDiscriminator(discriminator);
+        });
     }
 }
