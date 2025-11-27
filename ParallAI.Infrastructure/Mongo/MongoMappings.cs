@@ -58,7 +58,8 @@ public static class MongoMappings
     {
         foreach (var type in types)
         {
-            if (BsonClassMap.IsClassMapRegistered(type)) continue;
+            if (BsonClassMap.IsClassMapRegistered(type)) 
+                continue;
             var cm = new BsonClassMap(type);
             cm.AutoMap();
             BsonClassMap.RegisterClassMap(cm);
