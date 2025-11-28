@@ -72,7 +72,7 @@ public abstract class SettingsHandler<TState> where TState : SettingsState
         return true;
     }
     
-    private async Task SendPartsList(TState state, ChatId chatId, ITelegramBotClient bot)
+    public async Task SendPartsList(TState state, ChatId chatId, ITelegramBotClient bot)
     {
         var buttons = parts
             .Select((part, i) => InlineKeyboardButton.WithCallbackData(part.Name, $"{callbackId}:{i}"))

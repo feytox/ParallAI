@@ -19,6 +19,7 @@ public static class MongoMappings
             classMap.AutoMap();
             classMap.MapProperty("Models");
             classMap.MapProperty("Presets");
+            classMap.MapProperty("ChosenPreset");
         });
 
         BsonClassMap.RegisterClassMap<UserStateMachine>(cm =>

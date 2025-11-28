@@ -7,7 +7,7 @@ public class Preset(
     string name,
     PromptSettings promptSettings) : Entity<Guid>(id)
 {
-    public string Name { get; private set; } = name;
+    public string Name { get; set; } = name;
 
-    public PromptSettings PromptSettings { get; private set; } = promptSettings;
+    public PromptSettings PromptSettings { get; set; } = promptSettings;
 }

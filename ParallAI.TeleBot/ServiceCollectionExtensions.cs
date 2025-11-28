@@ -8,6 +8,7 @@ using ParallAI.TeleBot.Core.Commands;
 using ParallAI.TeleBot.Core.Settings;
 using ParallAI.TeleBot.Core.StateActions;
 using ParallAI.TeleBot.Services;
+using ParallAI.TeleBot.Settings;
 using ParallAI.TeleBot.StateActions;
 
 namespace ParallAI.TeleBot;
@@ -30,6 +31,8 @@ public static class ServiceCollectionExtensions
         RegisterSequentialState<PresetState, PresetStep>(services, assembly, true);
         RegisterSequentialState<RequestState, RequestStep>(services, assembly, true);
         services.AddSingleton<IStateAction, MainMenuStateAction>();
+        
+        services.AddSettingsState<PresetSettingsState, PresetSettingsHandler>();
     }
 
     private static void AddScannedHandlers<TInterface, TAttribute>(IServiceCollection services, Assembly assembly)
@@ -65,10 +68,11 @@ public static class ServiceCollectionExtensions
             services.AddSingleton(typeof(IStepStateAction<TState, TStep>), type);
     }
 
-    private static void RegisterSettingsState<TState, THandler>(this IServiceCollection services)
+    private static void AddSettingsState<TState, THandler>(this IServiceCollection services)
         where TState : SettingsState where THandler : SettingsHandler<TState>
     {
         services.AddSingleton<SettingsHandler<TState>, THandler>();
-        services.AddSingleton<SettingsStateAction<TState>>();
+        services.AddSingleton<THandler>();
+        services.AddSingleton<IStateAction, SettingsStateAction<TState>>();
     }
 }
