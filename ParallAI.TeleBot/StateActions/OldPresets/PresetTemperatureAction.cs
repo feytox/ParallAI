@@ -7,7 +7,7 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using User = ParallAI.Core.Entities.User;
 
-namespace ParallAI.TeleBot.Commands.Presets.StateActions;
+namespace ParallAI.TeleBot.StateActions.OldPresets;
 
 public class PresetTemperatureAction : IStepStateAction<PresetState, PresetStep>
 {

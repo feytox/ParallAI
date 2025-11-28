@@ -6,7 +6,7 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 using User = ParallAI.Core.Entities.User;
 
-namespace ParallAI.TeleBot.Callback.Presets;
+namespace ParallAI.TeleBot.Callback.OldPresets;
 
 [CallbackQuery("preset")]
 public class PresetCallback(IRepository<User, long> users) : PresetCallbackQuery(users)
