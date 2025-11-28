@@ -9,13 +9,15 @@ public class SequentialStateAction<TState, TStep> : StateAction<TState>
     where TState : SequentialState<TStep> where TStep : notnull
 {
     private readonly Dictionary<TStep, IStepStateAction<TState, TStep>> stepToAction;
+    private readonly bool endSilently;
 
-    public SequentialStateAction(IEnumerable<IStepStateAction<TState, TStep>> actions)
+    public SequentialStateAction(IEnumerable<IStepStateAction<TState, TStep>> actions, bool endSilently)
     {
         stepToAction = actions.ToDictionary(action => action.StateStep);
+        this.endSilently = endSilently;
     }
 
-    protected override async Task Execute(TState state, Message message, ITelegramBotClient bot, User user)
+    protected override async Task<bool> Execute(TState state, Message message, ITelegramBotClient bot, User user)
     {
         var currentStep = state.Current;
         if (!stepToAction.TryGetValue(currentStep, out var action))
@@ -23,15 +25,17 @@ public class SequentialStateAction<TState, TStep> : StateAction<TState>
 
         var nextStep = await action.Execute(state, message, bot, user);
         if (nextStep)
-            NextStepOrReset(state, user);
+            NextStepOrEnd(state, user);
+
+        return true;
     }
 
-    private static void NextStepOrReset(TState state, User user)
+    private void NextStepOrEnd(TState state, User user)
     {
         var hasNext = state.Next();
         if (hasNext && !state.IsCompleted)
             return;
             
-        user.StateMachine.Reset();
+        user.StateMachine.Pop(reactivate: !endSilently);
     }
 }

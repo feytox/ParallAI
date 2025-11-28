@@ -14,7 +14,7 @@ namespace ParallAI.Infrastructure;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddInfrastructure(this IServiceCollection services)
+    public static void AddInfrastructure(this IServiceCollection services)
     {
         MongoMappings.Setup();
         services.AddSingleton<IConfig>(EnvConfig.Load());
@@ -34,8 +34,6 @@ public static class ServiceCollectionExtensions
         RegisterProvider<GeminiGenHandler, GeminiProvider>(services);
         RegisterProvider<OpenAiGenHandler, OpenAICompatibleProvider>(services);
         RegisterProvider<OpenRouterGenHandler, OpenRouterProvider>(services);
-
-        return services;
     }
     
     private static MongoClient GetMongoClient(IConfig config)

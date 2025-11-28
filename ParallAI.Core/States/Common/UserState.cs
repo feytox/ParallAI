@@ -1,4 +1,4 @@
-namespace ParallAI.Core.States;
+namespace ParallAI.Core.States.Common;
 
 public abstract class UserState
 {

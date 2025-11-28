@@ -3,7 +3,7 @@ using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 using ParallAI.Core.Entities;
 using ParallAI.Core.Providers;
-using ParallAI.Core.States;
+using ParallAI.Core.States.Common;
 using ParallAI.Core.ValueTypes;
 
 namespace ParallAI.Infrastructure.Mongo;
@@ -20,8 +20,14 @@ public static class MongoMappings
             classMap.MapProperty("Models");
             classMap.MapProperty("Presets");
         });
+
+        BsonClassMap.RegisterClassMap<UserStateMachine>(cm =>
+        {
+            cm.AutoMap();
+            cm.MapProperty("States");
+        });
         
-        RegisterAutoMaps(typeof(AiModel), typeof(Preset), typeof(UserStateMachine));
+        RegisterAutoMaps(typeof(AiModel), typeof(Preset));
         
         RegisterProviders();
         RegisterStates();

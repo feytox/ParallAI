@@ -7,7 +7,7 @@ namespace ParallAI.TeleBot.Core;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddTelebotCore(this IServiceCollection services)
+    public static void AddTelebotCore(this IServiceCollection services)
     {
         var coreAssembly = typeof(ICommand).Assembly;
         
@@ -22,7 +22,5 @@ public static class ServiceCollectionExtensions
                         && !t.IsGenericTypeDefinition);
         foreach (var type in stateActionTypes)
             services.AddSingleton(typeof(IStateAction), type);
-        
-        return services;
     }
 }
