@@ -13,6 +13,8 @@ public static class ThinkingBudgetExt
 {
     public static int ToThinkingTokens(this ThinkingBudget budget)
     {
+        
+        
         return budget switch
         {
             ThinkingBudget.Dynamic => -1,

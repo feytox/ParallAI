@@ -1,6 +1,4 @@
-using ParallAI.Core.States.Common;
-
-namespace ParallAI.Core.States;
+namespace ParallAI.Core.States.Common;
 
 public abstract class SequentialState<TStep>(TStep[] steps) : UserState
 {

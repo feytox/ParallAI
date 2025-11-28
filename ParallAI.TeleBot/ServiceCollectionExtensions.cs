@@ -2,8 +2,10 @@ using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using ParallAI.Core;
 using ParallAI.Core.States;
+using ParallAI.Core.States.Common;
 using ParallAI.TeleBot.Core.Callback;
 using ParallAI.TeleBot.Core.Commands;
+using ParallAI.TeleBot.Core.Settings;
 using ParallAI.TeleBot.Core.StateActions;
 using ParallAI.TeleBot.Services;
 using ParallAI.TeleBot.StateActions;
@@ -61,5 +63,12 @@ public static class ServiceCollectionExtensions
 
         foreach (var type in stepTypes)
             services.AddSingleton(typeof(IStepStateAction<TState, TStep>), type);
+    }
+
+    private static void RegisterSettingsState<TState, THandler>(this IServiceCollection services)
+        where TState : SettingsState where THandler : SettingsHandler<TState>
+    {
+        services.AddSingleton<SettingsHandler<TState>, THandler>();
+        services.AddSingleton<SettingsStateAction<TState>>();
     }
 }

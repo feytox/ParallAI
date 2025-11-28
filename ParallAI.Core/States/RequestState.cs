@@ -1,4 +1,6 @@
-﻿namespace ParallAI.Core.States;
+﻿using ParallAI.Core.States.Common;
+
+namespace ParallAI.Core.States;
 
 public enum RequestStep
 {

@@ -1,4 +1,4 @@
-﻿using ParallAI.Core.States;
+﻿using ParallAI.Core.States.Common;
 using ParallAI.TeleBot.Core.Settings;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -6,7 +6,7 @@ using User = ParallAI.Core.Entities.User;
 
 namespace ParallAI.TeleBot.Core.StateActions;
 
-public class SettingsStateAction<TState, TResult>(SettingsHandler<TState, TResult> handler) : StateAction<TState> 
+public class SettingsStateAction<TState>(SettingsHandler<TState> handler) : StateAction<TState> 
     where TState : SettingsState
 {
     protected override async Task<bool> Execute(TState state, Message message, ITelegramBotClient bot, User user)
@@ -17,6 +17,6 @@ public class SettingsStateAction<TState, TResult>(SettingsHandler<TState, TResul
 
     protected override Task<bool> ExecuteAfter(TState state, ChatId chatId, ITelegramBotClient bot, User user)
     {
-        return handler.SavePartResult(state, chatId, bot, user);
+        return handler.SavePartResult(state, chatId, bot);
     }
 }

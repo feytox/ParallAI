@@ -1,4 +1,4 @@
-﻿using ParallAI.Core.States;
+﻿using ParallAI.Core.States.Common;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
