@@ -7,13 +7,16 @@ namespace ParallAI.TeleBot.Core.Commands;
 public class CommandHandler
 {
     private readonly Dictionary<string, ICommand> commands;
+    public readonly IEnumerable<CommandAttribute> CommandsDescription;
 
-    public CommandHandler(IEnumerable<ICommand> commands)
+    public CommandHandler(IEnumerable<ICommand> commands, IEnumerable<CommandAttribute> commandsDescription)
     {
         this.commands = commands
             .Select(cmd => (cmd, attr: cmd.GetType().GetCustomAttribute<CommandAttribute>()))
             .Where(t => t.attr is not null)
             .ToDictionary(t => t.attr!.Name, t => t.cmd, StringComparer.OrdinalIgnoreCase);
+        
+        CommandsDescription = commandsDescription;
     }
     
     public async Task HandleCommand(Message message, ITelegramBotClient bot)

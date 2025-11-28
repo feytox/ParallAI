@@ -24,13 +24,20 @@ public class Bot(
 
     private TelegramBotClient? client;
 
-    public Task StartAsync(CancellationToken cancellationToken)
+    public async Task StartAsync(CancellationToken cancellationToken)
     {
         client = new TelegramBotClient(config.BotToken, cancellationToken: cancellationToken);
 
         client.StartReceiving(HandleUpdate, HandleError, cancellationToken: cancellationToken);
+
+        var commands = commandHandler
+            .CommandsDescription
+            .Select(attr => new BotCommand(attr.Name, attr.Description))
+            .ToArray();
+        
+        await client.SetMyCommands(commands, cancellationToken: cancellationToken);
+        
         logger.LogInformation("Bot has been started.");
-        return Task.CompletedTask;
     }
 
     private Task HandleUpdate(ITelegramBotClient bot, Update update, CancellationToken cancellationToken)
