@@ -27,8 +27,7 @@ public static class ServiceCollectionExtensions
 
         AddScannedHandlers<ICommand, CommandAttribute>(services, assembly);
         AddScannedHandlers<ICallbackQuery, CallbackQueryAttribute>(services, assembly);
-
-        RegisterSequentialState<PresetState, PresetStep>(services, assembly, true);
+        
         RegisterSequentialState<RequestState, RequestStep>(services, assembly, true);
         services.AddSingleton<IStateAction, MainMenuStateAction>();
         
