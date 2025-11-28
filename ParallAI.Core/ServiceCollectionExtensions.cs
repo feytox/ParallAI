@@ -5,9 +5,8 @@ namespace ParallAI.Core;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddCore(this IServiceCollection services)
+    public static void AddCore(this IServiceCollection services)
     {
         services.AddSingleton<GenerationService>();
-        return services;
     }
 }

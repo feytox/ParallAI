@@ -12,7 +12,7 @@ public class RequestCommand(IRepository<User, long> users) : UserCommand(users)
 {
     protected override async Task Execute(Message message, ITelegramBotClient bot, User user)
     {
-        user.StateMachine.Set(new RequestState());
+        user.StateMachine.Push(new RequestState());
         await bot.SendMessage(message.Chat, "Введи запрос. Также можешь прикрепить файл");
     }
 }

@@ -1,3 +1,5 @@
+using ParallAI.Core.States.Common;
+
 namespace ParallAI.Core.Entities;
 
 public class User(long id) : Entity<long>(id)

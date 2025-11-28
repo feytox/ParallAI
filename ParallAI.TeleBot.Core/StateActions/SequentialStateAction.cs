@@ -15,7 +15,7 @@ public class SequentialStateAction<TState, TStep> : StateAction<TState>
         stepToAction = actions.ToDictionary(action => action.StateStep);
     }
 
-    protected override async Task Execute(TState state, Message message, ITelegramBotClient bot, User user)
+    protected override async Task<bool> Execute(TState state, Message message, ITelegramBotClient bot, User user)
     {
         var currentStep = state.Current;
         if (!stepToAction.TryGetValue(currentStep, out var action))
@@ -23,15 +23,17 @@ public class SequentialStateAction<TState, TStep> : StateAction<TState>
 
         var nextStep = await action.Execute(state, message, bot, user);
         if (nextStep)
-            NextStepOrReset(state, user);
+            NextStepOrEnd(state, user);
+
+        return true;
     }
 
-    private static void NextStepOrReset(TState state, User user)
+    private static void NextStepOrEnd(TState state, User user)
     {
         var hasNext = state.Next();
         if (hasNext && !state.IsCompleted)
             return;
             
-        user.StateMachine.Reset();
+        user.StateMachine.Pop();
     }
 }

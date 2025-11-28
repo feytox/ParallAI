@@ -14,7 +14,7 @@ public class AddPresetCommand(IRepository<User, long> users)
 {
     protected override async Task Execute(Message message, ITelegramBotClient bot, User user)
     {
-        user.StateMachine.Set(new PresetState());
+        user.StateMachine.Push(new PresetState());
         await bot.SendMessage(message.Chat, "Введите название нового пресета");
     }
 }
