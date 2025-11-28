@@ -11,7 +11,7 @@ public abstract class UserCommand(IRepository<User, long> users) : ICommand
 
     public async Task Execute(Message message, ITelegramBotClient bot)
     {
-        var user = await users.GetOrCreate(message.Chat.Id);
+        var user = await users.GetOrCreate(message.From!.Id);
         await Execute(message, bot, user);
         await users.Update(user);
     }

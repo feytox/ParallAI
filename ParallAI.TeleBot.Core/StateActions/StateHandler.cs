@@ -10,7 +10,7 @@ public class StateHandler(IEnumerable<IStateAction> actions, IRepository<User, l
 {
     public async Task<bool> HandleState(Message message, ITelegramBotClient bot)
     {
-        var user = await userRepository.GetOrCreate(message.Chat.Id);
+        var user = await userRepository.GetOrCreate(message.From!.Id);
         var mainSuccess = await ExecuteMainAction(message, bot, user);
         var afterSuccess = await ExecuteAfterAction(message, bot, user);
         
