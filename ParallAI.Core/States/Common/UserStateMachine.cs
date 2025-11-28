@@ -14,11 +14,12 @@ public class UserStateMachine
     public void Pop(bool reactivate = true)
     {
         if (States.Count == 1)
-            throw new InvalidOperationException("Unable to pop the default UserState."); 
-        
+            throw new InvalidOperationException("Unable to pop the default UserState.");
+
+        var prevState = Current;
         States.RemoveAt(States.Count - 1);
         
         if (reactivate && Current is IReactivatableState state)
-            state.Reactivated = true;
+            state.AcceptPrevState(prevState);
     }
 }

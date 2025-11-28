@@ -11,25 +11,22 @@ public class StateHandler(IEnumerable<IStateAction> actions, IRepository<User, l
     public async Task<bool> HandleState(Message message, ITelegramBotClient bot)
     {
         var user = await userRepository.GetOrCreate(message.From!.Id);
-        var mainSuccess = await ExecuteMainAction(message, bot, user);
-        var afterSuccess = await ExecuteAfterAction(message, bot, user);
-        
-        await userRepository.Update(user);
-        return mainSuccess || afterSuccess;
+        return await Execute(user, async (state, action) => await action.Execute(state, message, bot, user));
     }
 
-    private async Task<bool> ExecuteMainAction(Message message, ITelegramBotClient bot, User user)
+    public async Task<bool> HandlePostState(long userId, ITelegramBotClient bot)
     {
-        var state = user.StateMachine.Current;
-        var action = GetCurrentAction(state);
-        return await action.Execute(state, message, bot, user);
+        var user = await userRepository.GetOrCreate(userId);
+        return await Execute(user, async (state, action) => await action.ExecuteAfter(state, userId, bot, user));
     }
-    
-    private async Task<bool> ExecuteAfterAction(Message message, ITelegramBotClient bot, User user)
+
+    private async Task<T> Execute<T>(User user, Func<UserState, IStateAction, Task<T>> executor)
     {
         var state = user.StateMachine.Current;
         var action = GetCurrentAction(state);
-        return await action.ExecuteAfter(state, message, bot, user);
+        var result = await executor(state, action);
+        await userRepository.Update(user);
+        return result;
     }
 
     private IStateAction GetCurrentAction(UserState state)

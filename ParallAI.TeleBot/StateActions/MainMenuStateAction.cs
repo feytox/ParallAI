@@ -13,13 +13,13 @@ public class MainMenuStateAction : StateAction<MainMenuState>
         return Task.FromResult(false);
     }
 
-    protected override async Task<bool> ExecuteAfter(MainMenuState state, Message message, 
+    protected override async Task<bool> ExecuteAfter(MainMenuState state, ChatId chatId, 
         ITelegramBotClient bot, User user)
     {
         if (!state.Reactivated)
             return false;
 
-        await bot.SendMessage(message.Chat, "Привет, я параллаич! (плейсхолдер)");
+        await bot.SendMessage(chatId, "Привет, я параллаич! (плейсхолдер)");
         state.Reactivated = false;
         return true;
     }
