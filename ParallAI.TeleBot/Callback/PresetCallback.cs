@@ -11,7 +11,7 @@ namespace ParallAI.TeleBot.Callback;
 
 [CallbackQuery(Tag)]
 public class PresetCallback(IRepository<User, long> users, PresetSettingsHandler handler)
-    : SettingsElementCallback(Tag, users)
+    : SettingsElementCallback(users)
 {
     public const string Tag = "preset";
 

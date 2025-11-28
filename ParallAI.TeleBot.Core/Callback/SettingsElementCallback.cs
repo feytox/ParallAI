@@ -6,7 +6,7 @@ using User = ParallAI.Core.Entities.User;
 
 namespace ParallAI.TeleBot.Core.Callback;
 
-public abstract class SettingsElementCallback(string tag, IRepository<User, long> users) : UserCallbackQuery(users)
+public abstract class SettingsElementCallback(IRepository<User, long> users) : UserCallbackQuery(users)
 {
     protected abstract string GetElementInfo(int index, User user);
     protected abstract Task HandleChoose(CallbackQuery callbackQuery, int index, ITelegramBotClient bot, User user);

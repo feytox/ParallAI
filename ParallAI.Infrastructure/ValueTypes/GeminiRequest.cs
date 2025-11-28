@@ -29,7 +29,7 @@ public record GeminiRequest(
     {
         public static ThinkingConfig? Create(ThinkingBudget? thinkingBudget)
         {
-            if (thinkingBudget is null)
+            if (thinkingBudget is null or Unknown)
                 return null;
 
             if (thinkingBudget == Dynamic)

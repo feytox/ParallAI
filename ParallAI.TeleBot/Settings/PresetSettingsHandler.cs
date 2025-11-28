@@ -2,12 +2,16 @@
 using ParallAI.Core.States;
 using ParallAI.Core.ValueTypes;
 using ParallAI.TeleBot.Core.Settings;
+using Telegram.Bot;
+using Telegram.Bot.Types;
 using User = ParallAI.Core.Entities.User;
 
 namespace ParallAI.TeleBot.Settings;
 
-public class PresetSettingsHandler() : SettingsHandler<PresetSettingsState>("preset_settings", CreateParts)
+public class PresetSettingsHandler() : SettingsHandler<PresetSettingsState>(Tag, CreateParts)
 {
+    public const string Tag = "preset_settings";
+    
     private static readonly string ThinkingBudgets;
 
     protected override string GetPartsMessage(PresetSettingsState state)
@@ -15,12 +19,13 @@ public class PresetSettingsHandler() : SettingsHandler<PresetSettingsState>("pre
         return "Настройки пресетов"; // TODO: добавить отображение текущих настроек
     }
 
-    protected override void SaveResult(PresetSettingsState state, User user)
+    protected override async Task SaveSettingsToUser(PresetSettingsState state, ChatId chatId, ITelegramBotClient bot, User user)
     {
         if (state.PresetId is null)
             SaveNewPreset(state, user);
         else
             ApplyChanges(state, user);
+        await bot.SendMessage(chatId, "Пресет сохранён");
     }
 
     private static void SaveNewPreset(PresetSettingsState state, User user)
@@ -50,7 +55,7 @@ public class PresetSettingsHandler() : SettingsHandler<PresetSettingsState>("pre
                 ParseDecimal, (state, value) => state.Temperature = value)
             .AddSimple("Размышления", $"Выберите бюджет размышлений:\n{ThinkingBudgets}",
                 "Неправильный вариант. Попробуйте ещё раз",
-                text => Enum.Parse<ThinkingBudget>(text, true), (state, budget) => state.ThinkingBudget = budget);
+                ParseEnum<ThinkingBudget>, (state, budget) => state.ThinkingBudget = budget);
     }
 
     private static decimal? ParseDecimal(string text)
@@ -65,8 +70,14 @@ public class PresetSettingsHandler() : SettingsHandler<PresetSettingsState>("pre
         return null;
     }
 
+    private static T? ParseEnum<T>(string text) where T : struct, Enum
+    {
+        return Enum.TryParse<T>(text, true, out var result) ? result : null;
+    }
+
     static PresetSettingsHandler()
     {
+        // TODO: пофиксить Unknown в списке бюджета
         var lines = Enum.GetNames<ThinkingBudget>().Select(name => $"- {name}");
         ThinkingBudgets = string.Join('\n', lines);
     }

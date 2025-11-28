@@ -9,28 +9,28 @@ namespace ParallAI.TeleBot.Core.Settings;
 // TODO: add validation
 public abstract class SettingsHandler<TState> where TState : SettingsState
 {
+    protected abstract Task SaveSettingsToUser(TState state, ChatId chatId, ITelegramBotClient bot, User user);
     protected abstract string GetPartsMessage(TState state);
-    protected abstract void SaveResult(TState state, User user);
 
-    private readonly string callbackId;
+    private readonly string tag;
     private readonly SettingsPart<TState>[] parts;
 
-    protected SettingsHandler(string callbackId, SettingsPart<TState>[] parts)
+    protected SettingsHandler(string tag, SettingsPart<TState>[] parts)
     {
-        this.callbackId = callbackId;
+        this.tag = tag;
         this.parts = parts;
     }
 
-    protected SettingsHandler(string callbackId, Action<SettingsPartsBuilder<TState>> partsProvider)
+    protected SettingsHandler(string tag, Action<SettingsPartsBuilder<TState>> partsProvider)
     {
-        this.callbackId = callbackId;
+        this.tag = tag;
         
         var builder = new SettingsPartsBuilder<TState>();
         partsProvider(builder);
         parts = builder.Build();
     }
 
-    public async Task<bool> ActivatePart(TState state, int partIndex, ChatId chatId, ITelegramBotClient bot, User user)
+    public async Task ActivatePart(TState state, int partIndex, ChatId chatId, ITelegramBotClient bot, User user)
     {
         if (partIndex >= parts.Length)
             throw new IndexOutOfRangeException("Invalid settings part index");
@@ -41,8 +41,6 @@ public abstract class SettingsHandler<TState> where TState : SettingsState
         var nextState = await selectedPart.ActivatePart(state, chatId, bot, user);
         if (nextState is not null)
             user.StateMachine.Push(nextState);
-        
-        return true;
     }
 
     public async Task HandleMessage(TState state, Message message, ITelegramBotClient bot, User user)
@@ -75,11 +73,18 @@ public abstract class SettingsHandler<TState> where TState : SettingsState
     public async Task SendPartsList(TState state, ChatId chatId, ITelegramBotClient bot)
     {
         var buttons = parts
-            .Select((part, i) => InlineKeyboardButton.WithCallbackData(part.Name, $"{callbackId}:{i}"))
-            .Chunk(2);
+            .Select((part, i) => InlineKeyboardButton.WithCallbackData(part.Name, $"{tag}:{i}"))
+            .Chunk(2)
+            .Append([InlineKeyboardButton.WithCallbackData("Сохранить", $"{tag}:c")]);
         var message = GetPartsMessage(state);
 
         await bot.SendMessage(chatId, message, replyMarkup: new InlineKeyboardMarkup(buttons));
+    }
+
+    public async Task SaveSettings(TState state, ChatId chatId, ITelegramBotClient bot, User user)
+    {
+        await SaveSettingsToUser(state, chatId, bot, user);
+        user.StateMachine.Pop();
     }
 
     private SettingsPart<TState>? GetCurrentPart(TState state)
