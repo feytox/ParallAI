@@ -25,8 +25,8 @@ public static class ServiceCollectionExtensions
         AddScannedHandlers<ICommand, CommandAttribute>(services, assembly);
         AddScannedHandlers<ICallbackQuery, CallbackQueryAttribute>(services, assembly);
 
-        RegisterSequentialState<PresetState, PresetStep>(services, assembly);
-        RegisterSequentialState<RequestState, RequestStep>(services, assembly);
+        RegisterSequentialState<PresetState, PresetStep>(services, assembly, true);
+        RegisterSequentialState<RequestState, RequestStep>(services, assembly, true);
         services.AddSingleton<IStateAction, MainMenuStateAction>();
     }
 
@@ -34,7 +34,7 @@ public static class ServiceCollectionExtensions
         where TAttribute : Attribute
     {
         var types = assembly.GetTypes()
-            .Where(t => typeof(TInterface).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract)
+            .Where(t => typeof(TInterface).IsAssignableFrom(t) && t is { IsInterface: false, IsAbstract: false })
             .ToList();
 
         foreach (var type in types)
@@ -44,11 +44,16 @@ public static class ServiceCollectionExtensions
             types.SelectMany(t => t.GetCustomAttributes<TAttribute>()));
     }
 
-    private static void RegisterSequentialState<TState, TStep>(IServiceCollection services, Assembly assembly)
+    private static void RegisterSequentialState<TState, TStep>(IServiceCollection services, Assembly assembly,
+        bool endSilently)
         where TState : SequentialState<TStep>
         where TStep : notnull
     {
-        services.AddSingleton<IStateAction, SequentialStateAction<TState, TStep>>();
+        services.AddSingleton<IStateAction, SequentialStateAction<TState, TStep>>(sp =>
+            new SequentialStateAction<TState, TStep>(
+                sp.GetRequiredService<IEnumerable<IStepStateAction<TState, TStep>>>(),
+                endSilently
+            ));
 
         var stepTypes = assembly.GetTypes()
             .Where(t => typeof(IStepStateAction<TState, TStep>).IsAssignableFrom(t)

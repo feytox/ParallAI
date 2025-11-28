@@ -2,23 +2,23 @@ namespace ParallAI.Core.States.Common;
 
 public class UserStateMachine
 {
-    public UserState Current => States.Peek();
+    public UserState Current => States[^1];
     
-    private Stack<UserState> States { get; set; } = new([new MainMenuState()]);
+    private List<UserState> States { get; set; } = [new MainMenuState()];
 
     public void Push(UserState state)
     {
-        States.Push(state);
+        States.Add(state);
     }
 
-    public void Pop()
+    public void Pop(bool reactivate = true)
     {
         if (States.Count == 1)
             throw new InvalidOperationException("Unable to pop the default UserState."); 
         
-        States.Pop();
+        States.RemoveAt(States.Count - 1);
         
-        if (Current is IReactivatableState state)
+        if (reactivate && Current is IReactivatableState state)
             state.Reactivated = true;
     }
 }

@@ -8,12 +8,18 @@ namespace ParallAI.TeleBot.StateActions;
 
 public class MainMenuStateAction : StateAction<MainMenuState>
 {
-    protected override async Task<bool> Execute(MainMenuState state, Message message, ITelegramBotClient bot, User user)
+    protected override Task<bool> Execute(MainMenuState state, Message message, ITelegramBotClient bot, User user)
+    {
+        return Task.FromResult(false);
+    }
+
+    protected override async Task<bool> ExecuteAfter(MainMenuState state, Message message, 
+        ITelegramBotClient bot, User user)
     {
         if (!state.Reactivated)
             return false;
 
-        await bot.SendMessage(message.Chat, "Привет, друг! Я параллаич");
+        await bot.SendMessage(message.Chat, "Привет, я параллаич! (плейсхолдер)");
         state.Reactivated = false;
         return true;
     }

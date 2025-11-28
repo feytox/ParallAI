@@ -20,8 +20,14 @@ public static class MongoMappings
             classMap.MapProperty("Models");
             classMap.MapProperty("Presets");
         });
+
+        BsonClassMap.RegisterClassMap<UserStateMachine>(cm =>
+        {
+            cm.AutoMap();
+            cm.MapProperty("States");
+        });
         
-        RegisterAutoMaps(typeof(AiModel), typeof(Preset), typeof(UserStateMachine));
+        RegisterAutoMaps(typeof(AiModel), typeof(Preset));
         
         RegisterProviders();
         RegisterStates();
