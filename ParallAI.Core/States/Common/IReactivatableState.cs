@@ -2,5 +2,5 @@
 
 public interface IReactivatableState
 {
-    public bool Reactivated { set; }
+    public void AcceptPrevState(UserState state);
 }

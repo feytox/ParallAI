@@ -2,6 +2,7 @@
 
 public enum ThinkingBudget
 {
+    Unknown = 0,
     Dynamic,
     Minimal,
     Low,

@@ -20,7 +20,7 @@ public static class OpenAiReasoningEffortExt
     {
         return budget switch
         {
-            null => OpenAiReasoningEffort.None,
+            null or ThinkingBudget.Unknown => OpenAiReasoningEffort.None,
             ThinkingBudget.Dynamic => OpenAiReasoningEffort.Medium,
             ThinkingBudget.Minimal => OpenAiReasoningEffort.Minimal,
             ThinkingBudget.Low => OpenAiReasoningEffort.Low,

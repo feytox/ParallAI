@@ -7,7 +7,7 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 using User = ParallAI.Core.Entities.User;
 
-namespace ParallAI.TeleBot.Commands.Presets;
+namespace ParallAI.TeleBot.Commands.OldPresets;
 
 [Command("/showpresets", "вывод пользовательских пресетов")]
 public class ShowPresetsCommand(IRepository<User, long> users, ILogger<TestCommand> logger) 

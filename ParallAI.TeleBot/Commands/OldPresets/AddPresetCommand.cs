@@ -6,7 +6,7 @@ using Telegram.Bot.Types;
 using User = ParallAI.Core.Entities.User;
 
 
-namespace ParallAI.TeleBot.Commands.Presets;
+namespace ParallAI.TeleBot.Commands.OldPresets;
 
 [Command("/addpreset", "добавить пресет")]
 public class AddPresetCommand(IRepository<User, long> users) 

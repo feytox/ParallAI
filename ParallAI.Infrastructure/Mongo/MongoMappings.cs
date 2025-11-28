@@ -13,12 +13,13 @@ public static class MongoMappings
     public static void Setup()
     {
         BsonSerializer.RegisterSerializer(typeof(Guid), new GuidSerializer(GuidRepresentation.Standard));
-        
+
         BsonClassMap.RegisterClassMap<User>(classMap =>
         {
             classMap.AutoMap();
             classMap.MapProperty("Models");
             classMap.MapProperty("Presets");
+            classMap.MapProperty("ChosenPresetId");
         });
 
         BsonClassMap.RegisterClassMap<UserStateMachine>(cm =>
@@ -26,9 +27,9 @@ public static class MongoMappings
             cm.AutoMap();
             cm.MapProperty("States");
         });
-        
+
         RegisterAutoMaps(typeof(AiModel), typeof(Preset));
-        
+
         RegisterProviders();
         RegisterStates();
     }
@@ -40,7 +41,7 @@ public static class MongoMappings
             cm.AutoMap();
             cm.SetIsRootClass(true);
         });
-        
+
         RegisterDiscriminator<OpenAICompatibleProvider>("openai_compatible");
         RegisterDiscriminator<GeminiProvider>("gemini");
         RegisterDiscriminator<OpenRouterProvider>("openrouter");
@@ -53,25 +54,25 @@ public static class MongoMappings
             cm.AutoMap();
             cm.SetIsRootClass(true);
         });
-        
+
         var stateTypes = typeof(UserState).Assembly.GetTypes()
             .Where(t => !t.IsAbstract && typeof(UserState).IsAssignableFrom(t));
         foreach (var type in stateTypes)
             BsonClassMap.LookupClassMap(type);
     }
-    
+
     private static void RegisterAutoMaps(params Type[] types)
     {
         foreach (var type in types)
         {
-            if (BsonClassMap.IsClassMapRegistered(type)) 
+            if (BsonClassMap.IsClassMapRegistered(type))
                 continue;
             var cm = new BsonClassMap(type);
             cm.AutoMap();
             BsonClassMap.RegisterClassMap(cm);
         }
     }
-    
+
     private static void RegisterDiscriminator<T>(string discriminator)
     {
         BsonClassMap.RegisterClassMap<T>(cm =>

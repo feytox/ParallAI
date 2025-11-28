@@ -6,7 +6,7 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using User = ParallAI.Core.Entities.User;
 
-namespace ParallAI.TeleBot.Commands.Presets;
+namespace ParallAI.TeleBot.Commands.OldPresets;
 
 // временная команда для отправки запросоов с выбранным пресетом
 // Ввод: /presetrequest Название пресета

@@ -74,14 +74,16 @@ public class Bot(
 
     private async Task HandleMessage(ITelegramBotClient bot, Message message)
     {
-        var wasStateHandled = await stateHandler.HandleState(message, bot);
-        if (!wasStateHandled)
+        var mainHandled = await stateHandler.HandleState(message, bot);
+        var postHandled = await stateHandler.HandlePostState(message.From!.Id, bot);
+        if (!mainHandled && !postHandled)
             await commandHandler.HandleCommand(message, bot);
     }
 
     private async Task HandleCallbackQuery(ITelegramBotClient bot, CallbackQuery callbackQuery)
     {
         await callbackQueryHandler.HandleCallbackQuery(callbackQuery, bot);
+        await stateHandler.HandlePostState(callbackQuery.From.Id, bot);
     }
 
     private Task HandleError(ITelegramBotClient bot, Exception exception, CancellationToken cancellationToken)

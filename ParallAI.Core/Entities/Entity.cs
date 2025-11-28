@@ -2,7 +2,7 @@ namespace ParallAI.Core.Entities;
 
 public abstract class Entity<TId>(TId id) : IEntity<TId> where TId : notnull
 {
-    public TId Id { get; } = id;
+    public TId Id { get; private set; } = id;
 
     private bool Equals(Entity<TId> other)
     {

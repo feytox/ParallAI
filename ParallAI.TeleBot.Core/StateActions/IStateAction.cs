@@ -11,5 +11,5 @@ public interface IStateAction
     
     Task<bool> Execute(UserState state, Message message, ITelegramBotClient bot, User user);
     
-    Task<bool> ExecuteAfter(UserState state, Message message, ITelegramBotClient bot, User user);
+    Task<bool> ExecuteAfter(UserState state, ChatId chatId, ITelegramBotClient bot, User user);
 }

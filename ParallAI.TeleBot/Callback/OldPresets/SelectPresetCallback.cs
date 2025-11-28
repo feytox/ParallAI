@@ -5,7 +5,7 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using User = ParallAI.Core.Entities.User;
 
-namespace ParallAI.TeleBot.Callback.Presets;
+namespace ParallAI.TeleBot.Callback.OldPresets;
 
 // временно
 [CallbackQuery("selectpreset")]
