@@ -8,6 +8,7 @@ using User = ParallAI.Core.Entities.User;
 
 namespace ParallAI.TeleBot.Commands;
 
+[MainMenu("Запуск бота", MenuOrder.Start)] // Primer
 [Command("/start", "стартовая команда")]
 public class StartCommand(IRepository<User, long> users, ILogger<TestCommand> logger) 
     : UserCommand(users)

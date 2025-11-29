@@ -5,6 +5,7 @@ using Telegram.Bot.Types;
 
 namespace ParallAI.TeleBot.Commands;
 
+[MainMenu("Подсказка", MenuOrder.Help)] // Экзампле
 [Command("/help", "вывод списка доступных команд")]
 public class HelpCommand : ICommand
 {
