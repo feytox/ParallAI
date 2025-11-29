@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using ParallAI.Core.Repositories;
+using ParallAI.TeleBot.Commands.UI;
 using ParallAI.TeleBot.Core.Commands;
 using ParallAI.TeleBot.Example.Commands;
 using Telegram.Bot;

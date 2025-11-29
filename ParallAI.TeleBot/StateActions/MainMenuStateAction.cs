@@ -1,7 +1,9 @@
 ﻿using System.Reflection;
 using ParallAI.Core.States;
+using ParallAI.TeleBot.Commands.UI;
 using ParallAI.TeleBot.Core.Commands;
 using ParallAI.TeleBot.Core.StateActions;
+using ParallAI.TeleBot.Util;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -28,7 +30,7 @@ public class MainMenuStateAction : StateAction<MainMenuState>
             .ToDictionary(t => t.attr!.NameUI, t => t.cmd, StringComparer.OrdinalIgnoreCase);
         
         var sortedButtonNames = sortedCommands.Select(t => t.attr!.NameUI);
-        keyboard = CreateKeyboardFromCommands(sortedButtonNames);
+        keyboard = KeyboardHelper.CreateReplyKeyboard(sortedButtonNames);
     }
     
     protected override async Task<bool> Execute(MainMenuState state, Message message, ITelegramBotClient bot, User user)
@@ -59,31 +61,5 @@ public class MainMenuStateAction : StateAction<MainMenuState>
 
         state.Reactivated = false;
         return true;
-    }
-    
-    private static ReplyKeyboardMarkup CreateKeyboardFromCommands(IEnumerable<string> commands) // вынести
-    {
-        var buttons = new List<KeyboardButton[]>();
-        var currentRow = new List<KeyboardButton>();
-
-        foreach (var command in commands)
-        {
-            currentRow.Add(new KeyboardButton(command));
-
-            if (currentRow.Count != 2) continue;
-            
-            buttons.Add(currentRow.ToArray());
-            currentRow = [];
-        }
-        
-        if (currentRow.Count > 0)
-        {
-            buttons.Add(currentRow.ToArray());
-        }
-
-        return new ReplyKeyboardMarkup(buttons)
-        {
-            ResizeKeyboard = true,
-        };
     }
 }
