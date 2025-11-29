@@ -31,9 +31,9 @@ public static class ServiceCollectionExtensions
                 sp.GetRequiredService<IConfig>().UsersCollection
             ));
         
-        RegisterProvider<GeminiGenHandler, GeminiProvider>(services);
-        RegisterProvider<OpenAiGenHandler, OpenAICompatibleProvider>(services);
-        RegisterProvider<OpenRouterGenHandler, OpenRouterProvider>(services);
+        services.AddProvider<GeminiGenHandler, GeminiProvider>();
+        services.AddProvider<OpenAiGenHandler, OpenAICompatibleProvider>();
+        services.AddProvider<OpenRouterGenHandler, OpenRouterProvider>();
     }
     
     private static MongoClient GetMongoClient(IConfig config)
@@ -45,7 +45,7 @@ public static class ServiceCollectionExtensions
         return new MongoClient(settings);
     }
 
-    private static void RegisterProvider<THandler, TProvider>(IServiceCollection services)
+    private static void AddProvider<THandler, TProvider>(this IServiceCollection services)
         where TProvider : AiProvider
         where THandler : class, IGenerationHandler
     {
