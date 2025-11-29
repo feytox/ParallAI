@@ -39,7 +39,7 @@ public static class ServiceCollectionExtensions
         services.AddSettingsState<PresetSettingsState, PresetSettingsHandler>();
     }
 
-    private static void AddScannedHandlers<TInterface>(
+    private static void AddScannedHandlers<TInterface>( // вынести метод
         this IServiceCollection services,
         Assembly assembly,
         params Type[] attributeTypes)

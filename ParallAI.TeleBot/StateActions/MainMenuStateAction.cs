@@ -61,7 +61,7 @@ public class MainMenuStateAction : StateAction<MainMenuState>
         return true;
     }
     
-    private static ReplyKeyboardMarkup CreateKeyboardFromCommands(IEnumerable<string> commands)
+    private static ReplyKeyboardMarkup CreateKeyboardFromCommands(IEnumerable<string> commands) // вынести
     {
         var buttons = new List<KeyboardButton[]>();
         var currentRow = new List<KeyboardButton>();
@@ -84,7 +84,6 @@ public class MainMenuStateAction : StateAction<MainMenuState>
         return new ReplyKeyboardMarkup(buttons)
         {
             ResizeKeyboard = true,
-            InputFieldPlaceholder = "Главное меню"
         };
     }
 }
