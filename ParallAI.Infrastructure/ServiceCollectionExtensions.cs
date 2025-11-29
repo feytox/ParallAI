@@ -51,13 +51,10 @@ public static class ServiceCollectionExtensions
     {
         services.AddTransient<THandler>();
         services.AddTransient<IGenerationHandler>(sp => sp.GetRequiredService<THandler>());
+        
+        services.AddSingleton<Func<TProvider, AiModel, THandler>>(sp =>
+            (provider, model) => ActivatorUtilities.CreateInstance<THandler>(sp, provider, model));
 
-        services.AddSingleton<IGenService>(sp =>
-        {
-            THandler HandlerFactory(TProvider provider, AiModel model)
-                => ActivatorUtilities.CreateInstance<THandler>(sp, provider, model);
-
-            return new HandledGenService<THandler, TProvider>(HandlerFactory);
-        });
+        services.AddSingleton<IGenService, HandledGenService<THandler, TProvider>>();
     }
 }
