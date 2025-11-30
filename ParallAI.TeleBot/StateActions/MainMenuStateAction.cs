@@ -19,7 +19,7 @@ public class MainMenuStateAction : StateAction<MainMenuState>
         if (!state.Reactivated)
             return false;
 
-        await bot.SendMessage(chatId, "Привет, я параллаич! (плейсхолдер)");
+        // await bot.SendMessage(chatId, "Привет, я параллаич! (плейсхолдер)");
         state.Reactivated = false;
         return true;
     }

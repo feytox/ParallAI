@@ -3,6 +3,7 @@ using ParallAI.Core.States;
 using ParallAI.TeleBot.Core.Commands;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.ReplyMarkups;
 using User = ParallAI.Core.Entities.User;
 
 namespace ParallAI.TeleBot.Example.Commands;
@@ -12,7 +13,9 @@ public class RequestCommand(IRepository<User, long> users) : UserCommand(users)
 {
     protected override async Task Execute(Message message, ITelegramBotClient bot, User user)
     {
+        var cancelButton = InlineKeyboardButton.WithCallbackData("Отменить", "cancel");
         user.StateMachine.Push(new RequestState());
-        await bot.SendMessage(message.Chat, "Введи запрос. Также можешь прикрепить файл");
+        await bot.SendMessage(message.Chat, "Введи запрос. Также можешь прикрепить файл",
+            replyMarkup: new InlineKeyboardMarkup(cancelButton));
     }
 }
