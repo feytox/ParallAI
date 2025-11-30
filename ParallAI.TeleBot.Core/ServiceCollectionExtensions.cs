@@ -1,6 +1,6 @@
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
-using ParallAI.Core.States;
+using ParallAI.Core.States.Common;
 using ParallAI.TeleBot.Core.Callback;
 using ParallAI.TeleBot.Core.Commands;
 using ParallAI.TeleBot.Core.StateActions;
