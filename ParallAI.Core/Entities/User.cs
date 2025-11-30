@@ -15,17 +15,18 @@ public class User(long id) : Entity<long>(id)
     public Preset? ChosenPreset => ChosenPresetId is null ? null : Presets.Find(preset => preset.Id == ChosenPresetId);
     private Guid? ChosenPresetId { get; set; }
     
+    public AiModel? ChosenModel => ChosenModelId is null ? null : Models.Find(model => model.Id == ChosenModelId);
+    private Guid? ChosenModelId { get; set; }
+    
     public void AddModel(AiModel model) => Models.Add(model);
+    
+    public void DeleteModel(AiModel model) => Models.Remove(model);
+    
+    public void ChooseModel(AiModel model) => ChosenModelId = model.Id;
 
     public void AddPreset(Preset preset) => Presets.Add(preset);
 
-    public void DeletePreset(Preset preset)
-    {
-        Presets.Remove(preset);
-    }
+    public void DeletePreset(Preset preset) => Presets.Remove(preset);
 
-    public void ChoosePreset(Preset preset)
-    {
-        ChosenPresetId = preset.Id;
-    }
+    public void ChoosePreset(Preset preset) => ChosenPresetId = preset.Id;
 }

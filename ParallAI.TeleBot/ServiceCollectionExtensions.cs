@@ -32,6 +32,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IStateAction, MainMenuStateAction>();
         
         services.AddSettingsState<PresetSettingsState, PresetSettingsHandler>();
+        services.AddSettingsState<ModelSettingsState, ModelSettingsHandler>();
     }
 
     private static void AddScannedHandlers<TInterface, TAttribute>(IServiceCollection services, Assembly assembly)
