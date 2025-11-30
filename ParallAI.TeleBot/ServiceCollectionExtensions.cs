@@ -2,7 +2,6 @@ using Microsoft.Extensions.DependencyInjection;
 using ParallAI.Core;
 using ParallAI.Core.States;
 using ParallAI.Core.States.Common;
-using ParallAI.TeleBot.Commands.UI;
 using ParallAI.TeleBot.Core;
 using ParallAI.TeleBot.Core.Callback;
 using ParallAI.TeleBot.Core.Commands;
@@ -26,8 +25,18 @@ public static class ServiceCollectionExtensions
         services.AddTransient<IFileService, TgFileService>();
         services.AddSingleton<MediaGroupCollector>();
 
-        services.AddScannedHandlers<ICommand>(assembly, typeof(CommandAttribute), typeof(MainMenuAttribute));
-        services.AddScannedHandlers<ICallbackQuery>(assembly, typeof(CallbackQueryAttribute));
+        services.Scan(scan => scan
+            .FromAssemblies(assembly)
+            .AddClasses(classes => classes.AssignableTo<ICommand>()
+                                          .Where(c => c is { IsAbstract: false, IsInterface: false }))
+                .AsImplementedInterfaces()
+                .WithSingletonLifetime()
+            
+            .AddClasses(classes => classes.AssignableTo<ICallbackQuery>()
+                                          .Where(c => c is { IsAbstract: false, IsInterface: false }))
+                .AsImplementedInterfaces()
+                .WithSingletonLifetime()
+        );
         
         services.RegisterSequentialState<RequestState, RequestStep>(assembly, true);
         services.AddSingleton<IStateAction, MainMenuStateAction>();
@@ -36,7 +45,8 @@ public static class ServiceCollectionExtensions
     }
     
     private static void AddSettingsState<TState, THandler>(this IServiceCollection services)
-        where TState : SettingsState where THandler : SettingsHandler<TState>
+        where TState : SettingsState
+        where THandler : SettingsHandler<TState>
     {
         services.AddSingleton<SettingsHandler<TState>, THandler>();
         services.AddSingleton<THandler>();

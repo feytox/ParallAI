@@ -2,7 +2,9 @@ namespace ParallAI.TeleBot.Commands.UI;
 
 public enum MenuOrder
 {
-    Start = 1,
-    Help = 2, 
-    AddPreset = 3
+    Models = 1,
+    Presets = 2, 
+    Ask = 3,
+    Config = 4,
+    Compare = 5
 }

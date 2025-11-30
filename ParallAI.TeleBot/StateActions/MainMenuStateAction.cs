@@ -49,7 +49,7 @@ public class MainMenuStateAction : StateAction<MainMenuState>
         
         await bot.SendMessage(
             chatId: chatId,
-            text: "Главное меню:",
+            text: "\u3164", // тут мб будет красивое первое сообщение (Дима Комаров обязательно его придумает ПОТОМ)
             replyMarkup: keyboard
         );
 

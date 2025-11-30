@@ -11,23 +11,23 @@ public static class ServiceCollectionExtensions
 {
     public static void AddTelebotCore(this IServiceCollection services)
     {
-        var coreAssembly = typeof(ICommand).Assembly;
+        var assembly = typeof(ICommand).Assembly;
         
         services.AddSingleton<CommandHandler>();
         services.AddSingleton<CallbackQueryHandler>();
         services.AddSingleton<StateHandler>();
         
-        var stateActionTypes = coreAssembly.GetTypes()
-            .Where(t => typeof(IStateAction).IsAssignableFrom(t) 
-                        && !t.IsInterface 
-                        && !t.IsAbstract 
-                        && !t.IsGenericTypeDefinition);
-        foreach (var type in stateActionTypes)
-            services.AddSingleton(typeof(IStateAction), type);
+        services.Scan(scan => scan
+            .FromAssemblies(assembly)
+            .AddClasses(classes => classes.AssignableTo<IStateAction>()
+                .Where(c => c is { IsInterface: false, IsAbstract: false, IsGenericTypeDefinition: false }))
+            .AsImplementedInterfaces()
+            .WithSingletonLifetime()
+        );
     }
     
     public static void RegisterSequentialState<TState, TStep>(this IServiceCollection services, Assembly assembly,
-        bool endSilently) // мб отдельный класс создать 
+        bool endSilently)
         where TState : SequentialState<TStep>
         where TStep : notnull
     {

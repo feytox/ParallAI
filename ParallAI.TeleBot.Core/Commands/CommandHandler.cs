@@ -9,14 +9,21 @@ public class CommandHandler
     private readonly Dictionary<string, ICommand> commands;
     public readonly IEnumerable<CommandAttribute> CommandsDescription;
 
-    public CommandHandler(IEnumerable<ICommand> commands, IEnumerable<CommandAttribute> commandsDescription)
+    public CommandHandler(IEnumerable<ICommand> commands)
     {
-        this.commands = commands
+        var validCommands = commands
             .Select(cmd => (cmd, attr: cmd.GetType().GetCustomAttribute<CommandAttribute>()))
             .Where(t => t.attr is not null)
-            .ToDictionary(t => t.attr!.Name, t => t.cmd, StringComparer.OrdinalIgnoreCase);
+            .ToList();
         
-        CommandsDescription = commandsDescription;
+        this.commands = validCommands
+            .ToDictionary(
+                t => t.attr!.Name,
+                t => t.cmd, 
+                StringComparer.OrdinalIgnoreCase
+            );
+        
+        CommandsDescription = validCommands.Select(t => t.attr!);
     }
     
     public async Task HandleCommand(Message message, ITelegramBotClient bot)
