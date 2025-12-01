@@ -33,6 +33,7 @@ public static class ServiceCollectionExtensions
         
         services.AddSettingsState<PresetSettingsState, PresetSettingsHandler>();
         services.AddSettingsState<ModelSettingsState, ModelSettingsHandler>();
+        services.AddSettingsState<GeminiProviderSettingsState, GeminiProviderSettingsHandler>();
     }
 
     private static void AddScannedHandlers<TInterface, TAttribute>(IServiceCollection services, Assembly assembly)

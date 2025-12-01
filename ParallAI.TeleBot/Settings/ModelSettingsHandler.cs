@@ -47,6 +47,7 @@ public class ModelSettingsHandler() : SettingsHandler<ModelSettingsState>(Tag, C
             .AddSimple("Название", "Введите название модели", "",
                 text => text, (state, value) => state.DisplayName = value)
             .AddSimple("ID модели", "Введите ID модели", "",
-                text => text, (state, value) => state.ModelId = value);
+                text => text, (state, value) => state.ModelId = value)
+            .Add(new ProviderSettingsPart("Провайдер"));
     }
 }
