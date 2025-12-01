@@ -8,5 +8,5 @@ using ParallAI.TeleBot.Settings;
 namespace ParallAI.TeleBot.Callback;
 
 [CallbackQuery(GeminiProviderSettingsHandler.Tag)]
-public class ProviderPartCallBack(IRepository<User, long> users, SettingsHandler<GeminiProviderSettingsState> handler)
+public class GeminiPartCallBack(IRepository<User, long> users, SettingsHandler<GeminiProviderSettingsState> handler)
     : SettingsPartCallback<GeminiProviderSettingsState>(users, handler);

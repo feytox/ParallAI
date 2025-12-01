@@ -26,15 +26,3 @@ public abstract class ProviderChooseCallback<TProviderSettingsState>(IRepository
         await handler.SendPartsList(state, callbackQuery.From.Id, bot);
     }
 }
-
-[CallbackQuery(ProviderSettingsPart.GeminiTag)]
-public class GeminiChooseCallback(IRepository<User, long> users, SettingsHandler<GeminiProviderSettingsState> handler) :
-    ProviderChooseCallback<GeminiProviderSettingsState>(users, handler)
-{
-    protected override GeminiProviderSettingsState ToSettingsState(AiProvider provider)
-    {
-        if (provider is GeminiProvider geminiProvider)
-            return geminiProvider.ToState();
-        return new GeminiProviderSettingsState();
-    }
-}

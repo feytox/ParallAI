@@ -9,6 +9,7 @@ using ParallAI.TeleBot.Core.Settings;
 using ParallAI.TeleBot.Core.StateActions;
 using ParallAI.TeleBot.Services;
 using ParallAI.TeleBot.Settings;
+using ParallAI.TeleBot.Settings.Provider;
 using ParallAI.TeleBot.StateActions;
 
 namespace ParallAI.TeleBot;
@@ -34,6 +35,7 @@ public static class ServiceCollectionExtensions
         services.AddSettingsState<PresetSettingsState, PresetSettingsHandler>();
         services.AddSettingsState<ModelSettingsState, ModelSettingsHandler>();
         services.AddSettingsState<GeminiProviderSettingsState, GeminiProviderSettingsHandler>();
+        services.AddSettingsState<OpenAICompatibleSettingsState, OpenAICompatibleSettingsHandler>();
     }
 
     private static void AddScannedHandlers<TInterface, TAttribute>(IServiceCollection services, Assembly assembly)

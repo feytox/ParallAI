@@ -10,10 +10,12 @@ namespace ParallAI.TeleBot.Core.Settings;
 
 public class ProviderSettingsPart(string name) : SettingsPart<ModelSettingsState>(name)
 {
-    public const string GeminiTag = "choosing_gemini";
+    public const string GeminiTag = "choose_gemini";
+    public const string OpenAiTag = "choose_openai";
     public override async Task<UserState?> ActivatePart(ModelSettingsState state, ChatId chatId, ITelegramBotClient bot, User user)
     {
-        InlineKeyboardButton[] buttons = [InlineKeyboardButton.WithCallbackData("GeminiProvider", GeminiTag)];
+        InlineKeyboardButton[] buttons = [InlineKeyboardButton.WithCallbackData("GeminiProvider", GeminiTag),
+            InlineKeyboardButton.WithCallbackData("OpenAiCompatibleProvider", OpenAiTag)];
 
         await bot.SendMessage(chatId, "Выберите провайдер", replyMarkup: new InlineKeyboardMarkup(buttons));
         return null;
@@ -23,5 +25,7 @@ public class ProviderSettingsPart(string name) : SettingsPart<ModelSettingsState
     {
         if (prevState is GeminiProviderSettingsState geminiState)
             state.Provider = geminiState.ToProvider();
+        if (prevState is OpenAICompatibleSettingsState openAiState)
+            state.Provider = openAiState.ToProvider();
     }
 }
