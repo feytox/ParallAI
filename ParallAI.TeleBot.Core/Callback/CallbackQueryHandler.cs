@@ -1,4 +1,3 @@
-using System.Reflection;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
@@ -8,12 +7,10 @@ public class CallbackQueryHandler
 {
     private readonly Dictionary<string, ICallbackQuery> callbackQueries;
 
-    public CallbackQueryHandler(IEnumerable<ICallbackQuery> callbackQueries)
+    public CallbackQueryHandler(IEnumerable<(ICallbackQuery callback, CallbackQueryAttribute attribute)> callbacks)
     {
-        this.callbackQueries = callbackQueries
-            .Select(cbq => (cbq, attr: cbq.GetType().GetCustomAttribute<CallbackQueryAttribute>()))
-            .Where(t => t.attr is not null)
-            .ToDictionary(t => t.attr!.Key, t => t.cbq, StringComparer.OrdinalIgnoreCase);
+        callbackQueries = callbacks
+            .ToDictionary(t => t.attribute.Key, t => t.callback, StringComparer.OrdinalIgnoreCase);
     }
 
     public async Task HandleCallbackQuery(CallbackQuery callbackQuery, ITelegramBotClient bot)

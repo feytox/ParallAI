@@ -11,18 +11,15 @@ public static class ServiceCollectionExtensions
 {
     public static void AddTelebotCore(this IServiceCollection services)
     {
-        var assembly = typeof(ICommand).Assembly;
-        
         services.AddSingleton<CommandHandler>();
         services.AddSingleton<CallbackQueryHandler>();
         services.AddSingleton<StateHandler>();
         
         services.Scan(scan => scan
-            .FromAssemblies(assembly)
-            .AddClasses(classes => classes.AssignableTo<IStateAction>()
-                .Where(c => c is { IsInterface: false, IsAbstract: false, IsGenericTypeDefinition: false }))
-            .AsImplementedInterfaces()
-            .WithSingletonLifetime()
+            .FromAssemblyOf<ICommand>()
+            .AddClasses(classes => classes.AssignableTo<IStateAction>())
+                .AsImplementedInterfaces()
+                .WithSingletonLifetime()
         );
     }
     
@@ -37,11 +34,11 @@ public static class ServiceCollectionExtensions
                 endSilently
             ));
 
-        var stepTypes = assembly.GetTypes()
-            .Where(t => typeof(IStepStateAction<TState, TStep>).IsAssignableFrom(t)
-                        && t is { IsInterface: false, IsAbstract: false });
-
-        foreach (var type in stepTypes)
-            services.AddSingleton(typeof(IStepStateAction<TState, TStep>), type);
+        services.Scan(scan => scan
+            .FromAssemblies(assembly)
+            .AddClasses(classes => classes.AssignableTo<IStepStateAction<TState, TStep>>())
+            .As<IStepStateAction<TState, TStep>>()
+            .WithSingletonLifetime()
+        );
     }
 }

@@ -11,6 +11,6 @@ public class CompareCommand : ICommand
 {
     public async Task Execute(Message message, ITelegramBotClient bot)
     {
-        await bot.SendMessage(message.Chat, "Сделай меня :3");
+        await bot.SendMessage(message.Chat, "Я ещё не реализован, братик :3");
     }
 }

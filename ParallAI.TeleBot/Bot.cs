@@ -18,7 +18,8 @@ public class Bot(
     ILogger<Bot> logger,
     CommandHandler commandHandler,
     StateHandler stateHandler,
-    CallbackQueryHandler callbackQueryHandler) : IHostedService
+    CallbackQueryHandler callbackQueryHandler,
+    IEnumerable<(ICommand command, CommandAttribute attribute)> commandsDescription) : IHostedService
 {
     public ITelegramBotClient Client => client ?? throw new NullReferenceException("Bot is not initialized");
 
@@ -30,11 +31,7 @@ public class Bot(
 
         client.StartReceiving(HandleUpdate, HandleError, cancellationToken: cancellationToken);
 
-        var commands = commandHandler
-            .CommandsDescription
-            .Select(attr => new BotCommand(attr.Name, attr.Description))
-            .ToArray();
-        
+        var commands = commandsDescription.Select(t => new BotCommand(t.attribute.Name, t.attribute.Description));
         await client.SetMyCommands(commands, cancellationToken: cancellationToken);
         
         logger.LogInformation("Bot has been started.");

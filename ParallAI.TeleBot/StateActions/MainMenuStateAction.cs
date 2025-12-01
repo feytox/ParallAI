@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using ParallAI.Core.States;
+﻿using ParallAI.Core.States;
 using ParallAI.TeleBot.Commands.UI;
 using ParallAI.TeleBot.Core.Commands;
 using ParallAI.TeleBot.Core.StateActions;
@@ -16,19 +15,17 @@ public class MainMenuStateAction : StateAction<MainMenuState>
 
     private readonly ReplyKeyboardMarkup keyboard;
 
-    public MainMenuStateAction(IEnumerable<ICommand> commands)
+    public MainMenuStateAction(IEnumerable<(ICommand command, MainMenuAttribute attribute)> commands)
     {
         var sortedCommands = commands
-            .Select(cmd => (cmd, attr: cmd.GetType().GetCustomAttribute<MainMenuAttribute>()))
-            .Where(t => t.attr is not null)
-            .OrderBy(t => t.attr!.Weight)
-            .ThenBy(t => t.attr!.NameUI)
+            .OrderBy(t => t.attribute.Weight)
+            .ThenBy(t => t.attribute.NameUI)
             .ToList();
 
         this.commands = sortedCommands
-            .ToDictionary(t => t.attr!.NameUI, t => t.cmd, StringComparer.OrdinalIgnoreCase);
+            .ToDictionary(t => t.attribute.NameUI, t => t.command, StringComparer.OrdinalIgnoreCase);
 
-        keyboard = CreateKeyboard(sortedCommands.Select(t => t.attr!.NameUI));
+        keyboard = CreateKeyboard(sortedCommands.Select(t => t.attribute.NameUI));
     }
 
     protected override async Task<bool> Execute(MainMenuState state, Message message, ITelegramBotClient bot, User user)
@@ -49,7 +46,7 @@ public class MainMenuStateAction : StateAction<MainMenuState>
         
         await bot.SendMessage(
             chatId: chatId,
-            text: "\u3164", // тут мб будет красивое первое сообщение (Дима Комаров обязательно его придумает ПОТОМ)
+            text: "\u3164", // TODO: тут мб будет красивое первое сообщение (Дима Комаров обязательно его придумает)
             replyMarkup: keyboard
         );
 
