@@ -80,8 +80,11 @@ public class PresetSettingsHandler() : SettingsHandler<PresetSettingsState>(Tag,
 
     static PresetSettingsHandler()
     {
-        // TODO: пофиксить Unknown в списке бюджета
-        var lines = Enum.GetNames<ThinkingBudget>().Select(name => $"- {name}");
+        var lines = Enum.GetValues<ThinkingBudget>()
+            .Where(budget => budget != ThinkingBudget.Unknown)
+            .Select(Enum.GetName)
+            .Select(name => $"- {name}");
+
         ThinkingBudgets = string.Join('\n', lines);
     }
 }
