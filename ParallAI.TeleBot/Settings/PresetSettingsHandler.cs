@@ -11,7 +11,7 @@ namespace ParallAI.TeleBot.Settings;
 public class PresetSettingsHandler() : SettingsHandler<PresetSettingsState>(Tag, CreateParts)
 {
     public const string Tag = "preset_settings";
-    
+
     private static readonly string ThinkingBudgets;
 
     protected override string GetPartsMessage(PresetSettingsState state)
@@ -19,7 +19,8 @@ public class PresetSettingsHandler() : SettingsHandler<PresetSettingsState>(Tag,
         return "Настройки пресетов"; // TODO: добавить отображение текущих настроек
     }
 
-    protected override async Task SaveSettingsToUser(PresetSettingsState state, ChatId chatId, ITelegramBotClient bot,        User user)
+    protected override async Task SaveSettingsToUser(PresetSettingsState state, ChatId chatId,
+        ITelegramBotClient bot, User user)
     {
         if (state.PresetId is null)
             SaveNewPreset(state, user);
@@ -72,7 +73,9 @@ public class PresetSettingsHandler() : SettingsHandler<PresetSettingsState>(Tag,
 
     private static T? ParseEnum<T>(string text) where T : struct, Enum
     {
-        return Enum.TryParse<T>(text, true, out var result) ? result : null;
+        return Enum.TryParse<T>(text, true, out var result) && Enum.IsDefined(typeof(T), result)
+            ? result
+            : null;
     }
 
     static PresetSettingsHandler()
