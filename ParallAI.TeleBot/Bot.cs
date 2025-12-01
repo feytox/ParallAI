@@ -78,9 +78,9 @@ public class Bot(
 
     private async Task HandleMessage(ITelegramBotClient bot, Message message)
     {
-        var mainHandled = await stateHandler.HandleState(message, bot);
-        var postHandled = await stateHandler.HandlePostState(message.From!.Id, bot);
-        if (!mainHandled && !postHandled)
+        var mainResult = await stateHandler.HandleState(message, bot);
+        var postResult = await stateHandler.HandlePostState(message.From!.Id, bot);
+        if (mainResult != ActionResult.Handled && postResult != ActionResult.Handled)
             await commandHandler.HandleCommand(message, bot);
     }
 

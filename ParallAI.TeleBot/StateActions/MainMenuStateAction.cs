@@ -28,21 +28,22 @@ public class MainMenuStateAction : StateAction<MainMenuState>
         keyboard = CreateKeyboard(sortedCommands.Select(t => t.attribute.NameUI));
     }
 
-    protected override async Task<bool> Execute(MainMenuState state, Message message, ITelegramBotClient bot, User user)
+    protected override async Task<ActionResult> Execute(MainMenuState state, Message message, 
+        ITelegramBotClient bot, User user)
     {
         var messageText = message.Text ?? message.Caption;
         if (messageText == null || !commands.TryGetValue(messageText, out var command)) 
-            return false;
+            return ActionResult.Skipped;
         
         await command.Execute(message, bot);
-        return true;
+        return ActionResult.Handled;
     }
 
-    protected override async Task<bool> ExecuteAfter(MainMenuState state, ChatId chatId,
+    protected override async Task<ActionResult> ExecuteAfter(MainMenuState state, ChatId chatId,
         ITelegramBotClient bot, User user)
     {
         if (!state.Reactivated)
-            return false;
+            return ActionResult.Skipped;
         
         await bot.SendMessage(
             chatId: chatId,
@@ -51,7 +52,7 @@ public class MainMenuStateAction : StateAction<MainMenuState>
         );
 
         state.Reactivated = false;
-        return true;
+        return ActionResult.Handled;
     }
 
     private static ReplyKeyboardMarkup CreateKeyboard(IEnumerable<string> names)

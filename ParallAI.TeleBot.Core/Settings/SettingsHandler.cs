@@ -1,4 +1,5 @@
 ﻿using ParallAI.Core.States.Common;
+using ParallAI.TeleBot.Core.StateActions;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -56,10 +57,10 @@ public abstract class SettingsHandler<TState> where TState : SettingsState
         await SendPartsList(state, message.Chat, bot);
     }
     
-    public async Task<bool> SavePartResult(TState state, ChatId chatId, ITelegramBotClient bot)
+    public async Task<ActionResult> SavePartResult(TState state, ChatId chatId, ITelegramBotClient bot)
     {
         if (state.PrevState is null)
-            return false;
+            return ActionResult.Skipped;
 
         var currentPart = GetCurrentPart(state);
         if (currentPart is null)
@@ -67,7 +68,7 @@ public abstract class SettingsHandler<TState> where TState : SettingsState
 
         currentPart.SaveToState(state, state.PrevState);
         await SendPartsList(state, chatId, bot);
-        return true;
+        return ActionResult.Handled;
     }
     
     public async Task SendPartsList(TState state, ChatId chatId, ITelegramBotClient bot)
