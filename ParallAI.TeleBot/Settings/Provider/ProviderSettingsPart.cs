@@ -12,10 +12,13 @@ public class ProviderSettingsPart(string name) : SettingsPart<ModelSettingsState
 {
     public const string GeminiTag = "choose_gemini";
     public const string OpenAiTag = "choose_openai";
+    public const string OpenRouterTag = "choose_openrouter";
     public override async Task<UserState?> ActivatePart(ModelSettingsState state, ChatId chatId, ITelegramBotClient bot, User user)
     {
-        InlineKeyboardButton[] buttons = [InlineKeyboardButton.WithCallbackData("GeminiProvider", GeminiTag),
-            InlineKeyboardButton.WithCallbackData("OpenAiCompatibleProvider", OpenAiTag)];
+        InlineKeyboardButton[] buttons = [
+            InlineKeyboardButton.WithCallbackData("GeminiProvider", GeminiTag),
+            InlineKeyboardButton.WithCallbackData("OpenAiCompatibleProvider", OpenAiTag),
+            InlineKeyboardButton.WithCallbackData("OpenRouterProvider", OpenRouterTag)];
 
         await bot.SendMessage(chatId, "Выберите провайдер", replyMarkup: new InlineKeyboardMarkup(buttons));
         return null;
@@ -23,9 +26,12 @@ public class ProviderSettingsPart(string name) : SettingsPart<ModelSettingsState
 
     public override void SaveToState(ModelSettingsState state, UserState prevState)
     {
-        if (prevState is GeminiProviderSettingsState geminiState)
-            state.Provider = geminiState.ToProvider();
-        if (prevState is OpenAICompatibleSettingsState openAiState)
-            state.Provider = openAiState.ToProvider();
+        state.Provider = prevState switch
+        {
+            GeminiProviderSettingsState geminiState => geminiState.ToProvider(),
+            OpenAICompatibleSettingsState openAiState => openAiState.ToProvider(),
+            OpenRouterProviderSettingsState openRouterState => openRouterState.ToProvider(),
+            _ => throw new InvalidOperationException("Unknown previous state type")
+        };
     }
 }

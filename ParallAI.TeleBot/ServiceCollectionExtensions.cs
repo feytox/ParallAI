@@ -36,6 +36,7 @@ public static class ServiceCollectionExtensions
         services.AddSettingsState<ModelSettingsState, ModelSettingsHandler>();
         services.AddSettingsState<GeminiProviderSettingsState, GeminiProviderSettingsHandler>();
         services.AddSettingsState<OpenAICompatibleSettingsState, OpenAICompatibleSettingsHandler>();
+        services.AddSettingsState<OpenRouterProviderSettingsState, OpenRouterSettingsHandler>();
     }
 
     private static void AddScannedHandlers<TInterface, TAttribute>(IServiceCollection services, Assembly assembly)
