@@ -10,6 +10,7 @@
     <ItemGroup>
       <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.9" />
       <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.10" />
+      <PackageReference Include="Scrutor" Version="7.0.0" />
       <PackageReference Include="Telegram.Bot" Version="22.7.2" />
     </ItemGroup>
 

@@ -1,4 +1,6 @@
+using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
+using ParallAI.Core.States.Common;
 using ParallAI.TeleBot.Core.Callback;
 using ParallAI.TeleBot.Core.Commands;
 using ParallAI.TeleBot.Core.StateActions;
@@ -9,18 +11,34 @@ public static class ServiceCollectionExtensions
 {
     public static void AddTelebotCore(this IServiceCollection services)
     {
-        var coreAssembly = typeof(ICommand).Assembly;
-        
         services.AddSingleton<CommandHandler>();
         services.AddSingleton<CallbackQueryHandler>();
         services.AddSingleton<StateHandler>();
         
-        var stateActionTypes = coreAssembly.GetTypes()
-            .Where(t => typeof(IStateAction).IsAssignableFrom(t) 
-                        && !t.IsInterface 
-                        && !t.IsAbstract 
-                        && !t.IsGenericTypeDefinition);
-        foreach (var type in stateActionTypes)
-            services.AddSingleton(typeof(IStateAction), type);
+        services.Scan(scan => scan
+            .FromAssemblyOf<ICommand>()
+            .AddClasses(classes => classes.AssignableTo<IStateAction>())
+                .AsImplementedInterfaces()
+                .WithSingletonLifetime()
+        );
+    }
+    
+    public static void RegisterSequentialState<TState, TStep>(this IServiceCollection services, Assembly assembly,
+        bool endSilently)
+        where TState : SequentialState<TStep>
+        where TStep : notnull
+    {
+        services.AddSingleton<IStateAction, SequentialStateAction<TState, TStep>>(sp =>
+            new SequentialStateAction<TState, TStep>(
+                sp.GetRequiredService<IEnumerable<IStepStateAction<TState, TStep>>>(),
+                endSilently
+            ));
+
+        services.Scan(scan => scan
+            .FromAssemblies(assembly)
+            .AddClasses(classes => classes.AssignableTo<IStepStateAction<TState, TStep>>())
+            .As<IStepStateAction<TState, TStep>>()
+            .WithSingletonLifetime()
+        );
     }
 }
