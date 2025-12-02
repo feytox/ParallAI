@@ -16,8 +16,8 @@ public class CommandHandler
             .ToDictionary(t => t.attribute.Name, t => t.command, StringComparer.OrdinalIgnoreCase);
 
         highPriorityCommands = commandsAttributes
-            .Where(t => t.attr!.HighPriority)
-            .Select(t => t.attr!.Name)
+            .Where(t => t.attribute.HighPriority)
+            .Select(t => t.attribute.Name)
             .ToHashSet();
     }
 
