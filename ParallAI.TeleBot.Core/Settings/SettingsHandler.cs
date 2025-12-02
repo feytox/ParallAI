@@ -66,6 +66,10 @@ public abstract class SettingsHandler<TState> where TState : SettingsState
             throw new NullReferenceException("Previous state is not null, but current part is null");
 
         currentPart.SaveToState(state, state.PrevState);
+        //По идее когда мы сохраняем результат предыдущего стейта его нужно удалить так как он больше уже не нужен. 
+        //Если это не сделать то вызов state after или как его там будет повторяться хотя не должен.
+        //Из за этого например, если попытаться, снова поменять провайдер, не сохранив модель будет выскакиваь окошко общих настроек модели
+        state.RejectPrevState();
         await SendPartsList(state, chatId, bot);
         return true;
     }

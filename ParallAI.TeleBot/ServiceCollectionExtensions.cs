@@ -5,12 +5,14 @@ using ParallAI.Core.States;
 using ParallAI.Core.States.Common;
 using ParallAI.TeleBot.Commands.UI;
 using ParallAI.TeleBot.Core;
+using ParallAI.Core.States.Providers;
 using ParallAI.TeleBot.Core.Callback;
 using ParallAI.TeleBot.Core.Commands;
 using ParallAI.TeleBot.Core.Settings;
 using ParallAI.TeleBot.Core.StateActions;
 using ParallAI.TeleBot.Services;
 using ParallAI.TeleBot.Settings;
+using ParallAI.TeleBot.Settings.Provider;
 using ParallAI.TeleBot.StateActions;
 
 namespace ParallAI.TeleBot;
@@ -38,6 +40,10 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IStateAction, MainMenuStateAction>();
 
         services.AddSettingsState<PresetSettingsState, PresetSettingsHandler>();
+        services.AddSettingsState<ModelSettingsState, ModelSettingsHandler>();
+        services.AddSettingsState<GeminiProviderSettingsState, GeminiProviderSettingsHandler>();
+        services.AddSettingsState<OpenAICompatibleSettingsState, OpenAICompatibleSettingsHandler>();
+        services.AddSettingsState<OpenRouterProviderSettingsState, OpenRouterSettingsHandler>();
     }
 
     private static void AddScanned<TInterface>(this IServiceCollection services, Assembly assembly)

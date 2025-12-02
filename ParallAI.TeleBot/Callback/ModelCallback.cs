@@ -1,0 +1,51 @@
+using ParallAI.Core.Entities;
+using ParallAI.Core.Repositories;
+using ParallAI.Core.States;
+using ParallAI.TeleBot.Core.Callback;
+using ParallAI.TeleBot.Settings;
+using Telegram.Bot;
+using Telegram.Bot.Types;
+using User = ParallAI.Core.Entities.User;
+
+namespace ParallAI.TeleBot.Callback;
+
+[CallbackQuery(Tag)]
+public class ModelCallback(IRepository<User, long> users, ModelSettingsHandler handler)
+    : SettingsElementCallback(users)
+{
+    public const string Tag = "model";
+    
+    protected override string GetElementInfo(int index, User user)
+    {
+        var model = GetModel(user, index);
+        return $"Модель {model.DisplayName}"; // TODO: add more info
+    }
+
+    protected override async Task HandleChoose(CallbackQuery callbackQuery, int index, ITelegramBotClient bot, User user)
+    {
+        var model = GetModel(user, index);
+        user.ChooseModel(model);
+        
+        await bot.SendMessage(callbackQuery.From.Id, $"Модель {model.DisplayName} выбрана");
+    }
+
+    protected override async Task HandleEdit(CallbackQuery callbackQuery, int index, ITelegramBotClient bot, User user)
+    {
+        var state = index == -1 ? new ModelSettingsState(null) : GetModel(user, index).ToState();
+        user.StateMachine.Push(state);
+        await handler.SendPartsList(state, callbackQuery.From.Id, bot);
+    }
+
+    protected override async Task HandleRemove(CallbackQuery callbackQuery, int index, ITelegramBotClient bot, User user)
+    {
+        var model = GetModel(user, index);
+        user.DeleteModel(model);
+        
+        await bot.SendMessage(callbackQuery.From.Id, $"Модель {model.DisplayName} удалена");
+    }
+    
+    private static AiModel GetModel(User user, int index)
+    {
+        return user.UserModels[index];
+    }
+}
