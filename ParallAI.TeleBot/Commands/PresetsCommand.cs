@@ -10,7 +10,7 @@ using User = ParallAI.Core.Entities.User;
 namespace ParallAI.TeleBot.Commands;
 
 [MainMenu("💾 Пресеты", MenuOrder.Presets)]
-[Command("/presets", "Список и конфигурация пресетов")]
+[Command("/presets", "список и конфигурация пресетов")]
 public class PresetsCommand(IRepository<User, long> users) : UserCommand(users)
 {
     protected override async Task Execute(Message message, ITelegramBotClient bot, User user)

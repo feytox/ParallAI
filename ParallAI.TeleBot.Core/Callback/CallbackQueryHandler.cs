@@ -20,11 +20,11 @@ public class CallbackQueryHandler
             await bot.AnswerCallbackQuery(callbackQuery.Id);
             return;
         }
-        
+
         var callbackQueryKey = callbackQuery.Data.Split(':')[0];
         if (callbackQueries.TryGetValue(callbackQueryKey, out var callbackQueryObject))
             await callbackQueryObject.Handle(callbackQuery, bot);
-        else
-            await bot.AnswerCallbackQuery(callbackQuery.Id);
+        
+        await bot.AnswerCallbackQuery(callbackQuery.Id);
     }
 }

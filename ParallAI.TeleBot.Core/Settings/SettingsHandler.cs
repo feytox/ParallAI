@@ -75,7 +75,8 @@ public abstract class SettingsHandler<TState> where TState : SettingsState
         var buttons = parts
             .Select((part, i) => InlineKeyboardButton.WithCallbackData(part.Name, $"{tag}:{i}"))
             .Chunk(2)
-            .Append([InlineKeyboardButton.WithCallbackData("Сохранить", $"{tag}:c")]);
+            .Append([InlineKeyboardButton.WithCallbackData("Сохранить", $"{tag}:c")])
+            .Append([InlineKeyboardButton.WithCallbackData("Выйти без сохранения", "cancel")]);
         var message = GetPartsMessage(state);
 
         await bot.SendMessage(chatId, message, replyMarkup: new InlineKeyboardMarkup(buttons));
