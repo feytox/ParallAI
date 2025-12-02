@@ -1,11 +1,13 @@
 using ParallAI.Core.States;
 using ParallAI.Core.States.Common;
+using ParallAI.Core.States.Providers;
+using ParallAI.TeleBot.Core.Settings;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 using User = ParallAI.Core.Entities.User;
 
-namespace ParallAI.TeleBot.Core.Settings;
+namespace ParallAI.TeleBot.Settings.Provider;
 
 public class ProviderSettingsPart(string name) : SettingsPart<ModelSettingsState>(name)
 {

@@ -1,7 +1,8 @@
 using ParallAI.Core.Entities;
+using ParallAI.Core.States.Common;
 using ParallAI.Core.ValueTypes;
 
-namespace ParallAI.Core.States.Common;
+namespace ParallAI.Core.States;
 
 public class ModelSettingsState(Guid? id) : SettingsState
 {

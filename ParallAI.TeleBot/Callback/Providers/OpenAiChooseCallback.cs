@@ -1,12 +1,13 @@
 using ParallAI.Core.Entities;
 using ParallAI.Core.Providers;
 using ParallAI.Core.Repositories;
-using ParallAI.Core.States;
+using ParallAI.Core.States.Providers;
 using ParallAI.Core.ValueTypes;
 using ParallAI.TeleBot.Core.Callback;
 using ParallAI.TeleBot.Core.Settings;
+using ParallAI.TeleBot.Settings.Provider;
 
-namespace ParallAI.TeleBot.Callback;
+namespace ParallAI.TeleBot.Callback.Providers;
 
 [CallbackQuery(ProviderSettingsPart.OpenAiTag)]
 public class OpenAiChooseCallback(IRepository<User, long> users, SettingsHandler<OpenAICompatibleSettingsState> handler) :

@@ -1,10 +1,10 @@
-using ParallAI.Core.States;
+using ParallAI.Core.States.Providers;
 using ParallAI.TeleBot.Core.Settings;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using User = ParallAI.Core.Entities.User;
 
-namespace ParallAI.TeleBot.Settings;
+namespace ParallAI.TeleBot.Settings.Provider;
 
 public class GeminiProviderSettingsHandler(): SettingsHandler<GeminiProviderSettingsState>(Tag, CreateParts)
 {

@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using ParallAI.Core;
 using ParallAI.Core.States;
 using ParallAI.Core.States.Common;
+using ParallAI.Core.States.Providers;
 using ParallAI.TeleBot.Core.Callback;
 using ParallAI.TeleBot.Core.Commands;
 using ParallAI.TeleBot.Core.Settings;

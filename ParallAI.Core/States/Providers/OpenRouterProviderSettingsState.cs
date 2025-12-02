@@ -1,6 +1,6 @@
 using ParallAI.Core.Providers;
 
-namespace ParallAI.Core.States;
+namespace ParallAI.Core.States.Providers;
 
 public class OpenRouterProviderSettingsState: ProviderSettingsState
 {

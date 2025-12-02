@@ -1,7 +1,6 @@
 using ParallAI.Core.Providers;
-using ParallAI.Core.States.Common;
 
-namespace ParallAI.Core.States;
+namespace ParallAI.Core.States.Providers;
 
 public class OpenAICompatibleSettingsState : ProviderSettingsState
 {

@@ -1,6 +1,5 @@
 using ParallAI.Core.Repositories;
 using ParallAI.Core.States;
-using ParallAI.Core.States.Common;
 using ParallAI.Core.ValueTypes;
 using ParallAI.TeleBot.Core.Callback;
 using ParallAI.TeleBot.Core.Settings;
@@ -8,7 +7,7 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using User = ParallAI.Core.Entities.User;
 
-namespace ParallAI.TeleBot.Callback;
+namespace ParallAI.TeleBot.Callback.Providers;
 
 public abstract class ProviderChooseCallback<TProviderSettingsState>(IRepository<User, long> users, 
     SettingsHandler<TProviderSettingsState> handler) : UserCallbackQuery(users) where TProviderSettingsState : ProviderSettingsState, new()
