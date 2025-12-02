@@ -1,7 +1,9 @@
 using ParallAI.Core.Repositories;
 using ParallAI.TeleBot.Core.Callback;
+using ParallAI.TeleBot.Core.Util;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.ReplyMarkups;
 using User = ParallAI.Core.Entities.User;
 
 namespace ParallAI.TeleBot.Callback;
@@ -13,21 +15,10 @@ public class CancelCallback(IRepository<User, long> users) : UserCallbackQuery(u
     
     protected override async Task Handle(CallbackQuery callbackQuery, ITelegramBotClient bot, User user)
     {
-        if (callbackQuery.Message is not null)
-        {
-            await bot.DeleteMessage(callbackQuery.From.Id, callbackQuery.Message!.Id);
-        }
-        
-        try
-        {
-            user.StateMachine.Pop();
-        }
-        catch (InvalidOperationException ex) when (ex.Message.Contains("Unable to pop the default UserState."))
-        {
-            await bot.SendMessage(callbackQuery.From.Id, "Сейчас нет команды, которую можно отменить");
-            return;
-        }
-
-        await bot.SendMessage(callbackQuery.From.Id, "Команда отменена");
+        await CancelHelper.Cancel(callbackQuery.From.Id, callbackQuery.Message, bot, user);
     }
+
+    public static InlineKeyboardMarkup CreateMarkup(string text) => new(CreateButton(text));
+    
+    public static InlineKeyboardButton CreateButton(string text) => InlineKeyboardButton.WithCallbackData(text, Tag);
 }
