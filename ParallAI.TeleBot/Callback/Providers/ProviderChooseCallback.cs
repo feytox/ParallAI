@@ -1,4 +1,3 @@
-using ParallAI.Core.Providers;
 using ParallAI.Core.Repositories;
 using ParallAI.Core.States;
 using ParallAI.Core.States.Common;
@@ -15,11 +14,13 @@ public abstract class ProviderChooseCallback<TProviderSettingsState>(IRepository
     SettingsHandler<TProviderSettingsState> handler) : UserCallbackQuery(users) where TProviderSettingsState : ProviderSettingsState, new()
 {
     protected abstract TProviderSettingsState ToSettingsState(AiProvider provider);
+    
     //TODO: Add validation
     protected override async Task Handle(CallbackQuery callbackQuery, ITelegramBotClient bot, User user)
     {
         if (user.StateMachine.Current is not ModelSettingsState modelSettings)
             throw new InvalidOperationException("Incorrect current state");
+        
         var aiProvider = modelSettings.Provider;
         var state = aiProvider is null ? new TProviderSettingsState() : ToSettingsState(aiProvider);
         user.StateMachine.Push(state);

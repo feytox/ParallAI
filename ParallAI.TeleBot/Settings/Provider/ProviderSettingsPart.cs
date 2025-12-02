@@ -1,4 +1,3 @@
-using ParallAI.Core.Providers;
 using ParallAI.Core.States;
 using ParallAI.Core.States.Common;
 using Telegram.Bot;
@@ -13,12 +12,17 @@ public class ProviderSettingsPart(string name) : SettingsPart<ModelSettingsState
     public const string GeminiTag = "choose_gemini";
     public const string OpenAiTag = "choose_openai";
     public const string OpenRouterTag = "choose_openrouter";
-    public override async Task<UserState?> ActivatePart(ModelSettingsState state, ChatId chatId, ITelegramBotClient bot, User user)
+
+    public override async Task<UserState?> ActivatePart(ModelSettingsState state, ChatId chatId, 
+        ITelegramBotClient bot, User user)
     {
-        InlineKeyboardButton[] buttons = [
-            InlineKeyboardButton.WithCallbackData("GeminiProvider", GeminiTag),
-            InlineKeyboardButton.WithCallbackData("OpenAiCompatibleProvider", OpenAiTag),
-            InlineKeyboardButton.WithCallbackData("OpenRouterProvider", OpenRouterTag)];
+        var buttons = new[]
+            {
+                InlineKeyboardButton.WithCallbackData("Gemini", GeminiTag),
+                InlineKeyboardButton.WithCallbackData("OpenRouter", OpenRouterTag),
+                InlineKeyboardButton.WithCallbackData("OpenAI совместимое", OpenAiTag)
+            }
+            .Chunk(2);
 
         await bot.SendMessage(chatId, "Выберите провайдер", replyMarkup: new InlineKeyboardMarkup(buttons));
         return null;
