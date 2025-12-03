@@ -6,27 +6,32 @@ using User = ParallAI.Core.Entities.User;
 
 namespace ParallAI.TeleBot.Core.Settings;
 
-public class SimpleCallBackSettingsPart<TEnum, TState>(string tag, string name, string inputMessage, 
-    Action<TState, TEnum> saver, Func<TEnum, bool> selector): 
-    SimpleSettingsPart<TState>(name), IEmbeddedCallBackPart<TState> where TState : SettingsState where TEnum : struct, Enum
+public class EnumSettingsPart<TEnum, TState>(
+    string tag,
+    string name,
+    string inputMessage,
+    Action<TState, TEnum> saver,
+    Func<TEnum, bool> selector) :
+    SettingsPart<TState>(name), IEmbeddedCallBackPart<TState> where TState : SettingsState where TEnum : struct, Enum
 {
-    private IEnumerable<TEnum> values = Enum.GetValues(typeof(TEnum)).Cast<TEnum>().Where(selector);
-    
+    private readonly IEnumerable<TEnum> values = Enum.GetValues<TEnum>().Where(selector);
+
     public override async Task<UserState?> ActivatePart(TState state, ChatId chatId, ITelegramBotClient bot, User user)
     {
         var buttons = values
-            .Select(value => InlineKeyboardButton.WithCallbackData(Enum.GetName(value)!, 
+            .Select(value => InlineKeyboardButton.WithCallbackData(Enum.GetName(value)!,
                 $"{tag}:{Enum.GetName(value)!}"))
             .Chunk(2);
         await bot.SendMessage(chatId, inputMessage, replyMarkup: new InlineKeyboardMarkup(buttons));
         return null;
     }
+
     public Task<bool> HandleCallBack(TState state, CallbackQuery callback, ITelegramBotClient bot)
     {
         var data = callback.Data!.Split(':');
         if (data.Length != 2)
             throw new FormatException("Invalid callback data");
-        
+
         var value = Enum.Parse<TEnum>(data[1]);
         saver(state, value);
         return Task.FromResult(true);

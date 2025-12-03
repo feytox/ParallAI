@@ -46,15 +46,15 @@ public class PresetSettingsHandler() : SettingsHandler<PresetSettingsState>(Tag,
     private static void CreateParts(SettingsPartsBuilder<PresetSettingsState> builder)
     {
         builder
-            .AddMessageSimple("Название", "Введите название пресета", "",
+            .AddSimple("Название", "Введите название пресета", "",
                 text => text, (state, value) => state.Name = value)
-            .AddMessageSimple("Системный промпт", "Введите системный промпт", "",
+            .AddSimple("Системный промпт", "Введите системный промпт", "",
                 text => text, (state, value) => state.SystemPrompt = value)
-            .AddMessageSimple("Температура", "Введите температуру (число от 0 до 2)",
+            .AddSimple("Температура", "Введите температуру (число от 0 до 2)",
                 "Ошибка: Ожидается числом от 0 до 2. Попробуйте ещё раз",
                 ParseDecimal, (state, value) => state.Temperature = value)
-            .AddCallBackSimple<ThinkingBudget>(ThinkingBudgetTag, "Размышления",
-                $"Выберите бюджет размышлений",
+            .AddEnum<ThinkingBudget>(ThinkingBudgetTag, "Размышления",
+                "Выберите бюджет размышлений",
                 (state, value) => state.ThinkingBudget = value,
                 value=> value != ThinkingBudget.Unknown);
     }

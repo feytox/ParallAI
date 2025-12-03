@@ -9,7 +9,8 @@ using User = ParallAI.Core.Entities.User;
 
 namespace ParallAI.TeleBot.Settings.Provider;
 
-public class ProviderSettingsPart(string name) : SettingsPart<ModelSettingsState>(name)
+public class ProviderSettingsPart(string name) : SettingsPart<ModelSettingsState>(name), 
+    IComplexSettingsPart<ModelSettingsState>
 {
     public const string GeminiTag = "choose_gemini";
     public const string OpenAiTag = "choose_openai";
@@ -30,7 +31,7 @@ public class ProviderSettingsPart(string name) : SettingsPart<ModelSettingsState
         return null;
     }
 
-    public override void SaveToState(ModelSettingsState state, UserState prevState)
+    public void SaveToState(ModelSettingsState state, UserState prevState)
     {
         state.Provider = prevState switch
         {
