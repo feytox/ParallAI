@@ -10,7 +10,7 @@ public enum ThinkingBudget
     High
 }
 
-public static class ThinkingBudgetExt
+public static class ThinkingBudgetExtensions
 {
     public static int ToThinkingTokens(this ThinkingBudget budget)
     {

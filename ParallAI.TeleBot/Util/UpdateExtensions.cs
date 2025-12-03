@@ -3,7 +3,7 @@ using Telegram.Bot.Types.Enums;
 
 namespace ParallAI.TeleBot.Util;
 
-public static class UpdateExt
+public static class UpdateExtensions
 {
     public static ChatId? GetChatId(this Update update)
     {

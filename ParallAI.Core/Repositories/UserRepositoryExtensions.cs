@@ -2,7 +2,7 @@
 
 namespace ParallAI.Core.Repositories;
 
-public static class UserRepositoryExt
+public static class UserRepositoryExtensions
 {
     public static async Task<User> GetOrCreate(this IRepository<User, long> repository, long id)
     {

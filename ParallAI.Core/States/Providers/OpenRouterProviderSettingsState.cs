@@ -7,7 +7,7 @@ public class OpenRouterProviderSettingsState: ProviderSettingsState
     public string? Token { get; set; }
 }
 
-public static class OpenRouterProviderSettingsExt
+public static class OpenRouterProviderSettingsExtensions
 {
     public static OpenRouterProvider ToProvider(this OpenRouterProviderSettingsState state) => new(state.Token!);
     

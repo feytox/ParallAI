@@ -13,7 +13,7 @@ public class ModelSettingsState(Guid? id) : SettingsState
     
 }
 
-public static class ModelSettingsExt
+public static class ModelSettingsExtensions
 {
     public static AiModel ToModel(this ModelSettingsState state)
     {

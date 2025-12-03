@@ -2,7 +2,7 @@
 
 namespace ParallAI.TeleBot.Util;
 
-public static class MessageExt
+public static class MessageExtensions
 {
     public static bool IsMediaGroup(this Message message)
     {

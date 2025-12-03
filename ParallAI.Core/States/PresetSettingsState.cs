@@ -13,7 +13,7 @@ public class PresetSettingsState(Guid? presetId) : SettingsState
     public ThinkingBudget? ThinkingBudget { get; set; }
 }
 
-public static class PresetSettingsExt
+public static class PresetSettingsExtensions
 {
     public static Preset ToPreset(this PresetSettingsState state)
     {

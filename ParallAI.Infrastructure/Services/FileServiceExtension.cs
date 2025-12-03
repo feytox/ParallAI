@@ -3,7 +3,7 @@ using ParallAI.Core.ValueTypes;
 
 namespace ParallAI.Infrastructure.Services;
 
-public static class FileServiceExt
+public static class FileServiceExtensions
 {
     public static async Task<AiFile> DownloadFile(this IFileService service, AiFileInfo fileInfo)
     {

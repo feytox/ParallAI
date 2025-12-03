@@ -14,7 +14,7 @@ public enum OpenAiReasoningEffort
     High
 }
 
-public static class OpenAiReasoningEffortExt
+public static class OpenAiReasoningEffortExtensions
 {
     public static OpenAiReasoningEffort ToOpenAi(this ThinkingBudget? budget)
     {

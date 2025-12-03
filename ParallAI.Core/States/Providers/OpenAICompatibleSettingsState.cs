@@ -9,7 +9,7 @@ public class OpenAICompatibleSettingsState : ProviderSettingsState
     public string? Endpoint { get; set; }
 }
 
-public static class OpenAIProviderSettingsExt
+public static class OpenAIProviderSettingsExtensions
 {
     public static OpenAICompatibleProvider ToProvider(this OpenAICompatibleSettingsState state) => new(new Uri(state.Endpoint!), state.Token!);
     
