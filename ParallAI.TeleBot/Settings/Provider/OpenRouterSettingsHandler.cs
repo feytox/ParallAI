@@ -12,7 +12,7 @@ public class OpenRouterSettingsHandler() : SettingsHandler<OpenRouterProviderSet
 
     private static void CreateParts(SettingsPartsBuilder<OpenRouterProviderSettingsState> builder)
     {
-        builder.AddSimple("API ключ", "Введите API ключ провайдера", "",
+        builder.AddMessageSimple("API ключ", "Введите API ключ провайдера", "",
             text => text, (state, value) => state.Token = value);
     }
 

@@ -12,9 +12,9 @@ public class OpenAICompatibleSettingsHandler() : SettingsHandler<OpenAICompatibl
 
     private static void CreateParts(SettingsPartsBuilder<OpenAICompatibleSettingsState> builder)
     {
-        builder.AddSimple("API ключ", "Введите API ключ провайдера", "",
+        builder.AddMessageSimple("API ключ", "Введите API ключ провайдера", "",
             text => text, (state, value) => state.Token = value);
-        builder.AddSimple("EndpointUrl", "Введите EndPoint URL", "", 
+        builder.AddMessageSimple("EndpointUrl", "Введите EndPoint URL", "", 
             text => text, (state, value) => state.Endpoint = value);
     }
 

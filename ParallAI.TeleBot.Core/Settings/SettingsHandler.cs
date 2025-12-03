@@ -46,7 +46,7 @@ public abstract class SettingsHandler<TState> where TState : SettingsState
     public async Task HandleMessage(TState state, Message message, ITelegramBotClient bot, User user)
     {
         var currentPart = GetCurrentPart(state);
-        if (currentPart is IEmbeddedPart<TState> embeddedPart)
+        if (currentPart is IEmbeddedMessagePart<TState> embeddedPart)
         {
             var wasHandled = await embeddedPart.HandleMessage(state, message, bot);
             if (!wasHandled)
@@ -54,6 +54,19 @@ public abstract class SettingsHandler<TState> where TState : SettingsState
         }
         
         await SendPartsList(state, message.Chat, bot);
+    }
+
+    public async Task HandleCallBack(TState state, CallbackQuery callback, ITelegramBotClient bot, User user)
+    {
+        var currentPart = GetCurrentPart(state);
+        if (currentPart is IEmbeddedCallBackPart<TState> embeddedPart)
+        {
+            var wasHandled = await embeddedPart.HandleCallBack(state, callback, bot);
+            if (!wasHandled)
+                return;
+        }
+        
+        await SendPartsList(state, callback.From.Id, bot);
     }
     
     public async Task<bool> SavePartResult(TState state, ChatId chatId, ITelegramBotClient bot)

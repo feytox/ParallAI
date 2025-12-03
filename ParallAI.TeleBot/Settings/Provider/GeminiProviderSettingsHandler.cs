@@ -12,7 +12,7 @@ public class GeminiProviderSettingsHandler(): SettingsHandler<GeminiProviderSett
     
     private static void CreateParts(SettingsPartsBuilder<GeminiProviderSettingsState> builder)
     {
-        builder.AddSimple("API ключ", "Введите API ключ провайдера", "",
+        builder.AddMessageSimple("API ключ", "Введите API ключ провайдера", "",
             text => text, (state, value) => state.Token = value);
     }
 

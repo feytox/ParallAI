@@ -11,8 +11,7 @@ namespace ParallAI.TeleBot.Settings;
 public class PresetSettingsHandler() : SettingsHandler<PresetSettingsState>(Tag, CreateParts)
 {
     public const string Tag = "preset_settings";
-
-    private static readonly string ThinkingBudgets;
+    public const string ThinkingBudgetTag = "thinking_budget";
 
     protected override string GetPartsMessage(PresetSettingsState state)
     {
@@ -47,16 +46,17 @@ public class PresetSettingsHandler() : SettingsHandler<PresetSettingsState>(Tag,
     private static void CreateParts(SettingsPartsBuilder<PresetSettingsState> builder)
     {
         builder
-            .AddSimple("Название", "Введите название пресета", "",
+            .AddMessageSimple("Название", "Введите название пресета", "",
                 text => text, (state, value) => state.Name = value)
-            .AddSimple("Системный промпт", "Введите системный промпт", "",
+            .AddMessageSimple("Системный промпт", "Введите системный промпт", "",
                 text => text, (state, value) => state.SystemPrompt = value)
-            .AddSimple("Температура", "Введите температуру (число от 0 до 2)",
+            .AddMessageSimple("Температура", "Введите температуру (число от 0 до 2)",
                 "Ошибка: Ожидается числом от 0 до 2. Попробуйте ещё раз",
                 ParseDecimal, (state, value) => state.Temperature = value)
-            .AddSimple("Размышления", $"Выберите бюджет размышлений:\n{ThinkingBudgets}",
-                "Неправильный вариант. Попробуйте ещё раз",
-                ParseEnum<ThinkingBudget>, (state, budget) => state.ThinkingBudget = budget);
+            .AddCallBackSimple<ThinkingBudget>(ThinkingBudgetTag, "Размышления",
+                $"Выберите бюджет размышлений",
+                (state, value) => state.ThinkingBudget = value,
+                value=> value != ThinkingBudget.Unknown);
     }
 
     private static decimal? ParseDecimal(string text)
@@ -76,16 +76,6 @@ public class PresetSettingsHandler() : SettingsHandler<PresetSettingsState>(Tag,
         return Enum.TryParse<T>(text, true, out var result) && Enum.IsDefined(typeof(T), result)
             ? result
             : null;
-    }
-
-    static PresetSettingsHandler()
-    {
-        var lines = Enum.GetValues<ThinkingBudget>()
-            .Where(budget => budget != ThinkingBudget.Unknown)
-            .Select(Enum.GetName)
-            .Select(name => $"- {name}");
-
-        ThinkingBudgets = string.Join('\n', lines);
     }
 }
 
