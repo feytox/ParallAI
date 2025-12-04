@@ -1,4 +1,5 @@
 ﻿using ParallAI.Core.States.Common;
+using ParallAI.TeleBot.Core.Callback;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -56,22 +57,26 @@ public abstract class SettingsHandler<TState> where TState : SettingsState
         await SendPartsList(state, message.Chat, bot);
     }
     
-    public async Task<bool> SavePartResult(TState state, ChatId chatId, ITelegramBotClient bot)
+    public async Task<bool> HandleReactivation(TState state, ChatId chatId, ITelegramBotClient bot)
     {
-        if (state.PrevState is null)
+        if (!state.Reactivated)
             return false;
 
+        if (state.PrevState is not null) 
+            SavePartResult(state);
+        
+        state.RejectPrevState();
+        await SendPartsList(state, chatId, bot);
+        return true;
+    }
+
+    private void SavePartResult(TState state)
+    {
         var currentPart = GetCurrentPart(state);
         if (currentPart is null)
             throw new NullReferenceException("Previous state is not null, but current part is null");
 
-        currentPart.SaveToState(state, state.PrevState);
-        //По идее когда мы сохраняем результат предыдущего стейта его нужно удалить так как он больше уже не нужен. 
-        //Если это не сделать то вызов state after или как его там будет повторяться хотя не должен.
-        //Из за этого например, если попытаться, снова поменять провайдер, не сохранив модель будет выскакиваь окошко общих настроек модели
-        state.RejectPrevState();
-        await SendPartsList(state, chatId, bot);
-        return true;
+        currentPart.SaveToState(state, state.PrevState!);
     }
     
     public async Task SendPartsList(TState state, ChatId chatId, ITelegramBotClient bot)
@@ -80,7 +85,7 @@ public abstract class SettingsHandler<TState> where TState : SettingsState
             .Select((part, i) => InlineKeyboardButton.WithCallbackData(part.Name, $"{tag}:{i}"))
             .Chunk(2)
             .Append([InlineKeyboardButton.WithCallbackData("Сохранить", $"{tag}:c")])
-            .Append([InlineKeyboardButton.WithCallbackData("Выйти без сохранения", "cancel")]);
+            .Append([CancelHardCallback.CreateButton("Выйти без сохранения")]);
         var message = GetPartsMessage(state);
 
         await bot.SendMessage(chatId, message, replyMarkup: new InlineKeyboardMarkup(buttons));

@@ -17,6 +17,6 @@ public class SettingsStateAction<TState>(SettingsHandler<TState> handler) : Stat
 
     protected override Task<bool> ExecuteAfter(TState state, ChatId chatId, ITelegramBotClient bot, User user)
     {
-        return handler.SavePartResult(state, chatId, bot);
+        return handler.HandleReactivation(state, chatId, bot);
     }
 }

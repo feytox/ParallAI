@@ -1,6 +1,6 @@
 using ParallAI.Core.Repositories;
 using ParallAI.TeleBot.Commands.UI;
-using ParallAI.TeleBot.Core.Commands;
+using ParallAI.TeleBot.Core.Commands.Common;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;

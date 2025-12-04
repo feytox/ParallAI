@@ -5,9 +5,9 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using User = ParallAI.Core.Entities.User;
 
-namespace ParallAI.TeleBot.Core.Callback;
+namespace ParallAI.TeleBot.Core.Callback.Common;
 
-public class SettingsPartCallback<TState>(IRepository<User, long> users, SettingsHandler<TState> handler)
+public abstract class SettingsPartCallback<TState>(IRepository<User, long> users, SettingsHandler<TState> handler)
     : UserCallbackQuery(users)
     where TState : SettingsState
 {

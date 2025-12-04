@@ -1,7 +1,7 @@
 using ParallAI.Core.Repositories;
 using ParallAI.Core.States;
 using ParallAI.Core.ValueTypes;
-using ParallAI.TeleBot.Core.Callback;
+using ParallAI.TeleBot.Core.Callback.Common;
 using ParallAI.TeleBot.Core.Settings;
 using Telegram.Bot;
 using Telegram.Bot.Types;

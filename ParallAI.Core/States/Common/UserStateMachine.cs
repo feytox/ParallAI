@@ -11,22 +11,22 @@ public class UserStateMachine
         States.Add(state);
     }
 
-    public void Pop(bool reactivate = true)
+    public void Pop(bool reactivate = true, bool clearPrevious = false)
     {
-        if (!TryPop(reactivate))
+        if (!TryPop(reactivate, clearPrevious))
             throw new InvalidOperationException("Unable to pop the default UserState.");
     }
 
-    public bool TryPop(bool reactivate = true)
+    public bool TryPop(bool reactivate = true, bool clearPrevious = false)
     {
         if (States.Count == 1)
             return false;
-        
-        var prevState = Current;
+
+        var prevState = clearPrevious ? null : Current;
         States.RemoveAt(States.Count - 1);
-        
+
         if (reactivate && Current is IReactivatableState state)
             state.AcceptPrevState(prevState);
         return true;
-    }   
+    }
 }

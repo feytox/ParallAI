@@ -1,8 +1,8 @@
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using ParallAI.Core.States.Common;
-using ParallAI.TeleBot.Core.Callback;
-using ParallAI.TeleBot.Core.Commands;
+using ParallAI.TeleBot.Core.Callback.Common;
+using ParallAI.TeleBot.Core.Commands.Common;
 using ParallAI.TeleBot.Core.StateActions;
 
 namespace ParallAI.TeleBot.Core;
@@ -16,14 +16,14 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<StateHandler>();
         
         services.Scan(scan => scan
-            .FromAssemblyOf<ICommand>()
+            .FromAssemblyOf<IStateAction>()
             .AddClasses(classes => classes.AssignableTo<IStateAction>())
                 .AsImplementedInterfaces()
                 .WithSingletonLifetime()
         );
     }
     
-    public static void RegisterSequentialState<TState, TStep>(this IServiceCollection services, Assembly assembly,
+    public static void AddSequentialState<TState, TStep>(this IServiceCollection services, Assembly assembly,
         bool endSilently)
         where TState : SequentialState<TStep>
         where TStep : notnull

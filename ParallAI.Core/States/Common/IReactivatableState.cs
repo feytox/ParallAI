@@ -2,5 +2,5 @@
 
 public interface IReactivatableState
 {
-    public void AcceptPrevState(UserState state);
+    public void AcceptPrevState(UserState? state);
 }

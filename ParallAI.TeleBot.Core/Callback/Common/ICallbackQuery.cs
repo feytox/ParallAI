@@ -1,7 +1,7 @@
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
-namespace ParallAI.TeleBot.Core.Callback;
+namespace ParallAI.TeleBot.Core.Callback.Common;
 
 public interface ICallbackQuery
 {

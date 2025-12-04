@@ -3,7 +3,7 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using User = ParallAI.Core.Entities.User;
 
-namespace ParallAI.TeleBot.Core.Callback;
+namespace ParallAI.TeleBot.Core.Callback.Common;
 
 public abstract class UserCallbackQuery(IRepository<User, long> users) : ICallbackQuery
 {

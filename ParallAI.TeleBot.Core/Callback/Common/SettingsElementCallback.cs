@@ -4,7 +4,7 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 using User = ParallAI.Core.Entities.User;
 
-namespace ParallAI.TeleBot.Core.Callback;
+namespace ParallAI.TeleBot.Core.Callback.Common;
 
 public abstract class SettingsElementCallback(IRepository<User, long> users) : UserCallbackQuery(users)
 {

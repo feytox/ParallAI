@@ -1,6 +1,6 @@
 ﻿using ParallAI.Core.States;
 using ParallAI.TeleBot.Commands.UI;
-using ParallAI.TeleBot.Core.Commands;
+using ParallAI.TeleBot.Core.Commands.Common;
 using ParallAI.TeleBot.Core.StateActions;
 using Telegram.Bot;
 using Telegram.Bot.Types;

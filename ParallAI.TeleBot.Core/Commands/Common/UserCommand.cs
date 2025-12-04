@@ -3,7 +3,7 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using User = ParallAI.Core.Entities.User;
 
-namespace ParallAI.TeleBot.Core.Commands;
+namespace ParallAI.TeleBot.Core.Commands.Common;
 
 public abstract class UserCommand(IRepository<User, long> users) : ICommand
 {

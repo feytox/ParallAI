@@ -6,12 +6,13 @@ namespace ParallAI.TeleBot.Core.Util;
 
 public class CancelHelper
 {
-    public static async Task Cancel(ChatId chatId, Message? messageToDelete, ITelegramBotClient bot, User user)
+    public static async Task Cancel(ChatId chatId, Message? messageToDelete, bool clearPrevious,
+        ITelegramBotClient bot, User user)
     {
         if (messageToDelete is not null)
             await bot.DeleteMessage(chatId, messageToDelete.Id);
 
-        if (!user.StateMachine.TryPop())
+        if (!user.StateMachine.TryPop(clearPrevious: clearPrevious))
         {
             await bot.SendMessage(chatId, "Сейчас нет команды, которую можно отменить");
             return;
