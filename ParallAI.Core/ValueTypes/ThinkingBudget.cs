@@ -17,8 +17,8 @@ public static class ThinkingBudgetExt
     {
         return budget switch
         {
-            ThinkingBudget.Dynamic => -1,
             ThinkingBudget.None => 0,
+            ThinkingBudget.Dynamic => -1,
             ThinkingBudget.Minimal or ThinkingBudget.Low => 1024,
             ThinkingBudget.Medium => 8192,
             ThinkingBudget.High => 24576,

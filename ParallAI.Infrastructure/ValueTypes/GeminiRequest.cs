@@ -27,15 +27,12 @@ public record GeminiRequest(
 
     public record ThinkingConfig(int ThinkingBudget)
     {
-        public static ThinkingConfig? Create(ThinkingBudget? thinkingBudget)
+        public static ThinkingConfig? Create(ThinkingBudget thinkingBudget)
         {
-            if (thinkingBudget is null or Unknown)
+            if (thinkingBudget is Unknown)
                 return null;
 
-            if (thinkingBudget == Dynamic)
-                return new ThinkingConfig(-1);
-
-            var budget = thinkingBudget.Value.ToThinkingTokens();
+            var budget = thinkingBudget.ToThinkingTokens();
             return new ThinkingConfig(budget);
         }
     }
