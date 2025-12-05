@@ -6,5 +6,5 @@ public class MainMenuState : UserState, IReactivatableState
 {
     public bool Reactivated { get; set; } = true;
     
-    public void AcceptPrevState(UserState state) => Reactivated = true;
+    public void AcceptPrevState(UserState? state) => Reactivated = true;
 }

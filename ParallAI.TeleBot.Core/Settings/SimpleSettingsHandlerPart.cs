@@ -5,23 +5,18 @@ using User = ParallAI.Core.Entities.User;
 
 namespace ParallAI.TeleBot.Core.Settings;
 
-public class SimpleSettingsPart<TValue, TState>(
+public class SimpleSettingsHandlerPart<TValue, TState>(
     string name,
     string inputMessage,
     string failMessage,
     Func<string, TValue?> parser,
-    Action<TState, TValue> saver) : SettingsPart<TState>(name), IEmbeddedPart<TState> 
+    Action<TState, TValue> saver) : SettingsPart<TState>(name), IMessageHandlerPart<TState> 
     where TState : SettingsState
 {
     public override async Task<UserState?> ActivatePart(TState state, ChatId chatId, ITelegramBotClient bot, User user)
     {
         await bot.SendMessage(chatId, inputMessage);
         return null;
-    }
-
-    public override void SaveToState(TState state, UserState prevState)
-    {
-        throw new InvalidOperationException("Simple part result cannot be saved from previous state");
     }
 
     public async Task<bool> HandleMessage(TState state, Message message, ITelegramBotClient bot)

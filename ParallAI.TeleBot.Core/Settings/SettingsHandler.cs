@@ -25,7 +25,7 @@ public abstract class SettingsHandler<TState> where TState : SettingsState
     protected SettingsHandler(string tag, Action<SettingsPartsBuilder<TState>> partsProvider)
     {
         this.tag = tag;
-        
+
         var builder = new SettingsPartsBuilder<TState>();
         partsProvider(builder);
         parts = builder.Build();
@@ -38,7 +38,7 @@ public abstract class SettingsHandler<TState> where TState : SettingsState
 
         var selectedPart = parts[partIndex];
         state.CurrentPart = partIndex;
-        
+
         var nextState = await selectedPart.ActivatePart(state, chatId, bot, user);
         if (nextState is not null)
             user.StateMachine.Push(nextState);
@@ -47,45 +47,49 @@ public abstract class SettingsHandler<TState> where TState : SettingsState
     public async Task HandleMessage(TState state, Message message, ITelegramBotClient bot, User user)
     {
         var currentPart = GetCurrentPart(state);
-        if (currentPart is IEmbeddedPart<TState> embeddedPart)
+        if (currentPart is IMessageHandlerPart<TState> embeddedPart)
         {
             var wasHandled = await embeddedPart.HandleMessage(state, message, bot);
             if (!wasHandled)
                 return;
         }
-        
+
         await SendPartsList(state, message.Chat, bot);
     }
-    
-    public async Task<bool> HandleReactivation(TState state, ChatId chatId, ITelegramBotClient bot)
+
+    public async Task<bool> ExecuteAfter(TState state, ChatId chatId, ITelegramBotClient bot)
     {
         if (!state.Reactivated)
             return false;
 
-        if (state.PrevState is not null) 
-            SavePartResult(state);
-        
-        state.RejectPrevState();
+        if (state.PrevState is not null)
+        {
+            TrySavePartResult(state);
+            state.RejectPrevState();
+        }
+
         await SendPartsList(state, chatId, bot);
+        state.Reactivated = false;
         return true;
     }
 
-    private void SavePartResult(TState state)
+    private void TrySavePartResult(TState state)
     {
         var currentPart = GetCurrentPart(state);
         if (currentPart is null)
             throw new NullReferenceException("Previous state is not null, but current part is null");
 
-        currentPart.SaveToState(state, state.PrevState!);
+        if (currentPart is ICanSavePart<TState> part) 
+            part.SaveToState(state, state.PrevState!);
     }
-    
+
     public async Task SendPartsList(TState state, ChatId chatId, ITelegramBotClient bot)
     {
         var buttons = parts
             .Select((part, i) => InlineKeyboardButton.WithCallbackData(part.Name, $"{tag}:{i}"))
             .Chunk(2)
             .Append([InlineKeyboardButton.WithCallbackData("Сохранить", $"{tag}:c")])
-            .Append([CancelHardCallback.CreateButton("Выйти без сохранения")]);
+            .Append([CancelCallback.CreateButton("Выйти без сохранения")]);
         var message = GetPartsMessage(state);
 
         await bot.SendMessage(chatId, message, replyMarkup: new InlineKeyboardMarkup(buttons));

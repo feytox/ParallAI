@@ -9,13 +9,14 @@ using User = ParallAI.Core.Entities.User;
 
 namespace ParallAI.TeleBot.Settings.Provider;
 
-public class ProviderSettingsPart(string name) : SettingsPart<ModelSettingsState>(name)
+public class ProviderSettingsPart(string name)
+    : SettingsPart<ModelSettingsState>(name), ICanSavePart<ModelSettingsState, ProviderSettingsState>
 {
     public const string GeminiTag = "choose_gemini";
     public const string OpenAiTag = "choose_openai";
     public const string OpenRouterTag = "choose_openrouter";
 
-    public override async Task<UserState?> ActivatePart(ModelSettingsState state, ChatId chatId, 
+    public override async Task<UserState?> ActivatePart(ModelSettingsState state, ChatId chatId,
         ITelegramBotClient bot, User user)
     {
         var buttons = new[]
@@ -29,8 +30,8 @@ public class ProviderSettingsPart(string name) : SettingsPart<ModelSettingsState
         await bot.SendMessage(chatId, "Выберите провайдер", replyMarkup: new InlineKeyboardMarkup(buttons));
         return null;
     }
-
-    public override void SaveToState(ModelSettingsState state, UserState prevState)
+    
+    public void SaveToState(ModelSettingsState state, ProviderSettingsState prevState)
     {
         state.Provider = prevState switch
         {

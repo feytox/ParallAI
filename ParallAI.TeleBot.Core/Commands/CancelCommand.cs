@@ -13,6 +13,6 @@ public class CancelCommand(IRepository<User, long> users) : UserCommand(users)
 {
     protected override async Task Execute(Message message, ITelegramBotClient bot, User user)
     {
-        await CancelHelper.Cancel(message.Chat, null, false, bot, user);
+        await CancelHelper.Cancel(message.Chat, null, bot, user);
     }
 }

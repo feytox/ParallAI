@@ -10,5 +10,4 @@ public abstract class SettingsPart<TState>(string name) where TState : SettingsS
     public string Name { get; } = name;
     
     public abstract Task<UserState?> ActivatePart(TState state, ChatId chatId, ITelegramBotClient bot, User user);
-    public abstract void SaveToState(TState state, UserState prevState);
 }

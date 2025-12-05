@@ -4,7 +4,7 @@ public abstract class SettingsState : UserState, IReactivatableState
 {
     public int? CurrentPart { get; set; }
     public UserState? PrevState { get; private set; }
-    public bool Reactivated { get; private set; }
+    public bool Reactivated { get; set; }
     
     public void AcceptPrevState(UserState? state)
     {
@@ -12,9 +12,5 @@ public abstract class SettingsState : UserState, IReactivatableState
         Reactivated = true;
     }
 
-    public void RejectPrevState()
-    {
-        PrevState = null;
-        Reactivated = false;
-    }
+    public void RejectPrevState() => PrevState = null;
 }

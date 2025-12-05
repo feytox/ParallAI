@@ -15,7 +15,7 @@ public class CancelCallback(IRepository<User, long> users) : UserCallbackQuery(u
     
     protected override async Task Handle(CallbackQuery callbackQuery, ITelegramBotClient bot, User user)
     {
-        await CancelHelper.Cancel(callbackQuery.From.Id, callbackQuery.Message, true, bot, user);
+        await CancelHelper.Cancel(callbackQuery.From.Id, callbackQuery.Message, bot, user);
     }
 
     public static InlineKeyboardMarkup CreateMarkup(string text) => new(CreateButton(text));
