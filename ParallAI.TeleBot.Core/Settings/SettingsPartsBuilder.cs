@@ -20,5 +20,5 @@ public class SettingsPartsBuilder<TState> where TState : SettingsState
         return this;
     }
 
-    public SettingsPart<TState>[] Build() => parts.ToArray();
+    public List<SettingsPart<TState>> Build() => parts.ToList();
 }

@@ -6,9 +6,10 @@ using User = ParallAI.Core.Entities.User;
 
 namespace ParallAI.TeleBot.Settings.Provider;
 
-public class OpenRouterSettingsHandler() : SettingsHandler<OpenRouterProviderSettingsState>(Tag, CreateParts)
+public class OpenRouterSettingsHandler() 
+    : StandardSettingsHandler<OpenRouterProviderSettingsState>(CallbackTag, CreateParts)
 {
-    public const string Tag = "openrouter_provider_settings";
+    public const string CallbackTag = "openrouter_provider_settings";
 
     private static void CreateParts(SettingsPartsBuilder<OpenRouterProviderSettingsState> builder)
     {
@@ -17,8 +18,13 @@ public class OpenRouterSettingsHandler() : SettingsHandler<OpenRouterProviderSet
     }
 
     protected override Task SaveSettingsToUser(OpenRouterProviderSettingsState state, ChatId chatId,
-        ITelegramBotClient bot, User user) => Task.CompletedTask;
+        ITelegramBotClient bot, User user)
+    {
+        return Task.CompletedTask;
+    }
 
-    protected override string GetPartsMessage(OpenRouterProviderSettingsState state) =>
-        "Настройки провайдера"; // TODO: добавить отображение текущих настроек
+    protected override string GetPartsMessage(OpenRouterProviderSettingsState state)
+    {
+        return "Настройки провайдера"; // TODO: добавить отображение текущих настроек
+    }
 }

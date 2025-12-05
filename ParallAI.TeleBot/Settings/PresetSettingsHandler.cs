@@ -8,9 +8,9 @@ using User = ParallAI.Core.Entities.User;
 
 namespace ParallAI.TeleBot.Settings;
 
-public class PresetSettingsHandler() : SettingsHandler<PresetSettingsState>(Tag, CreateParts)
+public class PresetSettingsHandler() : StandardSettingsHandler<PresetSettingsState>(CallbackTag, CreateParts)
 {
-    public const string Tag = "preset_settings";
+    public const string CallbackTag = "preset_settings";
 
     private static readonly string ThinkingBudgets;
 

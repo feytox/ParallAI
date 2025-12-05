@@ -1,8 +1,6 @@
 ﻿using ParallAI.Core.States.Common;
-using ParallAI.TeleBot.Core.Callback;
 using Telegram.Bot;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.ReplyMarkups;
 using User = ParallAI.Core.Entities.User;
 
 namespace ParallAI.TeleBot.Core.Settings;
@@ -10,33 +8,27 @@ namespace ParallAI.TeleBot.Core.Settings;
 // TODO: add validation
 public abstract class SettingsHandler<TState> where TState : SettingsState
 {
+    public abstract Task SendPartsList(TState state, ChatId chatId, ITelegramBotClient bot);
     protected abstract Task SaveSettingsToUser(TState state, ChatId chatId, ITelegramBotClient bot, User user);
-    protected abstract string GetPartsMessage(TState state);
 
-    private readonly string tag;
-    private readonly SettingsPart<TState>[] parts;
-
-    protected SettingsHandler(string tag, SettingsPart<TState>[] parts)
-    {
-        this.tag = tag;
-        this.parts = parts;
-    }
+    protected readonly string Tag;
+    protected readonly List<SettingsPart<TState>> Parts;
 
     protected SettingsHandler(string tag, Action<SettingsPartsBuilder<TState>> partsProvider)
     {
-        this.tag = tag;
+        Tag = tag;
 
         var builder = new SettingsPartsBuilder<TState>();
         partsProvider(builder);
-        parts = builder.Build();
+        Parts = builder.Build();
     }
 
     public async Task ActivatePart(TState state, int partIndex, ChatId chatId, ITelegramBotClient bot, User user)
     {
-        if (partIndex >= parts.Length)
+        if (partIndex >= Parts.Count)
             throw new IndexOutOfRangeException("Invalid settings part index");
 
-        var selectedPart = parts[partIndex];
+        var selectedPart = Parts[partIndex];
         state.CurrentPart = partIndex;
 
         var nextState = await selectedPart.ActivatePart(state, chatId, bot, user);
@@ -79,20 +71,8 @@ public abstract class SettingsHandler<TState> where TState : SettingsState
         if (currentPart is null)
             throw new NullReferenceException("Previous state is not null, but current part is null");
 
-        if (currentPart is ICanSavePart<TState> part) 
+        if (currentPart is ICanSavePart<TState> part)
             part.SaveToState(state, state.PrevState!);
-    }
-
-    public async Task SendPartsList(TState state, ChatId chatId, ITelegramBotClient bot)
-    {
-        var buttons = parts
-            .Select((part, i) => InlineKeyboardButton.WithCallbackData(part.Name, $"{tag}:{i}"))
-            .Chunk(2)
-            .Append([InlineKeyboardButton.WithCallbackData("Сохранить", $"{tag}:c")])
-            .Append([CancelCallback.CreateButton("Выйти без сохранения")]);
-        var message = GetPartsMessage(state);
-
-        await bot.SendMessage(chatId, message, replyMarkup: new InlineKeyboardMarkup(buttons));
     }
 
     public async Task SaveSettings(TState state, ChatId chatId, ITelegramBotClient bot, User user)
@@ -103,6 +83,6 @@ public abstract class SettingsHandler<TState> where TState : SettingsState
 
     private SettingsPart<TState>? GetCurrentPart(TState state)
     {
-        return state.CurrentPart is null ? null : parts[state.CurrentPart.Value];
+        return state.CurrentPart is null ? null : Parts[state.CurrentPart.Value];
     }
 }

@@ -1,0 +1,26 @@
+﻿using ParallAI.Core.States.Common;
+using ParallAI.TeleBot.Core.Callback;
+using Telegram.Bot;
+using Telegram.Bot.Types;
+using Telegram.Bot.Types.ReplyMarkups;
+
+namespace ParallAI.TeleBot.Core.Settings;
+
+public abstract class StandardSettingsHandler<TState>(string tag, Action<SettingsPartsBuilder<TState>> partsProvider)
+    : SettingsHandler<TState>(tag, partsProvider)
+    where TState : SettingsState
+{
+    protected abstract string GetPartsMessage(TState state);
+
+    public override async Task SendPartsList(TState state, ChatId chatId, ITelegramBotClient bot)
+    {
+        var buttons = Parts
+            .Select((part, i) => InlineKeyboardButton.WithCallbackData(part.Name, $"{Tag}:{i}"))
+            .Chunk(2)
+            .Append([InlineKeyboardButton.WithCallbackData("Сохранить", $"{Tag}:c")])
+            .Append([CancelCallback.CreateButton("Выйти без сохранения")]);
+        var message = GetPartsMessage(state);
+
+        await bot.SendMessage(chatId, message, replyMarkup: new InlineKeyboardMarkup(buttons));
+    }
+}

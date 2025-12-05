@@ -6,19 +6,25 @@ using User = ParallAI.Core.Entities.User;
 
 namespace ParallAI.TeleBot.Settings.Provider;
 
-public class GeminiProviderSettingsHandler(): SettingsHandler<GeminiProviderSettingsState>(Tag, CreateParts)
+public class GeminiProviderSettingsHandler()
+    : StandardSettingsHandler<GeminiProviderSettingsState>(CallbackTag, CreateParts)
 {
-    public const string Tag = "gemini_provider_settings";
-    
+    public const string CallbackTag = "gemini_provider_settings";
+
     private static void CreateParts(SettingsPartsBuilder<GeminiProviderSettingsState> builder)
     {
         builder.AddSimple("API ключ", "Введите API ключ провайдера", "",
             text => text, (state, value) => state.Token = value);
     }
 
-    protected override Task SaveSettingsToUser(GeminiProviderSettingsState state, ChatId chatId, 
-        ITelegramBotClient bot, User user) => Task.CompletedTask;
+    protected override Task SaveSettingsToUser(GeminiProviderSettingsState state, ChatId chatId,
+        ITelegramBotClient bot, User user)
+    {
+        return Task.CompletedTask;
+    }
 
-    protected override string GetPartsMessage(GeminiProviderSettingsState state) => "Настройки провайдера"; // TODO: добавить отображение текущих настроек
+    protected override string GetPartsMessage(GeminiProviderSettingsState state)
+    {
+        return "Настройки провайдера"; // TODO: добавить отображение текущих настроек
+    }
 }
-

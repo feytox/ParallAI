@@ -7,13 +7,12 @@ using User = ParallAI.Core.Entities.User;
 
 namespace ParallAI.TeleBot.Settings;
 
-public class ModelSettingsHandler() : SettingsHandler<ModelSettingsState>(Tag, CreateParts)
+public class ModelSettingsHandler() : StandardSettingsHandler<ModelSettingsState>(CallbackTag, CreateParts)
 {
-    public const string Tag = "model_settings";
-    
-    private static readonly string AiProviderType;
+    public const string CallbackTag = "model_settings";
 
-    protected override async Task SaveSettingsToUser(ModelSettingsState state, ChatId chatId, ITelegramBotClient bot, User user)
+    protected override async Task SaveSettingsToUser(ModelSettingsState state, ChatId chatId, 
+        ITelegramBotClient bot, User user)
     {
         if (state.Id is null)
             SaveNewModel(state, user);

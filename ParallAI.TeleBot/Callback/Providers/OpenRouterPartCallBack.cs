@@ -2,10 +2,10 @@ using ParallAI.Core.Entities;
 using ParallAI.Core.Repositories;
 using ParallAI.Core.States.Providers;
 using ParallAI.TeleBot.Core.Callback.Common;
-using ParallAI.TeleBot.Core.Settings;
 using ParallAI.TeleBot.Settings.Provider;
 
 namespace ParallAI.TeleBot.Callback.Providers;
-[CallbackQuery(OpenRouterSettingsHandler.Tag)]
-public class OpenRouterPartCallBack(IRepository<User, long> users, SettingsHandler<OpenRouterProviderSettingsState> handler)
-    : SettingsPartCallback<OpenRouterProviderSettingsState>(users, handler);
+
+[CallbackQuery(OpenRouterSettingsHandler.CallbackTag)]
+public class OpenRouterPartCallBack(IRepository<User, long> users, OpenRouterSettingsHandler handler)
+    : StandardSettingsPartCallback<OpenRouterProviderSettingsState, OpenRouterSettingsHandler>(users, handler);
