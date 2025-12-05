@@ -16,11 +16,11 @@ public enum OpenAiReasoningEffort
 
 public static class OpenAiReasoningEffortExtensions
 {
-    public static OpenAiReasoningEffort ToOpenAi(this ThinkingBudget? budget)
+    public static OpenAiReasoningEffort ToOpenAi(this ThinkingBudget budget)
     {
         return budget switch
         {
-            null or ThinkingBudget.Unknown => OpenAiReasoningEffort.None,
+            ThinkingBudget.Unknown or ThinkingBudget.None => OpenAiReasoningEffort.None,
             ThinkingBudget.Dynamic => OpenAiReasoningEffort.Medium,
             ThinkingBudget.Minimal => OpenAiReasoningEffort.Minimal,
             ThinkingBudget.Low => OpenAiReasoningEffort.Low,

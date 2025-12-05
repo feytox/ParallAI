@@ -11,8 +11,7 @@ namespace ParallAI.TeleBot.Settings;
 public class PresetSettingsHandler() : StandardSettingsHandler<PresetSettingsState>(CallbackTag, CreateParts)
 {
     public const string CallbackTag = "preset_settings";
-
-    private static readonly string ThinkingBudgets;
+    public const string ThinkingBudgetTag = "thinking_budget";
 
     protected override string GetPartsMessage(PresetSettingsState state)
     {
@@ -54,9 +53,10 @@ public class PresetSettingsHandler() : StandardSettingsHandler<PresetSettingsSta
             .AddSimple("Температура", "Введите температуру (число от 0 до 2)",
                 "Ошибка: Ожидается числом от 0 до 2. Попробуйте ещё раз",
                 ParseDecimal, (state, value) => state.Temperature = value)
-            .AddSimple("Размышления", $"Выберите бюджет размышлений:\n{ThinkingBudgets}",
-                "Неправильный вариант. Попробуйте ещё раз",
-                ParseEnum<ThinkingBudget>, (state, budget) => state.ThinkingBudget = budget);
+            .AddEnum<ThinkingBudget>(ThinkingBudgetTag, "Размышления",
+                "Выберите бюджет размышлений",
+                (state, value) => state.ThinkingBudget = value,
+                value => value != ThinkingBudget.Unknown);
     }
 
     private static decimal? ParseDecimal(string text)
@@ -69,23 +69,6 @@ public class PresetSettingsHandler() : StandardSettingsHandler<PresetSettingsSta
         }
 
         return null;
-    }
-
-    private static T? ParseEnum<T>(string text) where T : struct, Enum
-    {
-        return Enum.TryParse<T>(text, true, out var result) && Enum.IsDefined(typeof(T), result)
-            ? result
-            : null;
-    }
-
-    static PresetSettingsHandler()
-    {
-        var lines = Enum.GetValues<ThinkingBudget>()
-            .Where(budget => budget != ThinkingBudget.Unknown)
-            .Select(Enum.GetName)
-            .Select(name => $"- {name}");
-
-        ThinkingBudgets = string.Join('\n', lines);
     }
 }
 

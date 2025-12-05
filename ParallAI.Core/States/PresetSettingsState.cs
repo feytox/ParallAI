@@ -10,7 +10,7 @@ public class PresetSettingsState(Guid? presetId) : SettingsState
     public string? Name { get; set; }
     public string? SystemPrompt { get; set; }
     public decimal? Temperature { get; set; }
-    public ThinkingBudget? ThinkingBudget { get; set; }
+    public ThinkingBudget ThinkingBudget { get; set; } = ThinkingBudget.None;
 }
 
 public static class PresetSettingsExtensions

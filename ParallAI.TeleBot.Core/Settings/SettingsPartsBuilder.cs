@@ -13,6 +13,14 @@ public class SettingsPartsBuilder<TState> where TState : SettingsState
         parts.Add(part);
         return this;
     }
+    
+    public SettingsPartsBuilder<TState> AddEnum<TEnum>(string tag, string name, string inputMessage, 
+        Action<TState, TEnum> saver, Func<TEnum, bool> selector) where TEnum : struct, Enum
+    {
+        var part = new EnumSettingsPart<TEnum, TState>(tag, name, inputMessage, saver, selector);
+        parts.Add(part);
+        return this;
+    }
 
     public SettingsPartsBuilder<TState> Add(SettingsPart<TState> part)
     {

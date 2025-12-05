@@ -3,6 +3,7 @@
 public enum ThinkingBudget
 {
     Unknown = 0,
+    None,
     Dynamic,
     Minimal,
     Low,
@@ -16,9 +17,9 @@ public static class ThinkingBudgetExtensions
     {
         return budget switch
         {
+            ThinkingBudget.None => 0,
             ThinkingBudget.Dynamic => -1,
-            ThinkingBudget.Minimal => 1024,
-            ThinkingBudget.Low => 1024,
+            ThinkingBudget.Minimal or ThinkingBudget.Low => 1024,
             ThinkingBudget.Medium => 8192,
             ThinkingBudget.High => 24576,
             _ => throw new ArgumentOutOfRangeException(nameof(budget), budget, null)

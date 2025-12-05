@@ -18,7 +18,6 @@ public class SimpleSettingsHandlerPart<TValue, TState>(
         await bot.SendMessage(chatId, inputMessage);
         return null;
     }
-
     public async Task<bool> HandleMessage(TState state, Message message, ITelegramBotClient bot)
     {
         if (!TryParse(message, out var value))
