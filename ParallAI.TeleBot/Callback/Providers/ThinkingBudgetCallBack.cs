@@ -9,4 +9,4 @@ namespace ParallAI.TeleBot.Callback.Providers;
 
 [CallbackQuery(PresetSettingsHandler.ThinkingBudgetTag)]
 public class ThinkingBudgetCallBack(IRepository<User, long> users, SettingsHandler<PresetSettingsState> handler) : 
-    EnumCallBack<PresetSettingsState>(users, handler);
+    SettingsStateCallBack<PresetSettingsState>(users, handler);

@@ -14,13 +14,12 @@ public class EnumSettingsPart<TEnum, TState>(
     Func<TEnum, bool> selector) :
     SettingsPart<TState>(name), IEmbeddedCallBackPart<TState> where TState : SettingsState where TEnum : struct, Enum
 {
-    private readonly IEnumerable<TEnum> values = Enum.GetValues<TEnum>().Where(selector);
+    private readonly string[] enumNames = Enum.GetValues<TEnum>().Where(selector).Select(Enum.GetName).ToArray()!;
 
     public override async Task<UserState?> ActivatePart(TState state, ChatId chatId, ITelegramBotClient bot, User user)
     {
-        var buttons = values
-            .Select(value => InlineKeyboardButton.WithCallbackData(Enum.GetName(value)!,
-                $"{tag}:{Enum.GetName(value)!}"))
+        var buttons = enumNames
+            .Select(name => InlineKeyboardButton.WithCallbackData(name, $"{tag}:{name}"))
             .Chunk(2);
         await bot.SendMessage(chatId, inputMessage, replyMarkup: new InlineKeyboardMarkup(buttons));
         return null;

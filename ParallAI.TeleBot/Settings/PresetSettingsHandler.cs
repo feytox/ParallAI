@@ -56,7 +56,7 @@ public class PresetSettingsHandler() : SettingsHandler<PresetSettingsState>(Tag,
             .AddEnum<ThinkingBudget>(ThinkingBudgetTag, "Размышления",
                 "Выберите бюджет размышлений",
                 (state, value) => state.ThinkingBudget = value,
-                value=> value != ThinkingBudget.Unknown);
+                value => value != ThinkingBudget.Unknown);
     }
 
     private static decimal? ParseDecimal(string text)
@@ -69,13 +69,6 @@ public class PresetSettingsHandler() : SettingsHandler<PresetSettingsState>(Tag,
         }
 
         return null;
-    }
-
-    private static T? ParseEnum<T>(string text) where T : struct, Enum
-    {
-        return Enum.TryParse<T>(text, true, out var result) && Enum.IsDefined(typeof(T), result)
-            ? result
-            : null;
     }
 }
 

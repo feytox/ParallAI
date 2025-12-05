@@ -7,7 +7,7 @@ using User = ParallAI.Core.Entities.User;
 
 namespace ParallAI.TeleBot.Core.Callback;
 
-public class EnumCallBack<TState>(IRepository<User, long> users, SettingsHandler<TState> handler)
+public class SettingsStateCallBack<TState>(IRepository<User, long> users, SettingsHandler<TState> handler)
     : UserCallbackQuery(users)
     where TState : SettingsState
 {
