@@ -25,7 +25,7 @@ public class UserStateMachine
         var prevState = cancelled ? null : Current;
         States.RemoveAt(States.Count - 1);
 
-        if (reactivate && Current is IReactivatableState state)
+        if (reactivate && Current is IPrevStateHandler state)
             state.AcceptPrevState(prevState);
         return true;
     }

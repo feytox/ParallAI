@@ -7,7 +7,7 @@ using User = ParallAI.Core.Entities.User;
 
 namespace ParallAI.TeleBot.Core.Callback.Common;
 
-public abstract class SettingsPartCallback<TState, THandler>(IRepository<User, long> users, THandler handler)
+public abstract class SettingsStateCallback<TState, THandler>(IRepository<User, long> users, THandler handler)
     : UserCallbackQuery(users)
     where TState : SettingsState
     where THandler : SettingsHandler<TState>
@@ -19,13 +19,16 @@ public abstract class SettingsPartCallback<TState, THandler>(IRepository<User, l
     
     protected override async Task Handle(CallbackQuery callbackQuery, ITelegramBotClient bot, User user)
     {
-        var data = callbackQuery.Data!.Split(':');
+        var data = callbackQuery.Data!.Split(':', 2);
         if (data.Length != 2)
             throw new ArgumentException($"Invalid callback data: {callbackQuery.Data}");
 
         var currentState = user.StateMachine.Current;
         if (currentState is not TState state)
             throw new InvalidOperationException($"{typeof(TState)} callback called for {currentState}");
+        
+        if (await Handler.HandleCallBack(state, callbackQuery, bot, user))
+            return;
         
         var content = data[1];
         var chatId = callbackQuery.From.Id;

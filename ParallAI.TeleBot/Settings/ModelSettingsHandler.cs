@@ -34,7 +34,7 @@ public class ModelSettingsHandler() : StandardSettingsHandler<ModelSettingsState
 
     private static void ApplyChanges(ModelSettingsState state, User user)
     {
-        var savedModel = user.UserModels.FirstOrDefault(model => model.Id == state.Id);
+        var savedModel = user.GetModel(state.Id!.Value);
         if (savedModel is null)
             SaveNewModel(state, user);
         else

@@ -30,11 +30,12 @@ public class PresetCallback(IRepository<User, long> users, PresetSettingsHandler
         await bot.SendMessage(callbackQuery.From.Id, $"Пресет {preset.Name} выбран");
     }
 
-    protected override async Task HandleEdit(CallbackQuery callbackQuery, int index, ITelegramBotClient bot, User user)
+    protected override Task HandleEdit(CallbackQuery callbackQuery, int index, ITelegramBotClient bot, User user)
     {
         var state = index == -1 ? new PresetSettingsState(null) : GetPreset(user, index).ToState();
         user.StateMachine.Push(state);
-        await handler.SendPartsList(state, callbackQuery.From.Id, bot);
+        
+        return Task.CompletedTask;
     }
 
     protected override async Task HandleRemove(CallbackQuery callbackQuery, int index,

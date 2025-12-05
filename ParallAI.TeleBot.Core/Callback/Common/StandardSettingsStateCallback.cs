@@ -7,8 +7,8 @@ using User = ParallAI.Core.Entities.User;
 
 namespace ParallAI.TeleBot.Core.Callback.Common;
 
-public abstract class StandardSettingsPartCallback<TState, THandler>(IRepository<User, long> users, THandler handler) 
-    : SettingsPartCallback<TState, THandler>(users, handler) 
+public abstract class StandardSettingsStateCallback<TState, THandler>(IRepository<User, long> users, THandler handler) 
+    : SettingsStateCallback<TState, THandler>(users, handler) 
     where TState : SettingsState 
     where THandler : StandardSettingsHandler<TState>
 {
@@ -18,7 +18,7 @@ public abstract class StandardSettingsPartCallback<TState, THandler>(IRepository
         if (content != "c")
             return false;
         
-        await Handler.SaveSettings(state, chatId, bot, user);
+        await Handler.FinalizeSettings(state, chatId, bot, user);
         return true;
     }
 }

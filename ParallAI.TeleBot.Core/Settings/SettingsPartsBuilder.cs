@@ -1,4 +1,5 @@
-﻿using ParallAI.Core.States.Common;
+﻿using ParallAI.Core.Entities;
+using ParallAI.Core.States.Common;
 
 namespace ParallAI.TeleBot.Core.Settings;
 
@@ -22,11 +23,21 @@ public class SettingsPartsBuilder<TState> where TState : SettingsState
         return this;
     }
 
+    public SettingsPartsBuilder<TState> AddSelect<TValue>(string tag, string name, string inputMessage,
+        Func<User, IReadOnlyList<TValue>> elementsProvider, Func<TValue, string> nameSelector,
+        Action<TState, TValue> saver)
+    {
+        var part = new SelectSettingsPart<TState, TValue>(tag, name, inputMessage, 
+            elementsProvider, nameSelector, saver);
+        parts.Add(part);
+        return this;
+    }
+
     public SettingsPartsBuilder<TState> Add(SettingsPart<TState> part)
     {
         parts.Add(part);
         return this;
     }
 
-    public List<SettingsPart<TState>> Build() => parts.ToList();
+    public SettingsPart<TState>[] Build() => parts.ToArray();
 }

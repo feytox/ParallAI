@@ -7,5 +7,5 @@ using ParallAI.TeleBot.Settings;
 namespace ParallAI.TeleBot.Callback;
 
 [CallbackQuery(PresetSettingsHandler.CallbackTag)]
-public class PresetPartCallback(IRepository<User, long> users, PresetSettingsHandler handler)
-    : StandardSettingsPartCallback<PresetSettingsState, PresetSettingsHandler>(users, handler);
+public class PresetStateCallback(IRepository<User, long> users, PresetSettingsHandler handler)
+    : StandardSettingsStateCallback<PresetSettingsState, PresetSettingsHandler>(users, handler);
