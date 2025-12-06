@@ -1,8 +1,14 @@
 ﻿namespace ParallAI.Core.ValueTypes;
 
-public abstract record AiMessage(Role Role = Role.User);
+public abstract record AiMessage(Role Role = Role.User)
+{
+    public abstract AiMessage AppendText(string text);
+}
 
-public record TextMessage(string Text, Role Role = Role.User) : AiMessage(Role);
+public record TextMessage(string Text, Role Role = Role.User) : AiMessage(Role)
+{
+    public override AiMessage AppendText(string text) => this with { Text = $"{Text}\n{text}" };
+}
 
 public record FileMessage(string Text, AiFileInfo[] Files, Role Role) : TextMessage(Text, Role)
 {
