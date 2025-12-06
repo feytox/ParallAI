@@ -20,6 +20,7 @@ public static class MongoMappings
             classMap.MapProperty("Models");
             classMap.MapProperty("Presets");
             classMap.MapProperty("ChosenPresetId");
+            classMap.MapProperty("ChosenModelId");
             classMap.MapProperty("CompareConfigs");
         });
 
