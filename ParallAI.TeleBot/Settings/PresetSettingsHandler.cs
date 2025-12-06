@@ -11,7 +11,6 @@ namespace ParallAI.TeleBot.Settings;
 public class PresetSettingsHandler() : StandardSettingsHandler<PresetSettingsState>(CallbackTag, CreateParts)
 {
     public const string CallbackTag = "preset_settings";
-    public const string ThinkingBudgetTag = "thinking_budget";
 
     protected override string GetPartsMessage(PresetSettingsState state)
     {
@@ -36,7 +35,7 @@ public class PresetSettingsHandler() : StandardSettingsHandler<PresetSettingsSta
 
     private static void ApplyChanges(PresetSettingsState state, User user)
     {
-        var savedPreset = user.UserPresets.FirstOrDefault(preset => preset.Id == state.PresetId);
+        var savedPreset = user.GetPreset(state.PresetId!.Value);
         if (savedPreset is null)
             SaveNewPreset(state, user);
         else
@@ -53,7 +52,7 @@ public class PresetSettingsHandler() : StandardSettingsHandler<PresetSettingsSta
             .AddSimple("Температура", "Введите температуру (число от 0 до 2)",
                 "Ошибка: Ожидается числом от 0 до 2. Попробуйте ещё раз",
                 ParseDecimal, (state, value) => state.Temperature = value)
-            .AddEnum<ThinkingBudget>(ThinkingBudgetTag, "Размышления",
+            .AddEnum<ThinkingBudget>(CallbackTag, "Размышления",
                 "Выберите бюджет размышлений",
                 (state, value) => state.ThinkingBudget = value,
                 value => value != ThinkingBudget.Unknown);

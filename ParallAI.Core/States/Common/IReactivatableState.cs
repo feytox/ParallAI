@@ -1,6 +1,8 @@
 ﻿namespace ParallAI.Core.States.Common;
 
-public interface IReactivatableState
+public interface IReactivatableState : IPrevStateHandler
 {
-    public void AcceptPrevState(UserState? state);
+    public bool Reactivated { get; set; }
+    
+    void IPrevStateHandler.AcceptPrevState(UserState? state) => Reactivated = true;
 }

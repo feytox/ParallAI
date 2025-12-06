@@ -7,5 +7,5 @@ using ParallAI.TeleBot.Settings.Provider;
 namespace ParallAI.TeleBot.Callback.Providers;
 
 [CallbackQuery(OpenRouterSettingsHandler.CallbackTag)]
-public class OpenRouterPartCallBack(IRepository<User, long> users, OpenRouterSettingsHandler handler)
-    : StandardSettingsPartCallback<OpenRouterProviderSettingsState, OpenRouterSettingsHandler>(users, handler);
+public class OpenRouterStateCallBack(IRepository<User, long> users, OpenRouterSettingsHandler handler)
+    : StandardSettingsStateCallback<OpenRouterProviderSettingsState, OpenRouterSettingsHandler>(users, handler);

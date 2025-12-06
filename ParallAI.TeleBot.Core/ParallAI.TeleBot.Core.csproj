@@ -13,6 +13,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\ParallAI.Core\ParallAI.Core.csproj" />
+      <ProjectReference Include="..\ParallAI.MarkdownV2\ParallAI.MarkdownV2.csproj" />
     </ItemGroup>
 
 </Project>

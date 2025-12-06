@@ -4,14 +4,13 @@ using ParallAI.Core.Repositories;
 using ParallAI.Core.States.Providers;
 using ParallAI.Core.ValueTypes;
 using ParallAI.TeleBot.Core.Callback.Common;
-using ParallAI.TeleBot.Core.Settings;
 using ParallAI.TeleBot.Settings.Provider;
 
 namespace ParallAI.TeleBot.Callback.Providers;
 
 [CallbackQuery(ProviderSettingsPart.OpenAiTag)]
-public class OpenAiChooseCallback(IRepository<User, long> users, SettingsHandler<OpenAICompatibleSettingsState> handler) :
-    ProviderChooseCallback<OpenAICompatibleSettingsState>(users, handler)
+public class OpenAiChooseCallback(IRepository<User, long> users) 
+    : ProviderChooseCallback<OpenAICompatibleSettingsState>(users)
 {
     protected override OpenAICompatibleSettingsState ToSettingsState(AiProvider provider)
     {

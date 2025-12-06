@@ -1,6 +1,7 @@
 ﻿using ParallAI.Core.States.Common;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.ReplyMarkups;
 using User = ParallAI.Core.Entities.User;
 
 namespace ParallAI.TeleBot.Core.Settings;
@@ -8,27 +9,27 @@ namespace ParallAI.TeleBot.Core.Settings;
 // TODO: add validation
 public abstract class SettingsHandler<TState> where TState : SettingsState
 {
-    public abstract Task SendPartsList(TState state, ChatId chatId, ITelegramBotClient bot);
-    protected abstract Task SaveSettingsToUser(TState state, ChatId chatId, ITelegramBotClient bot, User user);
+    public abstract Task FinalizeSettings(TState state, ChatId chatId, ITelegramBotClient bot, User user);
+    protected abstract Task SendPartsList(TState state, ChatId chatId, ITelegramBotClient bot);
 
     protected readonly string Tag;
-    protected readonly List<SettingsPart<TState>> Parts;
-
+    private readonly SettingsPart<TState>[] parts;
+    
     protected SettingsHandler(string tag, Action<SettingsPartsBuilder<TState>> partsProvider)
     {
         Tag = tag;
 
         var builder = new SettingsPartsBuilder<TState>();
         partsProvider(builder);
-        Parts = builder.Build();
+        parts = builder.Build();
     }
 
     public async Task ActivatePart(TState state, int partIndex, ChatId chatId, ITelegramBotClient bot, User user)
     {
-        if (partIndex >= Parts.Count)
+        if (partIndex >= parts.Length)
             throw new IndexOutOfRangeException("Invalid settings part index");
 
-        var selectedPart = Parts[partIndex];
+        var selectedPart = parts[partIndex];
         state.CurrentPart = partIndex;
 
         var nextState = await selectedPart.ActivatePart(state, chatId, bot, user);
@@ -40,26 +41,23 @@ public abstract class SettingsHandler<TState> where TState : SettingsState
     {
         var currentPart = GetCurrentPart(state);
         if (currentPart is IMessageHandlerPart<TState> embeddedPart)
-        {
-            var wasHandled = await embeddedPart.HandleMessage(state, message, bot);
-            if (!wasHandled)
+            if (!await embeddedPart.HandleMessage(state, message, bot))
                 return;
-        }
 
-        await SendPartsList(state, message.Chat, bot);
+        state.Reactivated = true;
     }
 
-    public async Task HandleCallBack(TState state, CallbackQuery callback, ITelegramBotClient bot, User user)
+    public async Task<bool> HandleCallBack(TState state, CallbackQuery callback, ITelegramBotClient bot, User user)
     {
         var currentPart = GetCurrentPart(state);
-        if (currentPart is ICallbackHandlerPart<TState> embeddedPart)
-        {
-            var wasHandled = await embeddedPart.HandleCallBack(state, callback, bot);
-            if (!wasHandled)
-                return;
-        }
+        if (currentPart is not ICallbackHandlerPart<TState> callbackHandler)
+            return false;
 
-        await SendPartsList(state, callback.From.Id, bot);
+        if (!await callbackHandler.HandleCallBack(state, callback, bot, user))
+            return false;
+
+        state.Reactivated = true;
+        return true;
     }
 
     public async Task<bool> ExecuteAfter(TState state, ChatId chatId, ITelegramBotClient bot)
@@ -75,7 +73,13 @@ public abstract class SettingsHandler<TState> where TState : SettingsState
 
         await SendPartsList(state, chatId, bot);
         state.Reactivated = false;
+        state.CurrentPart = null;
         return true;
+    }
+
+    protected IEnumerable<InlineKeyboardButton> CreatePartButtons()
+    {
+        return parts.Select((part, i) => InlineKeyboardButton.WithCallbackData(part.Name, $"{Tag}:{i}"));
     }
 
     private void TrySavePartResult(TState state)
@@ -88,14 +92,8 @@ public abstract class SettingsHandler<TState> where TState : SettingsState
             part.SaveToState(state, state.PrevState!);
     }
 
-    public async Task SaveSettings(TState state, ChatId chatId, ITelegramBotClient bot, User user)
-    {
-        await SaveSettingsToUser(state, chatId, bot, user);
-        user.StateMachine.Pop();
-    }
-
     private SettingsPart<TState>? GetCurrentPart(TState state)
     {
-        return state.CurrentPart is null ? null : Parts[state.CurrentPart.Value];
+        return state.CurrentPart is null ? null : parts[state.CurrentPart.Value];
     }
 }

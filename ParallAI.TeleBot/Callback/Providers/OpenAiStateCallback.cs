@@ -7,5 +7,5 @@ using ParallAI.TeleBot.Settings.Provider;
 namespace ParallAI.TeleBot.Callback.Providers;
 
 [CallbackQuery(OpenAICompatibleSettingsHandler.CallbackTag)]
-public class OpenAiPartCallback(IRepository<User, long> users, OpenAICompatibleSettingsHandler handler)
-    : StandardSettingsPartCallback<OpenAICompatibleSettingsState, OpenAICompatibleSettingsHandler>(users, handler);
+public class OpenAiStateCallback(IRepository<User, long> users, OpenAICompatibleSettingsHandler handler)
+    : StandardSettingsStateCallback<OpenAICompatibleSettingsState, OpenAICompatibleSettingsHandler>(users, handler);

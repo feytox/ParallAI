@@ -29,11 +29,12 @@ public class ModelCallback(IRepository<User, long> users, ModelSettingsHandler h
         await bot.SendMessage(callbackQuery.From.Id, $"Модель {model.DisplayName} выбрана");
     }
 
-    protected override async Task HandleEdit(CallbackQuery callbackQuery, int index, ITelegramBotClient bot, User user)
+    protected override Task HandleEdit(CallbackQuery callbackQuery, int index, ITelegramBotClient bot, User user)
     {
         var state = index == -1 ? new ModelSettingsState(null) : GetModel(user, index).ToState();
         user.StateMachine.Push(state);
-        await handler.SendPartsList(state, callbackQuery.From.Id, bot);
+        
+        return Task.CompletedTask;
     }
 
     protected override async Task HandleRemove(CallbackQuery callbackQuery, int index, ITelegramBotClient bot, User user)

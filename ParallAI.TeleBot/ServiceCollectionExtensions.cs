@@ -38,12 +38,15 @@ public static class ServiceCollectionExtensions
 
         services.AddSequentialState<RequestState, RequestStep>(assembly, true);
         services.AddSingleton<IStateAction, MainMenuStateAction>();
+        services.AddSingleton<IStateAction, CompareStateAction>();
 
         services.AddSettingsState<PresetSettingsState, PresetSettingsHandler>();
         services.AddSettingsState<ModelSettingsState, ModelSettingsHandler>();
         services.AddSettingsState<GeminiProviderSettingsState, GeminiProviderSettingsHandler>();
         services.AddSettingsState<OpenAICompatibleSettingsState, OpenAICompatibleSettingsHandler>();
         services.AddSettingsState<OpenRouterProviderSettingsState, OpenRouterSettingsHandler>();
+        services.AddSettingsState<CompareSettingsState, CompareSettingsHandler>();
+        services.AddSettingsState<CompareElementSettingsState, CompareElementSettingsHandler>();
     }
 
     private static void AddScanned<TInterface>(this IServiceCollection services)
