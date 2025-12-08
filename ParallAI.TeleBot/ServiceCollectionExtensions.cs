@@ -35,10 +35,10 @@ public static class ServiceCollectionExtensions
 
         services.AddScanned<ICallbackQuery>();
         services.AddAttribute<ICallbackQuery, CallbackQueryAttribute>();
-
-        services.AddSequentialState<RequestState, RequestStep>(assembly, true);
+        
         services.AddSingleton<IStateAction, MainMenuStateAction>();
         services.AddSingleton<IStateAction, CompareStateAction>();
+        services.AddSingleton<IStateAction, RequestStateAction>();
 
         services.AddSettingsState<PresetSettingsState, PresetSettingsHandler>();
         services.AddSettingsState<ModelSettingsState, ModelSettingsHandler>();
@@ -47,6 +47,7 @@ public static class ServiceCollectionExtensions
         services.AddSettingsState<OpenRouterProviderSettingsState, OpenRouterSettingsHandler>();
         services.AddSettingsState<CompareSettingsState, CompareSettingsHandler>();
         services.AddSettingsState<CompareElementSettingsState, CompareElementSettingsHandler>();
+        services.AddSettingsState<RequestSettingsState, RequestSettingsHandler>();
     }
 
     private static void AddScanned<TInterface>(this IServiceCollection services)

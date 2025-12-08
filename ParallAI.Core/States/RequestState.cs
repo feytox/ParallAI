@@ -1,10 +1,9 @@
 ﻿using ParallAI.Core.States.Common;
+using ParallAI.Core.ValueTypes;
 
 namespace ParallAI.Core.States;
 
-public enum RequestStep
+public class RequestState(RequestConfig config) : UserState
 {
-    Prompt
+    public RequestConfig Config { get; private set; } = config;
 }
-
-public class RequestState() : SequentialState<RequestStep>(Enum.GetValues<RequestStep>());
