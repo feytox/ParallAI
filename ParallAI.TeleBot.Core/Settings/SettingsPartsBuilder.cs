@@ -10,7 +10,7 @@ public class SettingsPartsBuilder<TState> where TState : SettingsState
     public SettingsPartsBuilder<TState> AddSimple<TValue>(string name, string inputMessage, string failMessage,
         Func<string, TValue?> parser, Action<TState, TValue> saver)
     {
-        var part = new SimpleSettingsHandlerPart<TValue, TState>(name, inputMessage, failMessage, parser, saver);
+        var part = new SimpleSettingsPart<TValue, TState>(name, inputMessage, failMessage, parser, saver);
         parts.Add(part);
         return this;
     }

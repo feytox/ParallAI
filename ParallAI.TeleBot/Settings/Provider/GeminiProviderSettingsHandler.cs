@@ -17,10 +17,10 @@ public class GeminiProviderSettingsHandler()
             text => text, (state, value) => state.Token = value);
     }
 
-    protected override Task SaveSettingsToUser(GeminiProviderSettingsState state, ChatId chatId,
+    protected override Task<bool> SaveSettingsToUser(GeminiProviderSettingsState state, ChatId chatId,
         ITelegramBotClient bot, User user)
     {
-        return Task.CompletedTask;
+        return Task.FromResult(true);
     }
 
     protected override string GetPartsMessage(GeminiProviderSettingsState state)

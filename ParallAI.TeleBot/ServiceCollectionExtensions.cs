@@ -47,6 +47,7 @@ public static class ServiceCollectionExtensions
         services.AddSettingsState<OpenRouterProviderSettingsState, OpenRouterSettingsHandler>();
         services.AddSettingsState<CompareSettingsState, CompareSettingsHandler>();
         services.AddSettingsState<CompareElementSettingsState, CompareElementSettingsHandler>();
+        services.AddSettingsState<OrchestratorSettingsState, OrchestratorSettingsHandler>();
     }
 
     private static void AddScanned<TInterface>(this IServiceCollection services)

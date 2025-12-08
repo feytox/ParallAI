@@ -14,12 +14,9 @@ public class CompareSettingsState : SettingsState
 
 public static class CompareSettingsStateExtensions
 {
-    public static CompareConfig Build(this CompareSettingsState state)
+    public static OrchestratorSettingsState ToOrchestratorState(this CompareSettingsState state)
     {
-        var creationTime = DateTime.UtcNow;
-        var elements = state.ConfiguredElements.SkipLast(1).ToArray();
-        var orchestrator = state.ConfiguredElements.Last();
-        
-        return new CompareConfig(elements, orchestrator, creationTime);
+        var elements = state.ConfiguredElements.ToArray();
+        return new OrchestratorSettingsState(elements);
     }
 }

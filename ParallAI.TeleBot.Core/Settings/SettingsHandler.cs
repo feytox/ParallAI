@@ -9,7 +9,7 @@ namespace ParallAI.TeleBot.Core.Settings;
 // TODO: add validation
 public abstract class SettingsHandler<TState> where TState : SettingsState
 {
-    public abstract Task FinalizeSettings(TState state, ChatId chatId, ITelegramBotClient bot, User user);
+    protected abstract Task<bool> SaveSettingsToUser(TState state, ChatId chatId, ITelegramBotClient bot, User user);
     protected abstract Task SendPartsList(TState state, ChatId chatId, ITelegramBotClient bot);
 
     protected readonly string Tag;
@@ -75,6 +75,12 @@ public abstract class SettingsHandler<TState> where TState : SettingsState
         state.Reactivated = false;
         state.CurrentPart = null;
         return true;
+    }
+    
+    public async Task FinalizeSettings(TState state, ChatId chatId, ITelegramBotClient bot, User user)
+    {
+        if (await SaveSettingsToUser(state, chatId, bot, user))
+            user.StateMachine.Pop();
     }
 
     protected IEnumerable<InlineKeyboardButton> CreatePartButtons()

@@ -17,10 +17,10 @@ public class OpenRouterSettingsHandler()
             text => text, (state, value) => state.Token = value);
     }
 
-    protected override Task SaveSettingsToUser(OpenRouterProviderSettingsState state, ChatId chatId,
+    protected override Task<bool> SaveSettingsToUser(OpenRouterProviderSettingsState state, ChatId chatId,
         ITelegramBotClient bot, User user)
     {
-        return Task.CompletedTask;
+        return Task.FromResult(true);
     }
 
     protected override string GetPartsMessage(OpenRouterProviderSettingsState state)

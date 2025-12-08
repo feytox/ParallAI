@@ -23,6 +23,7 @@ public class CompareCommand(IRepository<User, long> users) : UserCommand(users)
         }
 
         var buttons = user.ComparisonDates
+            .Reverse()
             .Select(time => time.ToUniversalTime().ToString("yyyy/MM/dd HH:mm z"))
             .Select((text, i) => CompareCallback.CreateButton(text, $"{i}"))
             .Append(CompareCallback.CreateButton("+", "+"))
