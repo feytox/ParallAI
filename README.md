@@ -1,6 +1,7 @@
 ﻿# ParallAI
 
 ## Self-hosting через Docker
+### Установка
 1. Убедитесь, что у вас установлен Docker
 
 2. Создайте файл `compose.yml` и вставьте в него следующее:
@@ -42,4 +43,19 @@ MONGO_PASS=passwd
 
 ```
 docker compose up -d
+```
+
+### Обновление
+Для обновления контейнера введите следующие команды:
+```
+docker compose down
+docker compose pull
+docker compose up -d
+```
+
+### Удаление
+Для удаления контейнера введите следующие команды:
+```
+docker compose down
+docker system prune -a
 ```
