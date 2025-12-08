@@ -1,0 +1,10 @@
+﻿services:
+  parallai.host:
+    image: parallai.host
+    build:
+      context: .
+      dockerfile: ParallAI.Host/Dockerfile
+    
+  mongo-db:
+    ports:
+      - "27017:27017"
