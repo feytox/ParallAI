@@ -6,23 +6,23 @@ using User = ParallAI.Core.Entities.User;
 
 namespace ParallAI.TeleBot.Settings;
 
-public class CompareElementSettingsHandler() 
+public class CompareElementSettingsHandler()
     : StandardSettingsHandler<CompareElementSettingsState>(CallbackTag, CreateParts)
 {
     public const string CallbackTag = "compare-element";
-    
+
     protected override string GetPartsMessage(CompareElementSettingsState state)
     {
         var stateInfo = string.Join('\n', state.ToTextLines());
         return $"Текущие настройки:\n{stateInfo}";
     }
 
-    protected override Task SaveSettingsToUser(CompareElementSettingsState state, ChatId chatId, 
+    protected override Task<bool> SaveSettingsToUser(CompareElementSettingsState state, ChatId chatId,
         ITelegramBotClient bot, User user)
     {
-        return Task.CompletedTask;
+        return Task.FromResult(true);
     }
-    
+
     private static void CreateParts(SettingsPartsBuilder<CompareElementSettingsState> builder)
     {
         builder

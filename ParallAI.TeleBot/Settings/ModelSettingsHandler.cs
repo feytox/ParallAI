@@ -11,7 +11,7 @@ public class ModelSettingsHandler() : StandardSettingsHandler<ModelSettingsState
 {
     public const string CallbackTag = "model_settings";
 
-    protected override async Task SaveSettingsToUser(ModelSettingsState state, ChatId chatId, 
+    protected override async Task<bool> SaveSettingsToUser(ModelSettingsState state, ChatId chatId, 
         ITelegramBotClient bot, User user)
     {
         if (state.Id is null)
@@ -19,6 +19,7 @@ public class ModelSettingsHandler() : StandardSettingsHandler<ModelSettingsState
         else
             ApplyChanges(state, user);
         await bot.SendMessage(chatId, "Модель сохранена");
+        return true;
     }
 
     protected override string GetPartsMessage(ModelSettingsState state)

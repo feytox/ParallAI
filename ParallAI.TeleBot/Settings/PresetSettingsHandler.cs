@@ -17,7 +17,7 @@ public class PresetSettingsHandler() : StandardSettingsHandler<PresetSettingsSta
         return "Настройки пресетов"; // TODO: добавить отображение текущих настроек
     }
 
-    protected override async Task SaveSettingsToUser(PresetSettingsState state, ChatId chatId,
+    protected override async Task<bool> SaveSettingsToUser(PresetSettingsState state, ChatId chatId,
         ITelegramBotClient bot, User user)
     {
         if (state.PresetId is null)
@@ -25,6 +25,7 @@ public class PresetSettingsHandler() : StandardSettingsHandler<PresetSettingsSta
         else
             ApplyChanges(state, user);
         await bot.SendMessage(chatId, "Пресет сохранён");
+        return true;
     }
 
     private static void SaveNewPreset(PresetSettingsState state, User user)

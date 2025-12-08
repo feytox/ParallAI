@@ -5,7 +5,7 @@ using User = ParallAI.Core.Entities.User;
 
 namespace ParallAI.TeleBot.Core.Settings;
 
-public class SimpleSettingsHandlerPart<TValue, TState>(
+public class SimpleSettingsPart<TValue, TState>(
     string name,
     string inputMessage,
     string failMessage,
