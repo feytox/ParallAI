@@ -1,22 +1,15 @@
-﻿services:
+services:
   parallai.host:
-    image: parallai.host
-    build:
-      context: .
-      dockerfile: ParallAI.Host/Dockerfile
-    ports:
-      - "8080:8080"
+    image: ghcr.io/feytox/parallai:latest
     environment:
       - BOT_TOKEN=${BOT_TOKEN}
       - MONGO_CONNECTION_STRING=mongodb://${MONGO_USER}:${MONGO_PASS}@mongo-db:27017/ParallAIDB?authSource=admin
     depends_on:
       - mongo-db
-    
+
   mongo-db:
     image: mongo:latest
     restart: always
-    ports:
-      - "27017:27017"
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${MONGO_USER}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASS}
