@@ -27,7 +27,9 @@ public class ProviderSettingsPart(string name)
             }
             .Chunk(2);
 
-        await bot.SendMessage(chatId, "Выберите провайдер", replyMarkup: new InlineKeyboardMarkup(buttons));
+        await bot.SendMessage(chatId,
+            "Выберите провайдер\n\nГайд на получение токенов(не онлифанс) 👉 /providerguide",
+            replyMarkup: new InlineKeyboardMarkup(buttons));
         return null;
     }
     
