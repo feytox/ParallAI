@@ -1,3 +1,5 @@
+using System.Text;
+using ParallAI.Core.Providers;
 using ParallAI.Core.States;
 using ParallAI.TeleBot.Core.Settings;
 using ParallAI.TeleBot.Settings.Provider;
@@ -23,7 +25,8 @@ public class ModelSettingsHandler() : StandardSettingsHandler<ModelSettingsState
 
     protected override string GetPartsMessage(ModelSettingsState state)
     {
-        return "Настройки моделей"; // TODO: добавить отображение текущих настроек
+        return $"Настройки модели:\n\n🏷️ Название: {state.DisplayName.ToDisplay(maxLength: 300)}"
+               + state.ToFormattedString();
     }
 
     private static void SaveNewModel(ModelSettingsState state, User user)
@@ -45,9 +48,11 @@ public class ModelSettingsHandler() : StandardSettingsHandler<ModelSettingsState
     {
         builder
             .AddSimple("Название", "Введите название модели", "",
-                text => text, (state, value) => state.DisplayName = value)
+                text => text,
+                state => state.DisplayName)
             .AddSimple("ID модели", "Введите ID модели", "",
-                text => text, (state, value) => state.ModelId = value)
+                text => text,
+                state => state.ModelId)
             .Add(new ProviderSettingsPart("Провайдер"));
     }
 }

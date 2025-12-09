@@ -10,7 +10,9 @@ public class SimpleSettingsHandlerPart<TValue, TState>(
     string inputMessage,
     string failMessage,
     Func<string, TValue?> parser,
-    Action<TState, TValue> saver) : SettingsPart<TState>(name), IMessageHandlerPart<TState> 
+    Func<TState, TValue?> getter,
+    Action<TState, TValue> setter
+    ) : SettingsPart<TState>(name), IMessageHandlerPart<TState>, IValidatablePart<TState>
     where TState : SettingsState
 {
     public override async Task<UserState?> ActivatePart(TState state, ChatId chatId, ITelegramBotClient bot, User user)
@@ -18,6 +20,7 @@ public class SimpleSettingsHandlerPart<TValue, TState>(
         await bot.SendMessage(chatId, inputMessage);
         return null;
     }
+    
     public async Task<bool> HandleMessage(TState state, Message message, ITelegramBotClient bot)
     {
         if (!TryParse(message, out var value))
@@ -26,7 +29,7 @@ public class SimpleSettingsHandlerPart<TValue, TState>(
             return false;
         }
 
-        saver(state, value);
+        setter(state, value);
         return true;
     }
 
@@ -41,6 +44,16 @@ public class SimpleSettingsHandlerPart<TValue, TState>(
             return false;
 
         result = value;
+        return true;
+    }
+
+    public bool Validate(TState state)
+    {
+        var value = getter(state);
+        
+        if (value is null) return false;
+        if (value is string s && string.IsNullOrWhiteSpace(s)) return false;
+        
         return true;
     }
 }

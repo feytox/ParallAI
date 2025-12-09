@@ -1,7 +1,10 @@
-﻿using ParallAI.Core.Entities;
+﻿using System.Text;
+using ParallAI.Core.Entities;
 using ParallAI.Core.Repositories;
 using ParallAI.Core.States;
+using ParallAI.Core.ValueTypes;
 using ParallAI.TeleBot.Core.Callback.Common;
+using ParallAI.TeleBot.Core.Settings;
 using ParallAI.TeleBot.Settings;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -18,7 +21,9 @@ public class PresetCallback(IRepository<User, long> users, PresetSettingsHandler
     protected override string GetElementInfo(int index, User user)
     {
         var preset = GetPreset(user, index);
-        return $"Пресет {preset.Name}"; // TODO: add more info
+        
+        return $"Пресет: {preset.Name.ToDisplay(maxLength: 300)}\n\n"
+               + preset.ToFormattedString();
     }
 
     protected override async Task HandleChoose(CallbackQuery callbackQuery, int index,
@@ -51,4 +56,6 @@ public class PresetCallback(IRepository<User, long> users, PresetSettingsHandler
     {
         return user.UserPresets[index];
     }
+    
+    protected override object GetElement(int index, User user) => GetPreset(user, index);
 }

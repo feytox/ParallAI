@@ -36,7 +36,7 @@ public class CompareSettingsHandler() : SettingsHandler<CompareSettingsState>(Ca
         var buttons = state.ConfiguredElements
             .Select(e => $"Модель: {e.Model.DisplayName}    Пресет: {e.Preset.Name}")
             .Select((elementText, i) => InlineKeyboardButton.WithCallbackData(elementText, $"{CallbackTag}:{-i - 1}"))
-            .Concat(CreatePartButtons())
+            .Concat(CreatePartButtons(state))
             .Chunk(1)
             .ToList();
         

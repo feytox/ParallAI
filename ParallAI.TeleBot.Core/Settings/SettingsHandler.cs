@@ -13,7 +13,7 @@ public abstract class SettingsHandler<TState> where TState : SettingsState
     protected abstract Task SendPartsList(TState state, ChatId chatId, ITelegramBotClient bot);
 
     protected readonly string Tag;
-    private readonly SettingsPart<TState>[] parts;
+    protected readonly SettingsPart<TState>[] parts;
     
     protected SettingsHandler(string tag, Action<SettingsPartsBuilder<TState>> partsProvider)
     {
@@ -77,9 +77,20 @@ public abstract class SettingsHandler<TState> where TState : SettingsState
         return true;
     }
 
-    protected IEnumerable<InlineKeyboardButton> CreatePartButtons()
+    protected IEnumerable<InlineKeyboardButton> CreatePartButtons(TState state)
     {
-        return parts.Select((part, i) => InlineKeyboardButton.WithCallbackData(part.Name, $"{Tag}:{i}"));
+        return parts.Select((part, i) =>
+        {
+            var icon = "";
+            
+            if (part is IValidatablePart<TState> validatable)
+                icon = validatable.Validate(state) ? "✅" : "";
+
+            return InlineKeyboardButton.WithCallbackData(
+                $"{icon}{part.Name}", 
+                $"{Tag}:{i}"
+            );
+        });
     }
 
     private void TrySavePartResult(TState state)

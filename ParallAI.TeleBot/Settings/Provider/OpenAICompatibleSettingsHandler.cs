@@ -14,9 +14,9 @@ public class OpenAICompatibleSettingsHandler()
     private static void CreateParts(SettingsPartsBuilder<OpenAICompatibleSettingsState> builder)
     {
         builder.AddSimple("API ключ", "Введите API ключ провайдера", "",
-            text => text, (state, value) => state.Token = value);
+            text => text, state => state.Token);
         builder.AddSimple("EndpointUrl", "Введите EndPoint URL", "", 
-            text => text, (state, value) => state.Endpoint = value);
+            text => text, state => state.Endpoint);
     }
 
     protected override Task SaveSettingsToUser(OpenAICompatibleSettingsState state, ChatId chatId,

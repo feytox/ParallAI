@@ -1,7 +1,11 @@
+using System.Text;
 using ParallAI.Core.Entities;
+using ParallAI.Core.Providers;
 using ParallAI.Core.Repositories;
 using ParallAI.Core.States;
+using ParallAI.Core.ValueTypes;
 using ParallAI.TeleBot.Core.Callback.Common;
+using ParallAI.TeleBot.Core.Settings;
 using ParallAI.TeleBot.Settings;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -18,7 +22,10 @@ public class ModelCallback(IRepository<User, long> users, ModelSettingsHandler h
     protected override string GetElementInfo(int index, User user)
     {
         var model = GetModel(user, index);
-        return $"Модель {model.DisplayName}"; // TODO: add more info
+        
+        return $"Модель: {model.DisplayName.ToDisplay(maxLength: 300)}\n"
+            + model.ToFormattedString();
+        
     }
 
     protected override async Task HandleChoose(CallbackQuery callbackQuery, int index, ITelegramBotClient bot, User user)
@@ -49,4 +56,6 @@ public class ModelCallback(IRepository<User, long> users, ModelSettingsHandler h
     {
         return user.UserModels[index];
     }
+    
+    protected override object GetElement(int index, User user) => GetModel(user, index);
 }

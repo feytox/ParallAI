@@ -1,3 +1,4 @@
+using ParallAI.Core.Entities.DefaultPresets;
 using ParallAI.Core.States.Common;
 using ParallAI.Core.ValueTypes;
 
@@ -11,7 +12,7 @@ public class User(long id) : Entity<long>(id)
     private List<AiModel> Models { get; set; } = [];
 
     public IReadOnlyList<Preset> UserPresets => Presets;
-    private List<Preset> Presets { get; set; } = [];
+    private List<Preset> Presets { get; set; } = [new DefaultPreset(), new DefaultComparePreset()];
 
     public Preset? ChosenPreset => ChosenPresetId is null ? null : Presets.Find(preset => preset.Id == ChosenPresetId);
     private Guid? ChosenPresetId { get; set; }
