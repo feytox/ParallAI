@@ -1,3 +1,4 @@
+using ParallAI.Core.Exceptions;
 using ParallAI.Core.States.Providers;
 using ParallAI.TeleBot.Core.Settings;
 using Telegram.Bot;
@@ -16,7 +17,7 @@ public class OpenAICompatibleSettingsHandler()
         builder.AddSimple("API ключ", "Введите API ключ провайдера", "",
             text => text, (state, value) => state.Token = value);
         builder.AddSimple("EndpointUrl", "Введите EndPoint URL", "", 
-            text => text, (state, value) => state.Endpoint = value);
+            text => text, SaveEndpoint);
     }
 
     protected override Task<bool> SaveSettingsToUser(OpenAICompatibleSettingsState state, ChatId chatId,
@@ -28,5 +29,12 @@ public class OpenAICompatibleSettingsHandler()
     protected override string GetPartsMessage(OpenAICompatibleSettingsState state)
     {
         return "Настройки провайдера"; // TODO: добавить отображение текущих настроек
+    }
+    
+    private static void SaveEndpoint(OpenAICompatibleSettingsState state, string value)
+    {
+        if (!Uri.TryCreate(value, UriKind.Absolute, out var uri))
+            throw new UserFriendlyException("Invalid endpoint URL", "Это не похоже на URL. Попробуйте снова");
+        state.Endpoint = uri;
     }
 }
