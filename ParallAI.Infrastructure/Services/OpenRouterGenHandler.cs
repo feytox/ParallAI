@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using ParallAI.Core;
 using ParallAI.Core.Entities;
+using ParallAI.Core.Exceptions;
 using ParallAI.Core.Providers;
 using ParallAI.Core.ValueTypes;
 using ParallAI.Infrastructure.ValueTypes;
@@ -17,7 +18,7 @@ public class OpenRouterGenHandler(
     HttpClient client,
     IFileService fileService,
     ILogger<OpenRouterGenHandler>? logger = null)
-    : HttpGenHandler<OpenRouterProvider, OpenRouterRequest, OpenAiMessage, OpenAiResponse>(provider, model, client, logger)
+    : HttpGenHandler<OpenRouterProvider, OpenRouterRequest, OpenAiMessage, OpenAiResponse, OpenRouterErrorResponse>(provider, model, client, logger)
 {
     private static readonly Uri BaseUrl = new("https://openrouter.ai/api/v1/chat/completions");
 
@@ -44,5 +45,13 @@ public class OpenRouterGenHandler(
     protected override void FillHttpRequest(HttpRequestMessage request)
     {
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", Provider.Token);
+    }
+
+    protected override void HandleErrorResponse(OpenRouterErrorResponse response)
+    {
+        throw new UserFriendlyException($"Failed request to OpenRouter provider with Code: {response.Error.Code}, " +
+                                        $"Message: {response.Error.Message}",
+            $"Произошла ошибка при отправке запроса к модели {model.DisplayName} " +
+            $"провайдера OpenRouter c текстом {response.Error.Message}");
     }
 }

@@ -9,7 +9,7 @@ using RichardSzalay.MockHttp;
 namespace ParallAI.Infrastructure.Tests;
 
 public class OpenRouterGenHandlerTests
-    : HttpGenHandlerTests<OpenRouterGenHandler, OpenRouterProvider, OpenRouterRequest, OpenAiMessage, OpenAiResponse>
+    : HttpGenHandlerTests<OpenRouterGenHandler, OpenRouterProvider, OpenRouterRequest, OpenAiMessage, OpenAiResponse, OpenRouterErrorResponse>
 {
     protected override string ExpectedUrl => "https://openrouter.ai/api/v1/chat/completions";
 

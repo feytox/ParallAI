@@ -2,16 +2,17 @@
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using ParallAI.Core.Entities;
+using ParallAI.Core.Exceptions;
 using ParallAI.Core.ValueTypes;
 using ParallAI.Infrastructure.ValueTypes;
 
 namespace ParallAI.Infrastructure.Services;
 
-public abstract class HttpGenHandler<TProvider, TRequest, TMessage, TResponse>(
+public abstract class HttpGenHandler<TProvider, TRequest, TMessage, TResponse, TErrorResponse>(
     TProvider provider,
     AiModel model,
     HttpClient client,
-    ILogger<HttpGenHandler<TProvider, TRequest, TMessage, TResponse>>? logger) 
+    ILogger<HttpGenHandler<TProvider, TRequest, TMessage, TResponse, TErrorResponse>>? logger) 
     : IGenerationHandler
     where TProvider : AiProvider
     where TResponse : IGenResponse
@@ -30,6 +31,8 @@ public abstract class HttpGenHandler<TProvider, TRequest, TMessage, TResponse>(
 
     protected abstract void FillHttpRequest(HttpRequestMessage request);
     
+    protected abstract void HandleErrorResponse(TErrorResponse response);
+    
     public async Task<AiResponse> Generate(AiMessage[] aiMessages, PromptSettings promptSettings)
     {
         var url = GetEndpointUrl();
@@ -43,10 +46,26 @@ public abstract class HttpGenHandler<TProvider, TRequest, TMessage, TResponse>(
         logger?.LogInformation(JsonSerializer.Serialize(aiRequest, JsonSerializerOptions.Web));
 
         var response = await Client.SendAsync(request);
-        response.EnsureSuccessStatusCode();
+        //try catch нужен потому что какой-ни будь OpenRouter может прислать ответ с кодом 200, но содержащий ошибку в теле.
+        //Try аналога метода десериализации не нашел :(
+        try
+        {
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorResponse = await response.Content.ReadFromJsonAsync<TErrorResponse>(JsonSerializerOptions.Web);
+                HandleErrorResponse(errorResponse);
+                response.EnsureSuccessStatusCode();
+            }
 
-        var providerResponse = await response.Content.ReadFromJsonAsync<TResponse>(JsonSerializerOptions.Web);
-        return providerResponse!.ToTextResponse();
+            var providerResponse = await response.Content.ReadFromJsonAsync<TResponse>(JsonSerializerOptions.Web);
+            return providerResponse!.ToTextResponse();
+        }
+        catch (JsonException e)
+        {
+            throw new UserFriendlyException(
+                $"Can't deserialize answer {await response.Content.ReadAsStringAsync()} from {typeof(TProvider).Name}",
+                $"Произошла ошибка при отправке запроса к модели {model.DisplayName} провайдера {typeof(TProvider).Name}");
+        }
     }
     
     private async Task<TMessage> CreateMessage(AiMessage aiMessage)

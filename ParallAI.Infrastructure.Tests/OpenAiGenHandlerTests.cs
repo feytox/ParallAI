@@ -11,7 +11,7 @@ namespace ParallAI.Infrastructure.Tests;
 
 [TestFixture]
 public class OpenAiGenHandlerTests
-    : HttpGenHandlerTests<OpenAiGenHandler, OpenAICompatibleProvider, OpenAiRequest, OpenAiMessage, OpenAiResponse>
+    : HttpGenHandlerTests<OpenAiGenHandler, OpenAICompatibleProvider, OpenAiRequest, OpenAiMessage, OpenAiResponse, OpenAiErrorResponse>
 {
     protected override string ExpectedUrl => "https://api.openai.com/v1/chat/completions";
 

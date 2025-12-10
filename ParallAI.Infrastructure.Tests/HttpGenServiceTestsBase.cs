@@ -15,8 +15,8 @@ using RichardSzalay.MockHttp;
 namespace ParallAI.Infrastructure.Tests;
 
 [TestFixture]
-public abstract class HttpGenHandlerTests<THandler, TProvider, TRequest, TMessage, TResponse> 
-    where THandler : HttpGenHandler<TProvider, TRequest, TMessage, TResponse> 
+public abstract class HttpGenHandlerTests<THandler, TProvider, TRequest, TMessage, TResponse, TErrorResponse> 
+    where THandler : HttpGenHandler<TProvider, TRequest, TMessage, TResponse, TErrorResponse> 
     where TProvider : AiProvider
     where TResponse : IGenResponse
 {

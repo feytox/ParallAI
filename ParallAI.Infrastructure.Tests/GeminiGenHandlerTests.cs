@@ -11,7 +11,7 @@ namespace ParallAI.Infrastructure.Tests;
 
 [TestFixture]
 public class GeminiGenHandlerTests
-    : HttpGenHandlerTests<GeminiGenHandler, GeminiProvider, GeminiRequest, GeminiContent, GeminiResponse>
+    : HttpGenHandlerTests<GeminiGenHandler, GeminiProvider, GeminiRequest, GeminiContent, GeminiResponse, GeminiErrorResponse>
 {
     protected override string ExpectedUrl =>
         $"https://generativelanguage.googleapis.com/v1beta/models/{ModelId}:generateContent";

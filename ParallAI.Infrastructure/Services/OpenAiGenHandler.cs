@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using ParallAI.Core;
 using ParallAI.Core.Entities;
+using ParallAI.Core.Exceptions;
 using ParallAI.Core.Providers;
 using ParallAI.Core.ValueTypes;
 using ParallAI.Infrastructure.ValueTypes;
@@ -17,7 +18,8 @@ public class OpenAiGenHandler(
     HttpClient client,
     IFileService fileService,
     ILogger<OpenAiGenHandler>? logger = null)
-    : HttpGenHandler<OpenAICompatibleProvider, OpenAiRequest, OpenAiMessage, OpenAiResponse>(provider, model, client, logger)
+    : HttpGenHandler<OpenAICompatibleProvider, OpenAiRequest, OpenAiMessage, OpenAiResponse, 
+        OpenAiErrorResponse>(provider, model, client, logger)
 {
     protected override Uri GetEndpointUrl()
     {
@@ -45,5 +47,14 @@ public class OpenAiGenHandler(
     protected override void FillHttpRequest(HttpRequestMessage request)
     {
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", Provider.Token);
+    }
+
+    protected override void HandleErrorResponse(OpenAiErrorResponse response)
+    {
+        throw new UserFriendlyException($"Failed request to OpenAiCompatible provider with Code: {response.Error.Code}, " +
+                                        $"Message: {response.Error.Message}, Type: {response.Error.Type}, " +
+                                        $"Param: {response.Error.Param}",  
+            $"Произошла ошибка при отправке запроса к модели {model.DisplayName} " +
+            $"провайдера OpenAiCompatible c текстом {response.Error.Message}");
     }
 }
