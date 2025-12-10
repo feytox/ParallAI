@@ -31,10 +31,13 @@ public class SettingsPartsBuilder<TState> where TState : SettingsState
 
     public SettingsPartsBuilder<TState> AddSelect<TValue>(string tag, string name, string inputMessage,
         Func<User, IReadOnlyList<TValue>> elementsProvider, Func<TValue, string> nameSelector,
-        Action<TState, TValue> setter)
+        Expression<Func<TState, TValue?>> propertySelector)
     {
+        var getter = propertySelector.Compile();
+        var setter = CreateSetter(propertySelector);
+        
         var part = new SelectSettingsPart<TState, TValue>(tag, name, inputMessage, 
-            elementsProvider, nameSelector, setter);
+            elementsProvider, nameSelector, getter, setter);
         parts.Add(part);
         return this;
     }

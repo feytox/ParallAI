@@ -12,7 +12,8 @@ public class SelectSettingsPart<TState, TValue>(
     string inputMessage,
     Func<User, IReadOnlyList<TValue>> elementsProvider,
     Func<TValue, string> nameSelector,
-    Action<TState, TValue> setter) 
+    Func<TState, TValue?> getter,
+    Action<TState, TValue> setter)
     : SettingsPart<TState>(name), ICallbackHandlerPart<TState>, IValidatablePart<TState>
     where TState : SettingsState
 {
@@ -38,5 +39,9 @@ public class SelectSettingsPart<TState, TValue>(
         return Task.FromResult(true);
     }
 
-    public bool Validate(TState state) => true;
+    public bool Validate(TState state)
+    {
+        var value = getter(state);
+        return value is not null;
+    }
 }
