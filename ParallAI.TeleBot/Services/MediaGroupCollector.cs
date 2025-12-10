@@ -29,7 +29,7 @@ public class MediaGroupCollector
 
     private bool AddMessage(string groupId, Message message)
     {
-        var isFirstMessage = mediaGroups.ContainsKey(groupId);
+        var isFirstMessage = !mediaGroups.ContainsKey(groupId);
 
         mediaGroups.AddOrUpdate(
             key: groupId,
