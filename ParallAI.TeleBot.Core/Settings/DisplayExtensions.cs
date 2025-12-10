@@ -2,6 +2,7 @@ using System.Text;
 using ParallAI.Core.Entities;
 using ParallAI.Core.Providers;
 using ParallAI.Core.States;
+using ParallAI.Core.States.Providers;
 using ParallAI.Core.ValueTypes;
 
 namespace ParallAI.TeleBot.Core.Settings;
@@ -59,4 +60,37 @@ public static class DisplayExtensions
     }
     
     public static string ToFormattedString(this AiModel model) => ToFormattedString(model.ToState());
+    
+    public static string ToFormattedString(this GeminiProviderSettingsState state)
+    {
+        var sb = new StringBuilder();
+        sb.AppendLine($"🔑 Токен: {state.Token.ToMaskedDisplay()}");
+        return sb.ToString();
+    }
+    
+    public static string ToFormattedString(this OpenRouterProviderSettingsState state)
+    {
+        var sb = new StringBuilder();
+        sb.AppendLine($"🔑 Токен: {state.Token.ToMaskedDisplay()}");
+        return sb.ToString();
+    }
+    
+    public static string ToFormattedString(this OpenAICompatibleSettingsState state)
+    {
+        var sb = new StringBuilder();
+        sb.AppendLine($"🔑 Токен: {state.Token.ToMaskedDisplay()}");
+        sb.AppendLine($"🌐 Endpoint Url: {state.Endpoint.ToDisplay(maxLength: 60)}");
+        return sb.ToString();
+    }
+    
+    private static string ToMaskedDisplay(this string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value)) 
+            return EmptyPlaceholder;
+
+        if (value.Length < 10) 
+            return "...";
+        
+        return $"{value[..3]}...{value[^4..]}";
+    }
 }

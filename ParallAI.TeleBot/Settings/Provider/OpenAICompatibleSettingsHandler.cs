@@ -27,6 +27,6 @@ public class OpenAICompatibleSettingsHandler()
 
     protected override string GetPartsMessage(OpenAICompatibleSettingsState state)
     {
-        return "Настройки провайдера"; // TODO: добавить отображение текущих настроек
+        return "Настройки провайдера:\n\n" + state.ToFormattedString();
     }
 }
