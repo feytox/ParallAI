@@ -1,16 +1,18 @@
 using ParallAI.Core.States;
 using ParallAI.Core.States.Common;
 using ParallAI.Core.States.Providers;
+using ParallAI.TeleBot.Commands;
 using ParallAI.TeleBot.Core.Settings;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 using User = ParallAI.Core.Entities.User;
 
 namespace ParallAI.TeleBot.Settings.Provider;
 
 public class ProviderSettingsPart(string name)
-    : SettingsPart<ModelSettingsState>(name), ICanSavePart<ModelSettingsState, ProviderSettingsState>
+    : SettingsPart<ModelSettingsState>(name), ICanSavePart<ModelSettingsState, ProviderSettingsState>, IValidatablePart<ModelSettingsState>
 {
     public const string GeminiTag = "choose_gemini";
     public const string OpenAiTag = "choose_openai";
@@ -27,7 +29,10 @@ public class ProviderSettingsPart(string name)
             }
             .Chunk(2);
 
-        await bot.SendMessage(chatId, "Выберите провайдер", replyMarkup: new InlineKeyboardMarkup(buttons));
+        await bot.SendMessage(chatId,
+            $"Выберите провайдер\n\nГайд на получение API-ключей 👉 {ProviderGuideCommand.GuideHtmlUrl}",
+            parseMode: ParseMode.Html,
+            replyMarkup: new InlineKeyboardMarkup(buttons));
         return null;
     }
     
@@ -40,5 +45,10 @@ public class ProviderSettingsPart(string name)
             OpenRouterProviderSettingsState openRouterState => openRouterState.ToProvider(),
             _ => throw new InvalidOperationException("Unknown previous state type")
         };
+    }
+
+    public bool Validate(ModelSettingsState state)
+    {
+        return state.Provider != null;
     }
 }

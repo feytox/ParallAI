@@ -1,4 +1,5 @@
-﻿using ParallAI.Core.Repositories;
+﻿using ParallAI.Core.Entities.DefaultPresets;
+using ParallAI.Core.Repositories;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -9,6 +10,7 @@ namespace ParallAI.TeleBot.Core.Callback.Common;
 public abstract class SettingsElementCallback(IRepository<User, long> users) : UserCallbackQuery(users)
 {
     protected abstract string GetElementInfo(int index, User user);
+    protected abstract object GetElement(int index, User user);
     protected abstract Task HandleChoose(CallbackQuery callbackQuery, int index, ITelegramBotClient bot, User user);
     protected abstract Task HandleEdit(CallbackQuery callbackQuery, int index, ITelegramBotClient bot, User user);
     protected abstract Task HandleRemove(CallbackQuery callbackQuery, int index, ITelegramBotClient bot, User user);
@@ -40,12 +42,15 @@ public abstract class SettingsElementCallback(IRepository<User, long> users) : U
         }
 
         var info = GetElementInfo(index, user);
-        var buttons = new[]
+        var buttons = new List<InlineKeyboardButton>
         {
             InlineKeyboardButton.WithCallbackData("Выбрать", $"{data[0]}:{data[1]}:c"),
-            InlineKeyboardButton.WithCallbackData("Изменить", $"{data[0]}:{data[1]}:e"),
-            InlineKeyboardButton.WithCallbackData("Удалить", $"{data[0]}:{data[1]}:r")
         };
+        if (GetElement(index, user) is not IImmutableElement)
+        {
+            buttons.Add(InlineKeyboardButton.WithCallbackData("Изменить", $"{data[0]}:{data[1]}:e"));
+            buttons.Add(InlineKeyboardButton.WithCallbackData("Удалить", $"{data[0]}:{data[1]}:r"));
+        }
 
         await bot.SendMessage(callbackQuery.From.Id, info, replyMarkup: new InlineKeyboardMarkup(buttons));
     }

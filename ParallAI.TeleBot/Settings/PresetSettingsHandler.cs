@@ -14,7 +14,8 @@ public class PresetSettingsHandler() : StandardSettingsHandler<PresetSettingsSta
 
     protected override string GetPartsMessage(PresetSettingsState state)
     {
-        return "Настройки пресетов"; // TODO: добавить отображение текущих настроек
+        return $"Настройки пресета:\n\n📝 Название: {state.Name.ToDisplay(maxLength: 300)}\n"
+               + state.ToFormattedString();
     }
 
     protected override async Task<bool> SaveSettingsToUser(PresetSettingsState state, ChatId chatId,
@@ -47,16 +48,19 @@ public class PresetSettingsHandler() : StandardSettingsHandler<PresetSettingsSta
     {
         builder
             .AddSimple("Название", "Введите название пресета", "",
-                text => text, (state, value) => state.Name = value)
+                text => text,
+                state => state.Name)
             .AddSimple("Системный промпт", "Введите системный промпт", "",
-                text => text, (state, value) => state.SystemPrompt = value)
+                text => text,
+                state => state.SystemPrompt)
             .AddSimple("Температура", "Введите температуру (число от 0 до 2)",
                 "Ошибка: Ожидается числом от 0 до 2. Попробуйте ещё раз",
-                ParseDecimal, (state, value) => state.Temperature = value)
+                ParseDecimal, 
+                state => state.Temperature)
             .AddEnum<ThinkingBudget>(CallbackTag, "Размышления",
                 "Выберите бюджет размышлений",
-                (state, value) => state.ThinkingBudget = value,
-                value => value != ThinkingBudget.Unknown);
+                value => value != ThinkingBudget.Unknown,
+                (state, budget) => state.ThinkingBudget = budget);
     }
 
     private static decimal? ParseDecimal(string text)

@@ -16,7 +16,6 @@ public class CreateElementSettingsPart(string name)
         return Task.FromResult<UserState?>(new CompareElementSettingsState());
     }
     
-    // TODO: add validation
     public void SaveToState(CompareSettingsState state, CompareElementSettingsState prevState)
     {
         var element = prevState.ToElement();

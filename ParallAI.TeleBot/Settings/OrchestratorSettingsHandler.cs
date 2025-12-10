@@ -30,8 +30,8 @@ public class OrchestratorSettingsHandler()
     {
         builder
             .AddSelect(CallbackTag, "Пресет", "Выберите пресет:", user => user.UserPresets, preset => preset.Name,
-                (state, preset) => state.Preset = preset)
+                state => state.Preset)
             .AddSelect(CallbackTag, "Модель", "Выберите модель:", user => user.UserModels, model => model.DisplayName,
-                (state, model) => state.Model = model);
+                state => state.Model);
     }
 }

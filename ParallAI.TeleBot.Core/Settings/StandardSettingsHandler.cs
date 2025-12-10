@@ -14,12 +14,20 @@ public abstract class StandardSettingsHandler<TState>(string tag, Action<Setting
     
     protected override async Task SendPartsList(TState state, ChatId chatId, ITelegramBotClient bot)
     {
-        var buttons = CreatePartButtons()
-            .Chunk(2)
-            .Append([InlineKeyboardButton.WithCallbackData("Сохранить", $"{Tag}:c")])
-            .Append([CancelCallback.CreateButton("Выйти без сохранения")]);
-        var message = GetPartsMessage(state);
+        var isAllValid = Parts
+            .OfType<IValidatablePart<TState>>()
+            .All(p => p.Validate(state));
+        
+        var partsButtons = CreatePartButtons(state).Chunk(2);
+        
+        var bottomButtons = new List<InlineKeyboardButton>();
+        if (isAllValid)
+            bottomButtons.Add(InlineKeyboardButton.WithCallbackData("💾 Сохранить", $"{Tag}:c"));
+        bottomButtons.Add(CancelCallback.CreateButton("🔙 Выйти без сохранения"));
+        
+        var allButtons = partsButtons.Append(bottomButtons.ToArray());
 
-        await bot.SendMessage(chatId, message, replyMarkup: new InlineKeyboardMarkup(buttons));
+        var message = GetPartsMessage(state);
+        await bot.SendMessage(chatId, message, replyMarkup: new InlineKeyboardMarkup(allButtons));
     }
 }

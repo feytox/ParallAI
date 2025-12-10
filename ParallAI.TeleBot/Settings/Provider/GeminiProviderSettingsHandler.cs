@@ -14,7 +14,7 @@ public class GeminiProviderSettingsHandler()
     private static void CreateParts(SettingsPartsBuilder<GeminiProviderSettingsState> builder)
     {
         builder.AddSimple("API ключ", "Введите API ключ провайдера", "",
-            text => text, (state, value) => state.Token = value);
+            text => text, state => state.Token);
     }
 
     protected override Task<bool> SaveSettingsToUser(GeminiProviderSettingsState state, ChatId chatId,

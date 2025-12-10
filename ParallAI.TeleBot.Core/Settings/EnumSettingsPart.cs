@@ -10,9 +10,9 @@ public class EnumSettingsPart<TEnum, TState>(
     string tag,
     string name,
     string inputMessage,
-    Action<TState, TEnum> saver,
-    Func<TEnum, bool> selector) 
-    : SettingsPart<TState>(name), ICallbackHandlerPart<TState> 
+    Func<TEnum, bool> selector,
+    Action<TState, TEnum> setter) 
+    : SettingsPart<TState>(name), ICallbackHandlerPart<TState>, IValidatablePart<TState>
     where TState : SettingsState 
     where TEnum : struct, Enum
 {
@@ -34,7 +34,9 @@ public class EnumSettingsPart<TEnum, TState>(
             throw new FormatException("Invalid callback data");
 
         var value = Enum.Parse<TEnum>(data[1]);
-        saver(state, value);
+        setter(state, value);
         return Task.FromResult(true);
     }
+
+    public bool Validate(TState state) => true;
 }

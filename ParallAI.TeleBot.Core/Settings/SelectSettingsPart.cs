@@ -12,8 +12,9 @@ public class SelectSettingsPart<TState, TValue>(
     string inputMessage,
     Func<User, IReadOnlyList<TValue>> elementsProvider,
     Func<TValue, string> nameSelector,
-    Action<TState, TValue> saver) 
-    : SettingsPart<TState>(name), ICallbackHandlerPart<TState> 
+    Func<TState, TValue?> getter,
+    Action<TState, TValue> setter)
+    : SettingsPart<TState>(name), ICallbackHandlerPart<TState>, IValidatablePart<TState>
     where TState : SettingsState
 {
     public override async Task<UserState?> ActivatePart(TState state, ChatId chatId, ITelegramBotClient bot, User user)
@@ -34,7 +35,13 @@ public class SelectSettingsPart<TState, TValue>(
         var elements = elementsProvider(user);
         var selectedValue = elements[index];
 
-        saver(state, selectedValue);
+        setter(state, selectedValue);
         return Task.FromResult(true);
+    }
+
+    public bool Validate(TState state)
+    {
+        var value = getter(state);
+        return value is not null;
     }
 }
