@@ -6,14 +6,13 @@ using User = ParallAI.Core.Entities.User;
 
 namespace ParallAI.TeleBot.Core.Settings;
 
-// TODO: add validation
 public abstract class SettingsHandler<TState> where TState : SettingsState
 {
     public abstract Task FinalizeSettings(TState state, ChatId chatId, ITelegramBotClient bot, User user);
     protected abstract Task SendPartsList(TState state, ChatId chatId, ITelegramBotClient bot);
 
     protected readonly string Tag;
-    protected readonly SettingsPart<TState>[] parts;
+    protected readonly SettingsPart<TState>[] Parts;
     
     protected SettingsHandler(string tag, Action<SettingsPartsBuilder<TState>> partsProvider)
     {
@@ -21,15 +20,15 @@ public abstract class SettingsHandler<TState> where TState : SettingsState
 
         var builder = new SettingsPartsBuilder<TState>();
         partsProvider(builder);
-        parts = builder.Build();
+        Parts = builder.Build();
     }
 
     public async Task ActivatePart(TState state, int partIndex, ChatId chatId, ITelegramBotClient bot, User user)
     {
-        if (partIndex >= parts.Length)
+        if (partIndex >= Parts.Length)
             throw new IndexOutOfRangeException("Invalid settings part index");
 
-        var selectedPart = parts[partIndex];
+        var selectedPart = Parts[partIndex];
         state.CurrentPart = partIndex;
 
         var nextState = await selectedPart.ActivatePart(state, chatId, bot, user);
@@ -79,7 +78,7 @@ public abstract class SettingsHandler<TState> where TState : SettingsState
 
     protected IEnumerable<InlineKeyboardButton> CreatePartButtons(TState state)
     {
-        return parts.Select((part, i) =>
+        return Parts.Select((part, i) =>
         {
             var icon = "";
             
@@ -105,6 +104,6 @@ public abstract class SettingsHandler<TState> where TState : SettingsState
 
     private SettingsPart<TState>? GetCurrentPart(TState state)
     {
-        return state.CurrentPart is null ? null : parts[state.CurrentPart.Value];
+        return state.CurrentPart is null ? null : Parts[state.CurrentPart.Value];
     }
 }

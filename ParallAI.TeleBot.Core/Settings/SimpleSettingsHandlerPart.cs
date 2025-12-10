@@ -50,10 +50,9 @@ public class SimpleSettingsHandlerPart<TValue, TState>(
     public bool Validate(TState state)
     {
         var value = getter(state);
+        if (value is null) 
+            return false;
         
-        if (value is null) return false;
-        if (value is string s && string.IsNullOrWhiteSpace(s)) return false;
-        
-        return true;
+        return value is not string s || !string.IsNullOrWhiteSpace(s);
     }
 }

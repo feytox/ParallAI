@@ -11,8 +11,7 @@ public class EnumSettingsPart<TEnum, TState>(
     string name,
     string inputMessage,
     Func<TEnum, bool> selector,
-    Func<TState, TEnum?> getter,
-    Action<TState, TEnum?> setter) 
+    Action<TState, TEnum> setter) 
     : SettingsPart<TState>(name), ICallbackHandlerPart<TState>, IValidatablePart<TState>
     where TState : SettingsState 
     where TEnum : struct, Enum
@@ -39,11 +38,5 @@ public class EnumSettingsPart<TEnum, TState>(
         return Task.FromResult(true);
     }
 
-    public bool Validate(TState state)
-    {
-        var value = getter(state);
-        if (value is null) return false;
-        var currentValueName = Enum.GetName(value.Value);
-        return currentValueName != null && enumNames.Contains(currentValueName);
-    }
+    public bool Validate(TState state) => true;
 }

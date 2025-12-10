@@ -6,7 +6,7 @@
 
 ## 💎 Google Gemini
 
-Бесплатный (с ограничениями) и быстрый доступ к моделям Gemini 1.5 Flash и Pro.
+Бесплатный (с ограничениями) и быстрый доступ к моделям Gemini 2.5 Flash и Pro.
 
 1. Перейдите в **[Google AI Studio](https://aistudio.google.com/app/apikey)**.
 2. Войдите в свой Google аккаунт.
@@ -20,7 +20,8 @@
 
 ## ⚡ OpenRouter
 
-Агрегатор, дающий доступ к Claude 3.5, GPT-4o, Llama 3 и сотням других моделей через один единый ключ.
+Агрегатор, дающий доступ к Claude, GPT, Grok и сотням других моделей через один единый ключ.
+Также есть модели с бесплатным доступом.
 
 1. Зарегистрируйтесь на сайте **[OpenRouter.ai](https://openrouter.ai/keys)**.
    ![](OpenRouter1.png)
@@ -38,27 +39,25 @@
 
 ## 🤖 OpenAI Compatible
 
-Этот тип подключения используется для DeepSeek, Groq, оригинального OpenAI или локальных моделей (Ollama).
+Этот тип подключения используется для оригинального OpenAI, Deepseek, Qwen, локальных моделей (Ollama) и большинства современных сервисов.
 
 Вам понадобятся два параметра:
 1.  **API Key** (получаете на сайте сервиса).
-2.  **Base URL** (адрес сервера, см. таблицу ниже).
+2.  **Base URL** (адрес сервера, примеры в таблице ниже).
 
 ### Таблица Base URL
 
-Бот запрашивает `EndpointUrl`, скопируйте нужную ссылку:
+Бот запрашивает `EndpointUrl`, примеры ссылок ниже:
 
-| Сервис                   | EndpointUrl                      |
-| :----------------------- | :------------------------------- |
-| **DeepSeek**             | `https://api.deepseek.com`       |
-| **Groq**                 | `https://api.groq.com/openai/v1` |
-| **OpenAI (Официальный)** | `https://api.openai.com/v1`      |
-| **Ollama (Локально)**    | `http://localhost:11434/v1`      |
-| **LM Studio (Локально)** | `http://localhost:1234/v1`       |
+| Сервис                   | Endpoint Url                    |
+|:-------------------------|:--------------------------------|
+| **DeepSeek**             | `https://api.deepseek.com`      |
+| **Z.AI**                 | `https://api.z.ai/api/paas/v4/` |
+| **OpenAI (Официальный)** | `https://api.openai.com/v1`     |
 
 ### Пример получения ключа (DeepSeek)
 
-DeepSeek — одна из самых дешевых и умных моделей (аналог GPT-4).
+DeepSeek — одна из самых дешевых моделей (аналог GPT-4).
 
 1. Зайдите на **[DeepSeek Platform](https://platform.deepseek.com/api_keys)**.
 2. Войдите через Google или зарегистрируйтесь.
@@ -67,4 +66,4 @@ DeepSeek — одна из самых дешевых и умных моделе�
 4. Введите имя и нажмите **Create**.
 5. Скопируйте ключ `sk-...`.
 
-⚠️ **Важно:** При настройке DeepSeek в боте не забудьте вставить ссылку `https://api.deepseek.com` в поле **EndpointUrl**.
+⚠️ **Важно:** При настройке DeepSeek в боте не забудьте вставить ссылку `https://api.deepseek.com` в поле **Endpoint Url**.

@@ -22,25 +22,19 @@ public class SettingsPartsBuilder<TState> where TState : SettingsState
     }
     
     public SettingsPartsBuilder<TState> AddEnum<TEnum>(string tag, string name, string inputMessage,
-        Func<TEnum, bool> selector, Expression<Func<TState, TEnum?>> propertySelector) where TEnum : struct, Enum
+        Func<TEnum, bool> selector, Action<TState, TEnum> setter) where TEnum : struct, Enum
     {
-        var getter = propertySelector.Compile();
-        var setter = CreateSetter(propertySelector);
-        
-        var part = new EnumSettingsPart<TEnum, TState>(tag, name, inputMessage, selector, getter, setter);
+        var part = new EnumSettingsPart<TEnum, TState>(tag, name, inputMessage, selector, setter);
         parts.Add(part);
         return this;
     }
 
     public SettingsPartsBuilder<TState> AddSelect<TValue>(string tag, string name, string inputMessage,
         Func<User, IReadOnlyList<TValue>> elementsProvider, Func<TValue, string> nameSelector,
-        Expression<Func<TState, TValue?>> propertySelector)
+        Action<TState, TValue> setter)
     {
-        var getter = propertySelector.Compile();
-        var setter = CreateSetter(propertySelector);
-        
         var part = new SelectSettingsPart<TState, TValue>(tag, name, inputMessage, 
-            elementsProvider, nameSelector, getter, setter);
+            elementsProvider, nameSelector, setter);
         parts.Add(part);
         return this;
     }

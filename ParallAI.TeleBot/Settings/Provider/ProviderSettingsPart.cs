@@ -1,9 +1,11 @@
 using ParallAI.Core.States;
 using ParallAI.Core.States.Common;
 using ParallAI.Core.States.Providers;
+using ParallAI.TeleBot.Commands;
 using ParallAI.TeleBot.Core.Settings;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 using User = ParallAI.Core.Entities.User;
 
@@ -28,7 +30,8 @@ public class ProviderSettingsPart(string name)
             .Chunk(2);
 
         await bot.SendMessage(chatId,
-            "Выберите провайдер\n\nГайд на получение токенов(не онлифанс) 👉 /providerguide",
+            $"Выберите провайдер\n\nГайд на получение API-ключей 👉 {ProviderGuideCommand.GuideHtmlUrl}",
+            parseMode: ParseMode.Html,
             replyMarkup: new InlineKeyboardMarkup(buttons));
         return null;
     }

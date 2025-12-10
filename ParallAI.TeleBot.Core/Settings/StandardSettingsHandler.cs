@@ -17,7 +17,7 @@ public abstract class StandardSettingsHandler<TState>(string tag, Action<Setting
     
     protected override async Task SendPartsList(TState state, ChatId chatId, ITelegramBotClient bot)
     {
-        var isAllValid = parts
+        var isAllValid = Parts
             .OfType<IValidatablePart<TState>>()
             .All(p => p.Validate(state));
         
@@ -25,8 +25,8 @@ public abstract class StandardSettingsHandler<TState>(string tag, Action<Setting
         
         var bottomButtons = new List<InlineKeyboardButton>();
         if (isAllValid)
-            bottomButtons.Add(InlineKeyboardButton.WithCallbackData("𒀱Сохранить", $"{Tag}:c"));
-        bottomButtons.Add(CancelCallback.CreateButton("🔙Выйти без сохранения"));
+            bottomButtons.Add(InlineKeyboardButton.WithCallbackData("💾 Сохранить", $"{Tag}:c"));
+        bottomButtons.Add(CancelCallback.CreateButton("🔙 Выйти без сохранения"));
         
         var allButtons = partsButtons.Append(bottomButtons.ToArray());
 

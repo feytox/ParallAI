@@ -27,8 +27,8 @@ public class CompareElementSettingsHandler()
     {
         builder
             .AddSelect(CallbackTag, "Пресет", "Выберите пресет:", user => user.UserPresets, preset => preset.Name,
-                state => state.Preset)
+                (state, preset) => state.Preset = preset)
             .AddSelect(CallbackTag, "Модель", "Выберите модель:", user => user.UserModels, model => model.DisplayName,
-                state => state.Model);
+                (state, model) => state.Model = model);
     }
 }

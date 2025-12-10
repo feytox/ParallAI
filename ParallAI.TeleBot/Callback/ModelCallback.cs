@@ -1,9 +1,6 @@
-using System.Text;
 using ParallAI.Core.Entities;
-using ParallAI.Core.Providers;
 using ParallAI.Core.Repositories;
 using ParallAI.Core.States;
-using ParallAI.Core.ValueTypes;
 using ParallAI.TeleBot.Core.Callback.Common;
 using ParallAI.TeleBot.Core.Settings;
 using ParallAI.TeleBot.Settings;
@@ -25,7 +22,6 @@ public class ModelCallback(IRepository<User, long> users, ModelSettingsHandler h
         
         return $"Модель: {model.DisplayName.ToDisplay(maxLength: 300)}\n"
             + model.ToFormattedString();
-        
     }
 
     protected override async Task HandleChoose(CallbackQuery callbackQuery, int index, ITelegramBotClient bot, User user)

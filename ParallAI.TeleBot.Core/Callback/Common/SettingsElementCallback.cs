@@ -46,7 +46,7 @@ public abstract class SettingsElementCallback(IRepository<User, long> users) : U
         {
             InlineKeyboardButton.WithCallbackData("Выбрать", $"{data[0]}:{data[1]}:c"),
         };
-        if (GetElement(index, user) is not IDontDeletable)
+        if (GetElement(index, user) is not IImmutableElement)
         {
             buttons.Add(InlineKeyboardButton.WithCallbackData("Изменить", $"{data[0]}:{data[1]}:e"));
             buttons.Add(InlineKeyboardButton.WithCallbackData("Удалить", $"{data[0]}:{data[1]}:r"));

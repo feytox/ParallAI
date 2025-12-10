@@ -10,4 +10,4 @@ public class DefaultComparePreset() : Preset(
         "Наколени ВСАВАУЙ я тебе говорю",
         0.3m,
         ThinkingBudget.Medium
-    )), IDontDeletable;
+    )), IImmutableElement;

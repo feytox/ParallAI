@@ -1,5 +1,4 @@
 ﻿using System.Globalization;
-using System.Text;
 using ParallAI.Core.States;
 using ParallAI.Core.ValueTypes;
 using ParallAI.TeleBot.Core.Settings;
@@ -60,7 +59,7 @@ public class PresetSettingsHandler() : StandardSettingsHandler<PresetSettingsSta
             .AddEnum<ThinkingBudget>(CallbackTag, "Размышления",
                 "Выберите бюджет размышлений",
                 value => value != ThinkingBudget.Unknown,
-                state => state.ThinkingBudget);
+                (state, budget) => state.ThinkingBudget = budget);
     }
 
     private static decimal? ParseDecimal(string text)

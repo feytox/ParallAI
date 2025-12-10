@@ -10,4 +10,4 @@ public class DefaultPreset() : Preset(
         "Представь что ты Саша Алабастер и реши задачу",
         0.42m,
         ThinkingBudget.Low
-    )), IDontDeletable;
+    )), IImmutableElement;

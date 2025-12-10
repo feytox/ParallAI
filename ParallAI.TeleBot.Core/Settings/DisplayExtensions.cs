@@ -8,7 +8,9 @@ namespace ParallAI.TeleBot.Core.Settings;
 
 public static class DisplayExtensions
 {
-    public static string ToDisplay(this string? value, int maxLength = 0, string emptyPlaceholder = "(не задано)")
+    private const string EmptyPlaceholder = "(не задано)";
+    
+    public static string ToDisplay(this string? value, int maxLength = 0, string emptyPlaceholder = EmptyPlaceholder)
     {
         if (string.IsNullOrWhiteSpace(value)) 
             return emptyPlaceholder;
@@ -22,14 +24,14 @@ public static class DisplayExtensions
     public static string ToFormattedString(this PresetSettingsState state)
     {
         var sb = new StringBuilder();
-        sb.AppendLine($"🌡 Температура: {(state.Temperature.HasValue ? state.Temperature.Value.ToString("0.0") : "(не задано)")}");
+        var temperatureText = state.Temperature.HasValue ? state.Temperature.Value.ToString("0.0") : EmptyPlaceholder;
+        sb.AppendLine($"🌡 Температура: {temperatureText}");
     
         var budget = state.ThinkingBudget == ThinkingBudget.Unknown 
-            ? "(не задано)" 
+            ? EmptyPlaceholder
             : state.ThinkingBudget.ToString();
         sb.AppendLine($"🧠 Бюджет: {budget}");
-        
-        sb.AppendLine($"💬 Промт: {state.SystemPrompt.ToDisplay(maxLength: 300)}");
+        sb.AppendLine($"💬 Промпт: {state.SystemPrompt.ToDisplay(maxLength: 300)}");
 
         return sb.ToString();
     }
@@ -44,7 +46,7 @@ public static class DisplayExtensions
         
         var providerName = state.Provider switch
         {
-            null => "(не задано)",
+            null => EmptyPlaceholder,
             GeminiProvider => "Google Gemini", 
             OpenRouterProvider => "OpenRouter",
             OpenAICompatibleProvider => "OpenAI совместимый",
