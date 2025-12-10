@@ -2,7 +2,6 @@
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using ParallAI.Core.Entities;
-using ParallAI.Core.Exceptions;
 using ParallAI.Core.ValueTypes;
 using ParallAI.Infrastructure.ValueTypes;
 
@@ -46,26 +45,15 @@ public abstract class HttpGenHandler<TProvider, TRequest, TMessage, TResponse, T
         logger?.LogInformation(JsonSerializer.Serialize(aiRequest, JsonSerializerOptions.Web));
 
         var response = await Client.SendAsync(request);
-        //try catch нужен потому что какой-ни будь OpenRouter может прислать ответ с кодом 200, но содержащий ошибку в теле.
-        //Try аналога метода десериализации не нашел :(
-        try
+        if (!response.IsSuccessStatusCode)
         {
-            if (!response.IsSuccessStatusCode)
-            {
-                var errorResponse = await response.Content.ReadFromJsonAsync<TErrorResponse>(JsonSerializerOptions.Web);
-                HandleErrorResponse(errorResponse);
-                response.EnsureSuccessStatusCode();
-            }
+            var errorResponse = await response.Content.ReadFromJsonAsync<TErrorResponse>(JsonSerializerOptions.Web);
+            HandleErrorResponse(errorResponse);
+            response.EnsureSuccessStatusCode();
+        }
 
-            var providerResponse = await response.Content.ReadFromJsonAsync<TResponse>(JsonSerializerOptions.Web);
-            return providerResponse!.ToTextResponse();
-        }
-        catch (JsonException e)
-        {
-            throw new UserFriendlyException(
-                $"Can't deserialize answer {await response.Content.ReadAsStringAsync()} from {typeof(TProvider).Name}",
-                $"Произошла ошибка при отправке запроса к модели {model.DisplayName} провайдера {typeof(TProvider).Name}");
-        }
+        var providerResponse = await response.Content.ReadFromJsonAsync<TResponse>(JsonSerializerOptions.Web);
+        return providerResponse!.ToTextResponse();
     }
     
     private async Task<TMessage> CreateMessage(AiMessage aiMessage)
