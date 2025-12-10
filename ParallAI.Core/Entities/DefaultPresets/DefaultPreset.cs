@@ -7,7 +7,7 @@ public class DefaultPreset() : Preset(
     "Default",
     new PromptSettings
     (
-        "Представь что ты Саша Алабастер и реши задачу",
+        "", // TODO: default prompt
         0.42m,
         ThinkingBudget.Low
     )), IImmutableElement;

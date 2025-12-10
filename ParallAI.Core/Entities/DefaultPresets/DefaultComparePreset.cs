@@ -7,7 +7,7 @@ public class DefaultComparePreset() : Preset(
     "Default Compare",
     new PromptSettings
     (
-        "Наколени ВСАВАУЙ я тебе говорю",
+        "", // TODO: default compare prompt
         0.3m,
         ThinkingBudget.Medium
     )), IImmutableElement;
