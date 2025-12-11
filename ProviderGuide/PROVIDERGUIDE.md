@@ -57,7 +57,7 @@
 
 ### Пример получения ключа (DeepSeek)
 
-DeepSeek — одна из самых дешевых моделей (аналог GPT-4).
+DeepSeek — одна из самых дешёвых моделей (аналог GPT-4).
 
 1. Зайдите на **[DeepSeek Platform](https://platform.deepseek.com/api_keys)**.
 2. Войдите через Google или зарегистрируйтесь.

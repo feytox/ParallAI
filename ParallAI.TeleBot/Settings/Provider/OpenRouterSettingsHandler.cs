@@ -25,6 +25,6 @@ public class OpenRouterSettingsHandler()
 
     protected override string GetPartsMessage(OpenRouterProviderSettingsState state)
     {
-        return "Настройки провайдера"; // TODO: добавить отображение текущих настроек
+        return "Настройки провайдера:\n\n" + state.ToFormattedString();
     }
 }
