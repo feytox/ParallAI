@@ -1,5 +1,5 @@
-﻿using ParallAI.Core.Entities.DefaultPresets;
-using ParallAI.Core.Repositories;
+﻿using ParallAI.Core.Repositories;
+using ParallAI.Core.Util;
 using ParallAI.TeleBot.Core.Util;
 using Telegram.Bot;
 using Telegram.Bot.Types;
