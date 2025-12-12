@@ -9,7 +9,7 @@ using RichardSzalay.MockHttp;
 namespace ParallAI.Infrastructure.Tests;
 
 public class OpenRouterGenHandlerTests
-    : HttpGenHandlerTests<OpenRouterGenHandler, OpenRouterProvider, OpenRouterRequest, OpenAiMessage, OpenAiResponse, OpenRouterErrorResponse>
+    : HttpGenHandlerTests<OpenRouterGenHandler, OpenRouterProvider, OpenRouterRequest, OpenAiMessage, OpenAiResponse>
 {
     protected override string ExpectedUrl => "https://openrouter.ai/api/v1/chat/completions";
     protected override string DefaultErrorContent => """{"error":{"message":"No cookie auth credentials found","code":"401"}}""";

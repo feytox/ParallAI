@@ -20,8 +20,7 @@ public class GeminiGenHandler(
     HttpClient client,
     IFileService fileService,
     ILogger<GeminiGenHandler>? logger = null)
-    : HttpGenHandler<GeminiProvider, GeminiRequest, GeminiContent, GeminiResponse, 
-        GeminiErrorResponse>(provider, model, client, logger)
+    : HttpGenHandler<GeminiProvider, GeminiRequest, GeminiContent, GeminiResponse>(provider, model, client, logger)
 {
     private const string BaseUrl = "https://generativelanguage.googleapis.com/v1beta/models";
     private const string UploadUrl = "https://generativelanguage.googleapis.com/upload/v1beta/files";
@@ -54,11 +53,14 @@ public class GeminiGenHandler(
         request.Headers.Add("x-goog-api-key", Provider.Token);
     }
 
-    protected override void HandleErrorResponse(GeminiErrorResponse response)
+    protected override async Task HandleErrorResponse(HttpResponseMessage response)
     {
-        throw new UserFriendlyException($"Failed request to Gemini provider with Code: {response.Error.Code}, " +
-                                        $"Status: {response.Error.Status}, Message: {response.Error.Message}",  
-            $"Произошла ошибка при отправке запроса к модели {model.DisplayName} провайдера Gemini c текстом {response.Error.Message}");
+        var errorResponse = await response.Content.ReadFromJsonAsync<GeminiErrorResponse>(JsonSerializerOptions.Web);
+        var message = $"Failed request to Gemini provider with Code: {errorResponse!.Error.Code}, " +
+                      $"Status: {errorResponse.Error.Status}, Message: {errorResponse.Error.Message}";
+        var userMessage = $"Произошла ошибка при отправке запроса к модели {model.DisplayName} " +
+                          $"провайдера Gemini c текстом {errorResponse.Error.Message}";
+        throw new UserFriendlyException(message, userMessage);
     }
 
     private async Task<string> DownloadAndUploadFile(AiFileInfo fileInfo)

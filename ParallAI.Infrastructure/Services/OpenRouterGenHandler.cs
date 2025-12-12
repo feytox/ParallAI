@@ -1,4 +1,6 @@
 ﻿using System.Net.Http.Headers;
+using System.Net.Http.Json;
+using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using ParallAI.Core;
 using ParallAI.Core.Entities;
@@ -18,7 +20,7 @@ public class OpenRouterGenHandler(
     HttpClient client,
     IFileService fileService,
     ILogger<OpenRouterGenHandler>? logger = null)
-    : HttpGenHandler<OpenRouterProvider, OpenRouterRequest, OpenAiMessage, OpenAiResponse, OpenRouterErrorResponse>(provider, model, client, logger)
+    : HttpGenHandler<OpenRouterProvider, OpenRouterRequest, OpenAiMessage, OpenAiResponse>(provider, model, client, logger)
 {
     private static readonly Uri BaseUrl = new("https://openrouter.ai/api/v1/chat/completions");
 
@@ -47,11 +49,15 @@ public class OpenRouterGenHandler(
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", Provider.Token);
     }
 
-    protected override void HandleErrorResponse(OpenRouterErrorResponse response)
+    protected override async Task HandleErrorResponse(HttpResponseMessage response)
     {
-        throw new UserFriendlyException($"Failed request to OpenRouter provider with Code: {response.Error.Code}, " +
-                                        $"Message: {response.Error.Message}",
-            $"Произошла ошибка при отправке запроса к модели {model.DisplayName} " +
-            $"провайдера OpenRouter c текстом {response.Error.Message}");
+        var errorResponse = await response.Content.ReadFromJsonAsync<OpenRouterErrorResponse>(JsonSerializerOptions.Web);
+        var message = $"Failed request to OpenRouter provider with Code: {errorResponse!.Error.Code}, " +
+                      $"Message: {errorResponse.Error.Message}";
+        var userMessage = $"Произошла ошибка при отправке запроса к модели {model.DisplayName} " +
+                          $"провайдера OpenRouter c текстом {errorResponse.Error.Message}. ";
+        if (errorResponse.Error.Code == 401)
+            throw new UserFriendlyException(message, userMessage + "Введите корректный API ключ провайдера модели");
+        throw new UserFriendlyException(message, userMessage);
     }
 }

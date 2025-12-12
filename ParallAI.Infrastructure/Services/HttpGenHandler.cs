@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Json;
+﻿using System.Net;
+using System.Net.Http.Json;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using ParallAI.Core.Entities;
@@ -7,11 +8,11 @@ using ParallAI.Infrastructure.ValueTypes;
 
 namespace ParallAI.Infrastructure.Services;
 
-public abstract class HttpGenHandler<TProvider, TRequest, TMessage, TResponse, TErrorResponse>(
+public abstract class HttpGenHandler<TProvider, TRequest, TMessage, TResponse>(
     TProvider provider,
     AiModel model,
     HttpClient client,
-    ILogger<HttpGenHandler<TProvider, TRequest, TMessage, TResponse, TErrorResponse>>? logger) 
+    ILogger<HttpGenHandler<TProvider, TRequest, TMessage, TResponse>>? logger) 
     : IGenerationHandler
     where TProvider : AiProvider
     where TResponse : IGenResponse
@@ -30,7 +31,7 @@ public abstract class HttpGenHandler<TProvider, TRequest, TMessage, TResponse, T
 
     protected abstract void FillHttpRequest(HttpRequestMessage request);
     
-    protected abstract void HandleErrorResponse(TErrorResponse response);
+    protected abstract Task HandleErrorResponse(HttpResponseMessage response);
     
     public async Task<AiResponse> Generate(AiMessage[] aiMessages, PromptSettings promptSettings)
     {
@@ -45,12 +46,9 @@ public abstract class HttpGenHandler<TProvider, TRequest, TMessage, TResponse, T
         logger?.LogInformation(JsonSerializer.Serialize(aiRequest, JsonSerializerOptions.Web));
 
         var response = await Client.SendAsync(request);
-        if (!response.IsSuccessStatusCode)
-        {
-            var errorResponse = await response.Content.ReadFromJsonAsync<TErrorResponse>(JsonSerializerOptions.Web);
-            HandleErrorResponse(errorResponse);
-            response.EnsureSuccessStatusCode();
-        }
+        if (IsClientError(response.StatusCode))
+            await HandleErrorResponse(response);
+        response.EnsureSuccessStatusCode();
 
         var providerResponse = await response.Content.ReadFromJsonAsync<TResponse>(JsonSerializerOptions.Web);
         return providerResponse!.ToTextResponse();
@@ -65,4 +63,6 @@ public abstract class HttpGenHandler<TProvider, TRequest, TMessage, TResponse, T
             _ => throw new ArgumentOutOfRangeException(nameof(aiMessage), aiMessage, null)
         };
     }
+    
+    private bool IsClientError(HttpStatusCode statusCode) => (int)statusCode >= 400 && (int)statusCode < 500;
 }

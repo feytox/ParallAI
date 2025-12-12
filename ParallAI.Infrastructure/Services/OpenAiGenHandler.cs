@@ -1,4 +1,7 @@
-﻿using System.Net.Http.Headers;
+﻿using System.Net;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
+using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using ParallAI.Core;
 using ParallAI.Core.Entities;
@@ -18,8 +21,7 @@ public class OpenAiGenHandler(
     HttpClient client,
     IFileService fileService,
     ILogger<OpenAiGenHandler>? logger = null)
-    : HttpGenHandler<OpenAICompatibleProvider, OpenAiRequest, OpenAiMessage, OpenAiResponse, 
-        OpenAiErrorResponse>(provider, model, client, logger)
+    : HttpGenHandler<OpenAICompatibleProvider, OpenAiRequest, OpenAiMessage, OpenAiResponse>(provider, model, client, logger)
 {
     protected override Uri GetEndpointUrl()
     {
@@ -49,12 +51,19 @@ public class OpenAiGenHandler(
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", Provider.Token);
     }
 
-    protected override void HandleErrorResponse(OpenAiErrorResponse response)
+    protected override async Task HandleErrorResponse(HttpResponseMessage response)
     {
-        throw new UserFriendlyException($"Failed request to OpenAiCompatible provider with Code: {response.Error.Code}, " +
-                                        $"Message: {response.Error.Message}, Type: {response.Error.Type}, " +
-                                        $"Param: {response.Error.Param}",  
-            $"Произошла ошибка при отправке запроса к модели {model.DisplayName} " +
-            $"провайдера OpenAiCompatible c текстом {response.Error.Message}");
+        if (response.StatusCode == HttpStatusCode.NotFound)
+            throw new UserFriendlyException("Failed request to OpenAiCompatible provider with Code: 404 Not Found",
+                $"Произошла ошибка при отправке запроса к модели {model.DisplayName} " +
+                $"провайдера OpenAiCompatible c текстом Not Found. Введите корректный Endpoint Url в параметрах модели");
+        
+        var errorResponse = await response.Content.ReadFromJsonAsync<OpenAiErrorResponse>(JsonSerializerOptions.Web);
+        var message = $"Failed request to OpenAiCompatible provider with Code: {errorResponse!.Error.Code}, " +
+                      $"Message: {errorResponse.Error.Message}, Type: {errorResponse.Error.Type}, " +
+                      $"Param: {errorResponse!.Error.Param}";
+        var userMessage = $"Произошла ошибка при отправке запроса к модели {model.DisplayName} " +
+                          $"провайдера OpenAiCompatible c текстом {errorResponse.Error.Message}";
+        throw new UserFriendlyException(message, userMessage);
     }
 }
