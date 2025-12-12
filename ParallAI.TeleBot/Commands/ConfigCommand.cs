@@ -12,12 +12,12 @@ namespace ParallAI.TeleBot.Commands;
 [Command("/config", "текущая конфигурация")]
 public class ConfigCommand(IRepository<User, long> users) : UserCommand(users)
 {
-    protected override async Task Execute(Message message, ITelegramBotClient bot, User user)
+    protected override async Task Execute(ChatId chatId, ITelegramBotClient bot, User user)
     {
         var modelName = user.ChosenModel?.DisplayName;
         var presetName = user.ChosenPreset?.Name;
 
-        await bot.SendMessage(message.Chat,
+        await bot.SendMessage(chatId,
             "<b>Модель</b> (/models) — " + (modelName ?? "не выбрана") + 
             "\n<b>Пресет</b> (/presets) — " + (presetName ?? "не выбран"),
             ParseMode.Html);

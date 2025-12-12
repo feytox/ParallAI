@@ -13,13 +13,13 @@ namespace ParallAI.TeleBot.Commands;
 [Command("/presets", "список и конфигурация пресетов")]
 public class PresetsCommand(IRepository<User, long> users) : UserCommand(users)
 {
-    protected override async Task Execute(Message message, ITelegramBotClient bot, User user)
+    protected override async Task Execute(ChatId chatId, ITelegramBotClient bot, User user)
     {
         var buttons = user.UserPresets
             .Select((preset, i) => PresetCallback.Create(preset.Name, i.ToString()))
             .Chunk(2)
             .Append([PresetCallback.Create("Создать", "-1")]);
 
-        await bot.SendMessage(message.Chat, "Ваши пресеты:", replyMarkup: new InlineKeyboardMarkup(buttons));
+        await bot.SendMessage(chatId, "Ваши пресеты:", replyMarkup: new InlineKeyboardMarkup(buttons));
     }
 }

@@ -11,8 +11,8 @@ namespace ParallAI.TeleBot.Core.Commands;
 [Command("/cancel", "выйти из пошаговой команды", HighPriority = true)]
 public class CancelCommand(IRepository<User, long> users) : UserCommand(users)
 {
-    protected override async Task Execute(Message message, ITelegramBotClient bot, User user)
+    protected override async Task Execute(ChatId chatId, ITelegramBotClient bot, User user)
     {
-        await CancelHelper.Cancel(message.Chat, null, bot, user);
+        await CancelHelper.Cancel(chatId, null, bot, user);
     }
 }

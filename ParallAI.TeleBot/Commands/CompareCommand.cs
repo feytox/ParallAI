@@ -14,10 +14,10 @@ namespace ParallAI.TeleBot.Commands;
 [Command("/compare", "глубокое сравнение запроса")]
 public class CompareCommand(IRepository<User, long> users) : UserCommand(users)
 {
-    protected override async Task Execute(Message message, ITelegramBotClient bot, User user)
+    protected override async Task Execute(ChatId chatId, ITelegramBotClient bot, User user)
     {
-        if (!await ValidationHelper.ValidateModelsCount(message, bot, user) 
-            || !await ValidationHelper.ValidatePresetsCount(message, bot, user))
+        if (!await ValidationHelper.ValidateModelsCount(chatId, bot, user) 
+            || !await ValidationHelper.ValidatePresetsCount(chatId, bot, user))
         {
             return;
         }
@@ -29,7 +29,7 @@ public class CompareCommand(IRepository<User, long> users) : UserCommand(users)
             .Append(CompareCallback.CreateButton("+", "+"))
             .Chunk(1);
 
-        await bot.SendMessage(message.Chat, "Выберите предыдущий конфиг сравнения или создайте новый:",
+        await bot.SendMessage(chatId, "Выберите предыдущий конфиг сравнения или создайте новый:",
             replyMarkup: new InlineKeyboardMarkup(buttons));
     }
 }

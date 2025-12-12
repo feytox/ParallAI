@@ -34,7 +34,7 @@ public class MainMenuStateAction : StateAction<MainMenuState>
         if (messageText == null || !commands.TryGetValue(messageText, out var command)) 
             return false;
         
-        await command.Execute(message, bot);
+        await command.Execute(message.Chat, message.From!.Id, bot);
         return true;
     }
 

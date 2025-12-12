@@ -7,12 +7,12 @@ namespace ParallAI.TeleBot.Core.Commands.Common;
 
 public abstract class UserCommand(IRepository<User, long> users) : ICommand
 {
-    protected abstract Task Execute(Message message, ITelegramBotClient bot, User user);
+    protected abstract Task Execute(ChatId chatId, ITelegramBotClient bot, User user);
 
-    public async Task Execute(Message message, ITelegramBotClient bot)
+    public async Task Execute(ChatId chatId, long userId, ITelegramBotClient bot)
     {
-        var user = await users.GetOrCreate(message.From!.Id);
-        await Execute(message, bot, user);
+        var user = await users.GetOrCreate(userId);
+        await Execute(chatId, bot, user);
         await users.Update(user);
     }
 }
