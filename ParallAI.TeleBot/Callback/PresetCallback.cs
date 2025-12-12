@@ -4,18 +4,17 @@ using ParallAI.Core.States;
 using ParallAI.TeleBot.Core.Callback.Common;
 using ParallAI.TeleBot.Core.Settings;
 using ParallAI.TeleBot.Core.Util;
-using ParallAI.TeleBot.Settings;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.ReplyMarkups;
 using User = ParallAI.Core.Entities.User;
 
 namespace ParallAI.TeleBot.Callback;
 
 [CallbackQuery(Tag)]
-public class PresetCallback(IRepository<User, long> users, PresetSettingsHandler handler)
-    : SettingsElementCallback(users)
+public class PresetCallback(IRepository<User, long> users) : SettingsElementCallback(users)
 {
-    public const string Tag = "preset";
+    private const string Tag = "preset";
 
     protected override string GetElementInfo(int index, User user)
     {
@@ -50,10 +49,15 @@ public class PresetCallback(IRepository<User, long> users, PresetSettingsHandler
         await bot.EditCallbackMessage(query, $"Пресет {preset.Name} удалён");
     }
 
+    protected override bool ContainsAt<T>(int index, User user) => GetPreset(user, index) is T;
+    
+    public static InlineKeyboardButton Create(string text, string data)
+    {
+        return InlineKeyboardButton.WithCallbackData(text, $"{Tag}:{data}");
+    }
+    
     private static Preset GetPreset(User user, int index)
     {
         return user.UserPresets[index];
     }
-    
-    protected override object GetElement(int index, User user) => GetPreset(user, index);
 }

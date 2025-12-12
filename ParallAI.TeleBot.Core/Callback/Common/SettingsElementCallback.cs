@@ -11,7 +11,7 @@ namespace ParallAI.TeleBot.Core.Callback.Common;
 public abstract class SettingsElementCallback(IRepository<User, long> users) : UserCallbackQuery(users)
 {
     protected abstract string GetElementInfo(int index, User user);
-    protected abstract object GetElement(int index, User user);
+    protected abstract bool ContainsAt<T>(int index, User user);
     protected abstract Task HandleChoose(CallbackQuery query, int index, ITelegramBotClient bot, User user);
     protected abstract Task HandleEdit(CallbackQuery query, int index, ITelegramBotClient bot, User user);
     protected abstract Task HandleRemove(CallbackQuery query, int index, ITelegramBotClient bot, User user);
@@ -42,17 +42,19 @@ public abstract class SettingsElementCallback(IRepository<User, long> users) : U
         }
 
         var info = GetElementInfo(index, user);
-        var buttons = new List<InlineKeyboardButton>
-        {
-            InlineKeyboardButton.WithCallbackData("Выбрать", $"{data[0]}:{data[1]}:c"),
-        };
-        if (GetElement(index, user) is not IImmutableElement)
-        {
-            buttons.Add(InlineKeyboardButton.WithCallbackData("Изменить", $"{data[0]}:{data[1]}:e"));
-            buttons.Add(InlineKeyboardButton.WithCallbackData("Удалить", $"{data[0]}:{data[1]}:r"));
-        }
+        var buttons = CreateButtons(index, data, user).Chunk(3);
 
         await bot.EditCallbackMessage(query, info, replyMarkup: new InlineKeyboardMarkup(buttons));
+    }
+
+    private IEnumerable<InlineKeyboardButton> CreateButtons(int index, string[] data, User user)
+    {
+        yield return InlineKeyboardButton.WithCallbackData("Выбрать", $"{data[0]}:{data[1]}:choose");
+        if (!ContainsAt<IImmutableElement>(index, user))
+        {
+            yield return InlineKeyboardButton.WithCallbackData("Изменить", $"{data[0]}:{data[1]}:edit");
+            yield return InlineKeyboardButton.WithCallbackData("Удалить", $"{data[0]}:{data[1]}:remove");
+        }
     }
 
     private Task HandleElementAction(CallbackQuery query, string[] data, ITelegramBotClient bot, User user)
@@ -60,9 +62,9 @@ public abstract class SettingsElementCallback(IRepository<User, long> users) : U
         var index = int.Parse(data[1]);
         return data[2] switch
         {
-            "c" => HandleChoose(query, index, bot, user),
-            "e" => HandleEdit(query, index, bot, user),
-            "r" => HandleRemove(query, index, bot, user),
+            "choose" => HandleChoose(query, index, bot, user),
+            "edit" => HandleEdit(query, index, bot, user),
+            "remove" => HandleRemove(query, index, bot, user),
             _ => throw new ArgumentOutOfRangeException($"Invalid callback: {query.Data}")
         };
     }
