@@ -59,14 +59,23 @@ public abstract class HttpGenHandlerTests<THandler, TProvider, TRequest, TMessag
     [TestCase(HttpStatusCode.Unauthorized)]
     [TestCase(HttpStatusCode.Forbidden)]
     [TestCase(HttpStatusCode.BadRequest)]
-    [TestCase(HttpStatusCode.InternalServerError)]
-    public async Task Generate_WhenApiReturnsError_ThrowsUserFriendlyException(HttpStatusCode statusCode)
+    public async Task Generate_WhenApiReturnsClientError_ThrowsUserFriendlyException(HttpStatusCode statusCode)
     {
         MockHttp.When(HttpMethod.Post, ExpectedUrl)
             .Respond(statusCode,"application/json", DefaultErrorContent);
         
         await Handler.Awaiting(s => s.Generate([DefaultMessage], DefaultSettings))
             .Should().ThrowAsync<UserFriendlyException>();
+    }
+    
+    [TestCase(HttpStatusCode.InternalServerError)]
+    public async Task Generate_WhenApiReturnsNotClientError_HttpRequestException(HttpStatusCode statusCode)
+    {
+        MockHttp.When(HttpMethod.Post, ExpectedUrl)
+            .Respond(statusCode,"application/json", DefaultErrorContent);
+        
+        await Handler.Awaiting(s => s.Generate([DefaultMessage], DefaultSettings))
+            .Should().ThrowAsync<HttpRequestException>();
     }
     
     [Test]
