@@ -2,6 +2,7 @@ using ParallAI.Core.Repositories;
 using ParallAI.Core.States;
 using ParallAI.Core.ValueTypes;
 using ParallAI.TeleBot.Core.Callback.Common;
+using ParallAI.TeleBot.Core.Util;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -15,16 +16,16 @@ public class AskCallback(IRepository<User, long> users) : UserCallbackQuery(user
 {
     private const string CallbackTag = "ask";
     
-    protected override async Task Handle(CallbackQuery callbackQuery, ITelegramBotClient bot, User user)
+    protected override async Task Handle(CallbackQuery query, ITelegramBotClient bot, User user)
     {
-        var content = callbackQuery.Data!.Split(':')[1];
+        var content = query.Data!.Split(':')[1];
         switch (content)
         {
             case "single":
-                await ChooseRequestConfig(callbackQuery, bot, user, RequestMode.Single);
+                await ChooseRequestConfig(query, bot, user, RequestMode.Single);
                 break;
             case "continuous":
-                await ChooseRequestConfig(callbackQuery, bot, user, RequestMode.Continuous);
+                await ChooseRequestConfig(query, bot, user, RequestMode.Continuous);
                 break;
             case "settings":
                 CreateRequestConfig(user);
@@ -32,12 +33,12 @@ public class AskCallback(IRepository<User, long> users) : UserCallbackQuery(user
         }
     }
 
-    private async Task ChooseRequestConfig(CallbackQuery callbackQuery, ITelegramBotClient bot, 
+    private async Task ChooseRequestConfig(CallbackQuery query, ITelegramBotClient bot, 
         User user, RequestMode requestMode)
     {
         if (user.ChosenModel is null)
         {
-            await bot.SendMessage(callbackQuery.From.Id, "Чтобы отправлять запросы, необходимо выбрать модель");
+            await bot.EditCallbackMessage(query, "Чтобы отправлять запросы, выберите модель в /models");
             return;
         }
 

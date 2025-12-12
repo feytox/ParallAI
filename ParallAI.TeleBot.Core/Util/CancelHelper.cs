@@ -11,12 +11,7 @@ public class CancelHelper
         if (messageToDelete is not null)
             await bot.DeleteMessage(chatId, messageToDelete.Id);
 
-        if (!user.StateMachine.TryPop(cancelled: true))
-        {
+        if (!user.StateMachine.TryPop(cancelled: true)) 
             await bot.SendMessage(chatId, "Сейчас нет команды, которую можно отменить");
-            return;
-        }
-
-        await bot.SendMessage(chatId, "Команда отменена");
     }
 }

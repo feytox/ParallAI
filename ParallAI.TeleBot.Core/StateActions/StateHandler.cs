@@ -14,10 +14,12 @@ public class StateHandler(IEnumerable<IStateAction> actions, IRepository<User, l
         return await Execute(user, async (state, action) => await action.Execute(state, message, bot, user));
     }
 
-    public async Task<bool> HandlePostState(long userId, ITelegramBotClient bot)
+    public async Task<bool> HandlePostState(ChatId chatId, long userId, ITelegramBotClient bot, 
+        Message? prevMessage = null)
     {
         var user = await userRepository.GetOrCreate(userId);
-        return await Execute(user, async (state, action) => await action.ExecuteAfter(state, userId, bot, user));
+        return await Execute(user,
+            async (state, action) => await action.ExecuteAfter(state, chatId, prevMessage, bot, user));
     }
 
     private async Task<T> Execute<T>(User user, Func<UserState, IStateAction, Task<T>> executor)

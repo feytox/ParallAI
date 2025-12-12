@@ -14,7 +14,7 @@ public class OrchestratorSettingsHandler()
     
     protected override string GetPartsMessage(OrchestratorSettingsState state) => "Настройки оркестратора:";
 
-    protected override Task<bool> SaveSettingsToUser(OrchestratorSettingsState state, ChatId chatId, 
+    protected override Task<bool> SaveSettingsToUser(OrchestratorSettingsState state, CallbackQuery query,
         ITelegramBotClient bot, User user)
     {
         var config = state.Build();

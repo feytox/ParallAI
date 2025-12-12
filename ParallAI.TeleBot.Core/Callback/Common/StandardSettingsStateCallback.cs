@@ -12,13 +12,13 @@ public abstract class StandardSettingsStateCallback<TState, THandler>(IRepositor
     where TState : SettingsState 
     where THandler : StandardSettingsHandler<TState>
 {
-    protected override async Task<bool> HandleDataContent(TState state, ChatId chatId, string content, 
+    protected override async Task<bool> HandleDataContent(TState state, CallbackQuery query, string content,
         ITelegramBotClient bot, User user)
     {
         if (content != "c")
             return false;
         
-        await Handler.FinalizeSettings(state, chatId, bot, user);
+        await Handler.FinalizeSettings(state, query, bot, user);
         return true;
     }
 }

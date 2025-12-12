@@ -15,7 +15,6 @@ public static class ValidationHelper
         return false;
     }
     
-    
     public static async Task<bool> ValidatePresetsCount(Message message, ITelegramBotClient bot, User user)
     {
         if (user.UserPresets.Count > 0)

@@ -38,7 +38,7 @@ public class MainMenuStateAction : StateAction<MainMenuState>
         return true;
     }
 
-    protected override async Task<bool> ExecuteAfter(MainMenuState state, ChatId chatId,
+    protected override async Task<bool> ExecuteAfter(MainMenuState state, ChatId chatId, Message? prevMessage,
         ITelegramBotClient bot, User user)
     {
         if (!state.Reactivated)

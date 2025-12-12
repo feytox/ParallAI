@@ -15,8 +15,9 @@ public class SettingsStateAction<TState>(SettingsHandler<TState> handler) : Stat
         return true;
     }
 
-    protected override Task<bool> ExecuteAfter(TState state, ChatId chatId, ITelegramBotClient bot, User user)
+    protected override Task<bool> ExecuteAfter(TState state, ChatId chatId, Message? prevMessage, 
+        ITelegramBotClient bot, User user)
     {
-        return handler.ExecuteAfter(state, chatId, bot);
+        return handler.ExecuteAfter(state, chatId, prevMessage, bot);
     }
 }

@@ -3,6 +3,7 @@ using ParallAI.Core.States.Common;
 using ParallAI.Core.States.Providers;
 using ParallAI.TeleBot.Commands;
 using ParallAI.TeleBot.Core.Settings;
+using ParallAI.TeleBot.Core.Util;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
@@ -18,7 +19,7 @@ public class ProviderSettingsPart(string name)
     public const string OpenAiTag = "choose_openai";
     public const string OpenRouterTag = "choose_openrouter";
 
-    public override async Task<UserState?> ActivatePart(ModelSettingsState state, ChatId chatId,
+    public override async Task<UserState?> ActivatePart(ModelSettingsState state, CallbackQuery query,
         ITelegramBotClient bot, User user)
     {
         var buttons = new[]
@@ -29,7 +30,7 @@ public class ProviderSettingsPart(string name)
             }
             .Chunk(2);
 
-        await bot.SendMessage(chatId,
+        await bot.EditCallbackMessage(query,
             $"Выберите провайдер\n\nГайд на получение API-ключей 👉 {ProviderGuideCommand.GuideHtmlUrl}",
             parseMode: ParseMode.Html,
             replyMarkup: new InlineKeyboardMarkup(buttons));

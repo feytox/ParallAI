@@ -1,5 +1,6 @@
 ﻿using ParallAI.Core.Entities.DefaultPresets;
 using ParallAI.Core.Repositories;
+using ParallAI.TeleBot.Core.Util;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -11,33 +12,32 @@ public abstract class SettingsElementCallback(IRepository<User, long> users) : U
 {
     protected abstract string GetElementInfo(int index, User user);
     protected abstract object GetElement(int index, User user);
-    protected abstract Task HandleChoose(CallbackQuery callbackQuery, int index, ITelegramBotClient bot, User user);
-    protected abstract Task HandleEdit(CallbackQuery callbackQuery, int index, ITelegramBotClient bot, User user);
-    protected abstract Task HandleRemove(CallbackQuery callbackQuery, int index, ITelegramBotClient bot, User user);
+    protected abstract Task HandleChoose(CallbackQuery query, int index, ITelegramBotClient bot, User user);
+    protected abstract Task HandleEdit(CallbackQuery query, int index, ITelegramBotClient bot, User user);
+    protected abstract Task HandleRemove(CallbackQuery query, int index, ITelegramBotClient bot, User user);
 
-    protected override async Task Handle(CallbackQuery callbackQuery, ITelegramBotClient bot, User user)
+    protected override async Task Handle(CallbackQuery query, ITelegramBotClient bot, User user)
     {
-        var data = callbackQuery.Data!.Split(':');
+        var data = query.Data!.Split(':');
         switch (data.Length)
         {
             case 2:
-                await HandleElementChoice(callbackQuery, data, bot, user);
+                await HandleElementChoice(query, data, bot, user);
                 break;
             case 3:
-                await HandleElementAction(callbackQuery, data, bot, user);
+                await HandleElementAction(query, data, bot, user);
                 break;
             default:
-                throw new ArgumentException($"Invalid callback: {callbackQuery.Data}");
+                throw new ArgumentException($"Invalid callback: {query.Data}");
         }
     }
 
-    private async Task HandleElementChoice(CallbackQuery callbackQuery, string[] data,
-        ITelegramBotClient bot, User user)
+    private async Task HandleElementChoice(CallbackQuery query, string[] data, ITelegramBotClient bot, User user)
     {
         var index = int.Parse(data[1]);
         if (index == -1)
         {
-            await HandleEdit(callbackQuery, index, bot, user);
+            await HandleEdit(query, index, bot, user);
             return;
         }
 
@@ -52,18 +52,18 @@ public abstract class SettingsElementCallback(IRepository<User, long> users) : U
             buttons.Add(InlineKeyboardButton.WithCallbackData("Удалить", $"{data[0]}:{data[1]}:r"));
         }
 
-        await bot.SendMessage(callbackQuery.From.Id, info, replyMarkup: new InlineKeyboardMarkup(buttons));
+        await bot.EditCallbackMessage(query, info, replyMarkup: new InlineKeyboardMarkup(buttons));
     }
 
-    private Task HandleElementAction(CallbackQuery callbackQuery, string[] data, ITelegramBotClient bot, User user)
+    private Task HandleElementAction(CallbackQuery query, string[] data, ITelegramBotClient bot, User user)
     {
         var index = int.Parse(data[1]);
         return data[2] switch
         {
-            "c" => HandleChoose(callbackQuery, index, bot, user),
-            "e" => HandleEdit(callbackQuery, index, bot, user),
-            "r" => HandleRemove(callbackQuery, index, bot, user),
-            _ => throw new ArgumentOutOfRangeException($"Invalid callback: {callbackQuery.Data}")
+            "c" => HandleChoose(query, index, bot, user),
+            "e" => HandleEdit(query, index, bot, user),
+            "r" => HandleRemove(query, index, bot, user),
+            _ => throw new ArgumentOutOfRangeException($"Invalid callback: {query.Data}")
         };
     }
 }

@@ -10,7 +10,7 @@ namespace ParallAI.TeleBot.Settings;
 public class CreateElementSettingsPart(string name) 
     : SettingsPart<CompareSettingsState>(name), ICanSavePart<CompareSettingsState, CompareElementSettingsState>
 {
-    public override Task<UserState?> ActivatePart(CompareSettingsState state, ChatId chatId, 
+    public override Task<UserState?> ActivatePart(CompareSettingsState state, CallbackQuery query,
         ITelegramBotClient bot, User user)
     {
         return Task.FromResult<UserState?>(new CompareElementSettingsState());

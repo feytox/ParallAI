@@ -12,13 +12,14 @@ namespace ParallAI.TeleBot.Callback;
 public class RequestSettingsStateCallback(IRepository<User, long> users, RequestSettingsHandler handler)
     : SettingsStateCallback<RequestSettingsState, RequestSettingsHandler>(users, handler)
 {
-    protected override async Task<bool> HandleDataContent(RequestSettingsState state, ChatId chatId, string content, 
+    protected override async Task<bool> HandleDataContent(RequestSettingsState state, CallbackQuery query,
+        string content,
         ITelegramBotClient bot, User user)
     {
         if (content != "c") 
             return content.StartsWith('-');
         
-        await Handler.FinalizeSettings(state, chatId, bot, user);
+        await Handler.FinalizeSettings(state, query, bot, user);
         return true;
     }
 }

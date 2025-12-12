@@ -14,7 +14,7 @@ public abstract class ProviderChooseCallback<TProviderSettingsState>(IRepository
 {
     protected abstract TProviderSettingsState ToSettingsState(AiProvider provider);
 
-    protected override Task Handle(CallbackQuery callbackQuery, ITelegramBotClient bot, User user)
+    protected override Task Handle(CallbackQuery query, ITelegramBotClient bot, User user)
     {
         if (user.StateMachine.Current is not ModelSettingsState modelSettings)
             throw new InvalidOperationException("Incorrect current state");

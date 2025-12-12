@@ -1,6 +1,7 @@
 ﻿using ParallAI.Core.States;
 using ParallAI.TeleBot.Core.Callback;
 using ParallAI.TeleBot.Core.Settings;
+using ParallAI.TeleBot.Core.Util;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -19,7 +20,8 @@ public class CompareSettingsHandler() : SettingsHandler<CompareSettingsState>(Ca
         state.Reactivated = true;
     }
 
-    protected override async Task SendPartsList(CompareSettingsState state, ChatId chatId, ITelegramBotClient bot)
+    protected override async Task SendPartsList(CompareSettingsState state, ChatId chatId, Message? prevMessage,
+        ITelegramBotClient bot)
     {
         var buttons = state.ConfiguredElements
             .Select(e => $"Модель: {e.Model.DisplayName}    Пресет: {e.Preset.Name}")
@@ -33,6 +35,9 @@ public class CompareSettingsHandler() : SettingsHandler<CompareSettingsState>(Ca
 
         buttons.Add([CancelCallback.CreateButton("Выйти без сохранения")]);
 
+        if (prevMessage is not null)
+            await bot.DeleteMessage(chatId, prevMessage.Id);
+        
         // TODO: rewrite text
         await bot.SendMessage(chatId, 
             $"Для старта сравнения настройте как минимум {MinElements} элемента.\n\n" +
@@ -40,14 +45,14 @@ public class CompareSettingsHandler() : SettingsHandler<CompareSettingsState>(Ca
             replyMarkup: new InlineKeyboardMarkup(buttons));
     }
 
-    protected override async Task<bool> SaveSettingsToUser(CompareSettingsState state, ChatId chatId, 
+    protected override async Task<bool> SaveSettingsToUser(CompareSettingsState state, CallbackQuery query,
         ITelegramBotClient bot, User user)
     {
         user.StateMachine.Pop(reactivate: false);
         var nextState = state.ToOrchestratorState();
         user.StateMachine.Push(nextState);
 
-        await bot.SendMessage(chatId, "Теперь настройте оркестратора.");
+        await bot.EditCallbackMessage(query, "Теперь настройте оркестратора.");
         return false;
     }
 

@@ -3,12 +3,12 @@ using ParallAI.Core.States;
 using ParallAI.Core.ValueTypes;
 using ParallAI.TeleBot.Core.Callback;
 using ParallAI.TeleBot.Core.StateActions;
+using ParallAI.TeleBot.Core.Util;
 using ParallAI.TeleBot.Services;
 using ParallAI.TeleBot.Util;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
-using Telegram.Bot.Types.ReplyMarkups;
 using User = ParallAI.Core.Entities.User;
 
 namespace ParallAI.TeleBot.StateActions;
@@ -26,23 +26,29 @@ public class RequestStateAction(GenerationService genService, MediaGroupCollecto
         var prompt = AiMessageHelper.CreateAiMessage(messages);
         var settings = preset is not null ? preset.PromptSettings : PromptSettings.Default;
 
-        var response = await genService.Generate(model!, [prompt], settings);
+        var response = await genService.Generate(model, [prompt], settings);
         await bot.SendMessage(message.Chat, response.Text);
         if (state.Config.RequestMode == RequestMode.Single)
             user.StateMachine.TryPop();
         return true;
     }
 
-    protected override async Task<bool> ExecuteAfter(RequestState state, ChatId chatId, ITelegramBotClient bot, User user)
+    protected override async Task<bool> ExecuteAfter(RequestState state, ChatId chatId, Message? prevMessage, 
+        ITelegramBotClient bot, User user)
     {
+        if (prevMessage is not null)
+            await bot.DeleteMessageOptional(chatId, prevMessage.Id);
+        
+        var presetText = state.Config.Preset?.Name ?? "не выбран";
+        var cancelText = state.Config.RequestMode == RequestMode.Single ? "Отменить" : "Выйти из режима запросов";
+        
         await bot.SendMessage(chatId, 
-            "<b>Модель</b> (/models) — " + state.Config.Model.DisplayName + 
-            "\n<b>Пресет</b> (/presets) — " + (state.Config.Preset is not null ? state.Config.Preset.Name : "не выбран") + 
-            "\nВведи запрос. Также можешь прикрепить файл", ParseMode.Html,
-            replyMarkup: CancelCallback.CreateMarkup(
-                state.Config.RequestMode == RequestMode.Single
-                    ? "Отменить"
-                    : "Выйти из режима запросов"));
+            $"<b>Модель</b> (/models) — {state.Config.Model.DisplayName}\n" +
+            $"<b>Пресет</b> (/presets) — {presetText}\n" +
+            $"Введи запрос. Также можешь прикрепить файл",
+            parseMode: ParseMode.Html,
+            replyMarkup: CancelCallback.CreateMarkup(cancelText));
+        
         return true;
     }
 }

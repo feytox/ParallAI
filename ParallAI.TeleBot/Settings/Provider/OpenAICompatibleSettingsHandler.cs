@@ -19,7 +19,7 @@ public class OpenAICompatibleSettingsHandler()
             text => text, state => state.Endpoint);
     }
 
-    protected override Task<bool> SaveSettingsToUser(OpenAICompatibleSettingsState state, ChatId chatId,
+    protected override Task<bool> SaveSettingsToUser(OpenAICompatibleSettingsState state, CallbackQuery query,
         ITelegramBotClient bot, User user)
     {
         return Task.FromResult(true);

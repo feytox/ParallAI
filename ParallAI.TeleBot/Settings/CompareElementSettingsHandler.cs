@@ -17,7 +17,7 @@ public class CompareElementSettingsHandler()
         return $"Текущие настройки:\n{stateInfo}";
     }
 
-    protected override Task<bool> SaveSettingsToUser(CompareElementSettingsState state, ChatId chatId,
+    protected override Task<bool> SaveSettingsToUser(CompareElementSettingsState state, CallbackQuery query,
         ITelegramBotClient bot, User user)
     {
         return Task.FromResult(true);
