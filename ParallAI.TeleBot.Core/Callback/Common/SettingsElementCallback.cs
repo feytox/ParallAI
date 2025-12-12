@@ -15,6 +15,7 @@ public abstract class SettingsElementCallback(IRepository<User, long> users) : U
     protected abstract Task HandleChoose(CallbackQuery query, int index, ITelegramBotClient bot, User user);
     protected abstract Task HandleEdit(CallbackQuery query, int index, ITelegramBotClient bot, User user);
     protected abstract Task HandleRemove(CallbackQuery query, int index, ITelegramBotClient bot, User user);
+    protected abstract InlineKeyboardButton? CreateBackButton(string text);
 
     protected override async Task Handle(CallbackQuery query, ITelegramBotClient bot, User user)
     {
@@ -55,6 +56,10 @@ public abstract class SettingsElementCallback(IRepository<User, long> users) : U
             yield return InlineKeyboardButton.WithCallbackData("Изменить", $"{data[0]}:{data[1]}:edit");
             yield return InlineKeyboardButton.WithCallbackData("Удалить", $"{data[0]}:{data[1]}:remove");
         }
+
+        var backButton = CreateBackButton("Назад");
+        if (backButton is not null)
+            yield return backButton;
     }
 
     private Task HandleElementAction(CallbackQuery query, string[] data, ITelegramBotClient bot, User user)

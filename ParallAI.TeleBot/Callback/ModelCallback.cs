@@ -1,6 +1,8 @@
 using ParallAI.Core.Entities;
 using ParallAI.Core.Repositories;
 using ParallAI.Core.States;
+using ParallAI.TeleBot.Commands;
+using ParallAI.TeleBot.Core.Callback;
 using ParallAI.TeleBot.Core.Callback.Common;
 using ParallAI.TeleBot.Core.Settings;
 using ParallAI.TeleBot.Core.Util;
@@ -46,6 +48,11 @@ public class ModelCallback(IRepository<User, long> users) : SettingsElementCallb
         user.DeleteModel(model);
         
         await bot.EditCallbackMessage(query, $"Модель {model.DisplayName} удалена");
+    }
+
+    protected override InlineKeyboardButton CreateBackButton(string text)
+    {
+        return CommandCallback.Create<ModelsCommand>(text);
     }
 
     protected override bool ContainsAt<T>(int index, User user) => GetModel(user, index) is T;

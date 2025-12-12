@@ -1,6 +1,8 @@
 ﻿using ParallAI.Core.Entities;
 using ParallAI.Core.Repositories;
 using ParallAI.Core.States;
+using ParallAI.TeleBot.Commands;
+using ParallAI.TeleBot.Core.Callback;
 using ParallAI.TeleBot.Core.Callback.Common;
 using ParallAI.TeleBot.Core.Settings;
 using ParallAI.TeleBot.Core.Util;
@@ -47,6 +49,11 @@ public class PresetCallback(IRepository<User, long> users) : SettingsElementCall
         user.DeletePreset(preset);
 
         await bot.EditCallbackMessage(query, $"Пресет {preset.Name} удалён");
+    }
+
+    protected override InlineKeyboardButton CreateBackButton(string text)
+    {
+        return CommandCallback.Create<PresetsCommand>(text);
     }
 
     protected override bool ContainsAt<T>(int index, User user) => GetPreset(user, index) is T;

@@ -43,8 +43,8 @@ public class RequestStateAction(GenerationService genService, MediaGroupCollecto
         var cancelText = state.Config.RequestMode == RequestMode.Single ? "Отменить" : "Выйти из режима запросов";
         
         await bot.SendMessage(chatId, 
-            $"<b>Модель</b> (/models) — {state.Config.Model.DisplayName}\n" +
-            $"<b>Пресет</b> (/presets) — {presetText}\n" +
+            $"<b>Модель</b> — {state.Config.Model.DisplayName}\n" +
+            $"<b>Пресет</b> — {presetText}\n" +
             $"Введи запрос. Также можешь прикрепить файл",
             parseMode: ParseMode.Html,
             replyMarkup: CancelCallback.CreateMarkup(cancelText));

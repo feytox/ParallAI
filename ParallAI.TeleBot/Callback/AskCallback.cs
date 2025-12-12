@@ -1,6 +1,8 @@
 using ParallAI.Core.Repositories;
 using ParallAI.Core.States;
 using ParallAI.Core.ValueTypes;
+using ParallAI.TeleBot.Commands;
+using ParallAI.TeleBot.Core.Callback;
 using ParallAI.TeleBot.Core.Callback.Common;
 using ParallAI.TeleBot.Core.Util;
 using Telegram.Bot;
@@ -11,10 +13,10 @@ using User = ParallAI.Core.Entities.User;
 
 namespace ParallAI.TeleBot.Callback;
 
-[CallbackQuery(CallbackTag)]
+[CallbackQuery(Tag)]
 public class AskCallback(IRepository<User, long> users) : UserCallbackQuery(users)
 {
-    private const string CallbackTag = "ask";
+    private const string Tag = "ask";
     
     protected override async Task Handle(CallbackQuery query, ITelegramBotClient bot, User user)
     {
@@ -32,13 +34,18 @@ public class AskCallback(IRepository<User, long> users) : UserCallbackQuery(user
                 break;
         }
     }
+    
+    public static InlineKeyboardButton Create(string text, string content)
+    {
+        return InlineKeyboardButton.WithCallbackData(text, $"{Tag}:{content}");
+    }
 
-    private async Task ChooseRequestConfig(CallbackQuery query, ITelegramBotClient bot, 
+    private static async Task ChooseRequestConfig(CallbackQuery query, ITelegramBotClient bot, 
         User user, RequestMode requestMode)
     {
         if (user.ChosenModel is null)
         {
-            await bot.EditCallbackMessage(query, "Чтобы отправлять запросы, выберите модель в /models");
+            await HandleNotSetModel(query, bot);
             return;
         }
 
@@ -48,15 +55,18 @@ public class AskCallback(IRepository<User, long> users) : UserCallbackQuery(user
         var state = new RequestState(requestConfig);
         user.StateMachine.Push(state);
     }
+
+    private static async Task HandleNotSetModel(CallbackQuery query, ITelegramBotClient bot)
+    {
+        var markup = new InlineKeyboardMarkup(CommandCallback.Create<ModelsCommand>("Выбрать модель"));
+        await bot.EditCallbackMessage(query, 
+            "Чтобы отправлять одиночные запросы, выберите модель", 
+            replyMarkup: markup);
+    }
     
-    private void CreateRequestConfig(User user)
+    private static void CreateRequestConfig(User user)
     {
         var state = new RequestSettingsState();
         user.StateMachine.Push(state);
-    }
-
-    public static InlineKeyboardButton Create(string text, string content)
-    {
-        return InlineKeyboardButton.WithCallbackData(text, $"{CallbackTag}:{content}");
     }
 }
