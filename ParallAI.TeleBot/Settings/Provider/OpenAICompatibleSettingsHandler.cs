@@ -15,8 +15,9 @@ public class OpenAICompatibleSettingsHandler()
     {
         builder.AddSimple("API ключ", "Введите API ключ провайдера", "",
             text => text, state => state.Token);
-        builder.AddSimple("EndpointUrl", "Введите EndPoint URL", "", 
-            text => text, state => state.Endpoint);
+        builder.AddSimple("Endpoint Url", "Введите Endpoint URL", "Это не похоже на URL. Попробуйте снова", 
+            text => Uri.TryCreate(text, UriKind.Absolute, out var uri) ? uri : null, 
+            state => state.Endpoint);
     }
 
     protected override Task<bool> SaveSettingsToUser(OpenAICompatibleSettingsState state, CallbackQuery query,

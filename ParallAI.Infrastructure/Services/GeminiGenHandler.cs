@@ -4,6 +4,7 @@ using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using ParallAI.Core;
 using ParallAI.Core.Entities;
+using ParallAI.Core.Exceptions;
 using ParallAI.Core.Providers;
 using ParallAI.Core.ValueTypes;
 using ParallAI.Infrastructure.ValueTypes;
@@ -50,6 +51,16 @@ public class GeminiGenHandler(
     protected override void FillHttpRequest(HttpRequestMessage request)
     {
         request.Headers.Add("x-goog-api-key", Provider.Token);
+    }
+
+    protected override async Task HandleErrorResponse(HttpResponseMessage response)
+    {
+        var errorResponse = await response.Content.ReadFromJsonAsync<GeminiErrorResponse>(JsonSerializerOptions.Web);
+        var message = $"Failed request to Gemini provider with Code: {errorResponse!.Error.Code}, " +
+                      $"Status: {errorResponse.Error.Status}, Message: {errorResponse.Error.Message}";
+        var userMessage = $"Произошла ошибка при отправке запроса к модели {model.DisplayName} " +
+                          $"провайдера Gemini c текстом {errorResponse.Error.Message}";
+        throw new UserFriendlyException(message, userMessage);
     }
 
     private async Task<string> DownloadAndUploadFile(AiFileInfo fileInfo)

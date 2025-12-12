@@ -14,6 +14,11 @@ public class OpenAiGenHandlerTests
     : HttpGenHandlerTests<OpenAiGenHandler, OpenAICompatibleProvider, OpenAiRequest, OpenAiMessage, OpenAiResponse>
 {
     protected override string ExpectedUrl => "https://api.openai.com/v1/chat/completions";
+    protected override string DefaultErrorContent =>
+        """{"error":{"code":"unsupported_country_region_territory",""" +
+        """
+        "message":"Country, region, or territory not supported","param":"null","type":"request_forbidden"}}
+        """;
 
     protected override OpenAiGenHandler CreateHandler(HttpClient client, AiModel model,
         OpenAICompatibleProvider provider)

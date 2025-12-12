@@ -29,6 +29,7 @@ public class Bot(
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         client = new TelegramBotClient(config.BotToken, cancellationToken: cancellationToken);
+        await client.GetMe(cancellationToken);
 
         client.StartReceiving(HandleUpdate, HandleError, cancellationToken: cancellationToken);
 

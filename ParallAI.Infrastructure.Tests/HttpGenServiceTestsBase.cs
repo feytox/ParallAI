@@ -5,6 +5,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using ParallAI.Core;
 using ParallAI.Core.Entities;
+using ParallAI.Core.Exceptions;
 using ParallAI.Core.ValueTypes;
 using ParallAI.Infrastructure.Services;
 using ParallAI.Infrastructure.ValueTypes;
@@ -30,6 +31,7 @@ public abstract class HttpGenHandlerTests<THandler, TProvider, TRequest, TMessag
     private HttpClient httpClient;
 
     protected abstract string ExpectedUrl { get; }
+    protected abstract string DefaultErrorContent { get; }
     protected TextMessage DefaultMessage;
     protected PromptSettings DefaultSettings;
 
@@ -57,11 +59,20 @@ public abstract class HttpGenHandlerTests<THandler, TProvider, TRequest, TMessag
     [TestCase(HttpStatusCode.Unauthorized)]
     [TestCase(HttpStatusCode.Forbidden)]
     [TestCase(HttpStatusCode.BadRequest)]
-    [TestCase(HttpStatusCode.InternalServerError)]
-    public async Task Generate_WhenApiReturnsError_ThrowsHttpRequestException(HttpStatusCode statusCode)
+    public async Task Generate_WhenApiReturnsClientError_ThrowsUserFriendlyException(HttpStatusCode statusCode)
     {
         MockHttp.When(HttpMethod.Post, ExpectedUrl)
-            .Respond(statusCode);
+            .Respond(statusCode,"application/json", DefaultErrorContent);
+        
+        await Handler.Awaiting(s => s.Generate([DefaultMessage], DefaultSettings))
+            .Should().ThrowAsync<UserFriendlyException>();
+    }
+    
+    [TestCase(HttpStatusCode.InternalServerError)]
+    public async Task Generate_WhenApiReturnsNotClientError_HttpRequestException(HttpStatusCode statusCode)
+    {
+        MockHttp.When(HttpMethod.Post, ExpectedUrl)
+            .Respond(statusCode,"application/json", DefaultErrorContent);
         
         await Handler.Awaiting(s => s.Generate([DefaultMessage], DefaultSettings))
             .Should().ThrowAsync<HttpRequestException>();

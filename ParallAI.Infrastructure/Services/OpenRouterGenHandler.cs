@@ -1,7 +1,10 @@
 ﻿using System.Net.Http.Headers;
+using System.Net.Http.Json;
+using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using ParallAI.Core;
 using ParallAI.Core.Entities;
+using ParallAI.Core.Exceptions;
 using ParallAI.Core.Providers;
 using ParallAI.Core.ValueTypes;
 using ParallAI.Infrastructure.ValueTypes;
@@ -44,5 +47,17 @@ public class OpenRouterGenHandler(
     protected override void FillHttpRequest(HttpRequestMessage request)
     {
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", Provider.Token);
+    }
+
+    protected override async Task HandleErrorResponse(HttpResponseMessage response)
+    {
+        var errorResponse = await response.Content.ReadFromJsonAsync<OpenRouterErrorResponse>(JsonSerializerOptions.Web);
+        var message = $"Failed request to OpenRouter provider with Code: {errorResponse!.Error.Code}, " +
+                      $"Message: {errorResponse.Error.Message}";
+        var userMessage = $"Произошла ошибка при отправке запроса к модели {model.DisplayName} " +
+                          $"провайдера OpenRouter c текстом {errorResponse.Error.Message}. ";
+        if (errorResponse.Error.Code == 401)
+            throw new UserFriendlyException(message, userMessage + "Введите корректный API ключ провайдера модели");
+        throw new UserFriendlyException(message, userMessage);
     }
 }

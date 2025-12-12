@@ -79,7 +79,7 @@ public static class DisplayExtensions
     {
         var sb = new StringBuilder();
         sb.AppendLine($"🔑 Токен: {state.Token.ToMaskedDisplay()}");
-        sb.AppendLine($"🌐 Endpoint Url: {state.Endpoint.ToDisplay(maxLength: 60)}");
+        sb.AppendLine($"🌐 Endpoint Url: {state.Endpoint?.AbsoluteUri.ToDisplay(maxLength: 60)}");
         return sb.ToString();
     }
     

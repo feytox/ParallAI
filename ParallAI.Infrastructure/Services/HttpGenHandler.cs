@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Json;
+﻿using System.Net;
+using System.Net.Http.Json;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using ParallAI.Core.Entities;
@@ -30,6 +31,8 @@ public abstract class HttpGenHandler<TProvider, TRequest, TMessage, TResponse>(
 
     protected abstract void FillHttpRequest(HttpRequestMessage request);
     
+    protected abstract Task HandleErrorResponse(HttpResponseMessage response);
+    
     public async Task<AiResponse> Generate(AiMessage[] aiMessages, PromptSettings promptSettings)
     {
         var url = GetEndpointUrl();
@@ -43,6 +46,8 @@ public abstract class HttpGenHandler<TProvider, TRequest, TMessage, TResponse>(
         logger?.LogInformation(JsonSerializer.Serialize(aiRequest, JsonSerializerOptions.Web));
 
         var response = await Client.SendAsync(request);
+        if (IsClientError(response.StatusCode))
+            await HandleErrorResponse(response);
         response.EnsureSuccessStatusCode();
 
         var providerResponse = await response.Content.ReadFromJsonAsync<TResponse>(JsonSerializerOptions.Web);
@@ -58,4 +63,6 @@ public abstract class HttpGenHandler<TProvider, TRequest, TMessage, TResponse>(
             _ => throw new ArgumentOutOfRangeException(nameof(aiMessage), aiMessage, null)
         };
     }
+    
+    private bool IsClientError(HttpStatusCode statusCode) => (int)statusCode >= 400 && (int)statusCode < 500;
 }
