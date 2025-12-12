@@ -17,7 +17,7 @@ public class CallbackQueryHandlerTests
     }
 
     [Test]
-    public async Task HandleExistingCallbackQuery()
+    public async Task HandleCallbackQuery_WhenExists()
     {
         var fakeClb = A.Fake<ICallbackQuery>();
         var callbackQueryHandler = CreateHandler((fakeClb, new CallbackQueryAttribute("test-key")));
@@ -27,7 +27,7 @@ public class CallbackQueryHandlerTests
     }
     
     [Test]
-    public async Task HandleNonexistentCallbackQuery()
+    public async Task HandleCallbackQuery_WhenNotExists()
     {
         var fakeClb = A.Fake<ICallbackQuery>();
         var callbackQueryHandler = CreateHandler();

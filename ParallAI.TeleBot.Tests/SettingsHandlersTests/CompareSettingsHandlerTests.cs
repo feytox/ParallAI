@@ -10,10 +10,8 @@ namespace ParallAI.TeleBot.Tests;
 [TestFixture]
 public class CompareSettingsHandlerTests : SettingsHandlerTests<CompareSettingsHandler, CompareSettingsState>
 {
-    protected override CompareSettingsHandler CreateHandler()
-    {
-        return new CompareSettingsHandler();
-    }
+    protected override CompareSettingsHandler CreateHandler() => new();
+    protected override CompareSettingsState CreateInitialState() => new();
 
     [Test]
     public void RemoveCompareElement()
@@ -31,7 +29,7 @@ public class CompareSettingsHandlerTests : SettingsHandlerTests<CompareSettingsH
     }
     
     [Test]
-    public async Task SaveSettingsToUser()
+    public async Task FinalizeSettings()
     {
         var handler = CreateHandler();
         var state = new CompareSettingsState();

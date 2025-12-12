@@ -7,7 +7,7 @@ namespace ParallAI.TeleBot.Tests;
 public class MediaGroupCollectorTests
 {
     [Test]
-    public async Task CollectMessageNoMediaGroup()
+    public async Task CollectMessages_WithoutMediaGroup()
     {
         var mediaGroupCollector = new MediaGroupCollector();
         var testMessages = new Message { Text = "test message" };
@@ -17,7 +17,7 @@ public class MediaGroupCollectorTests
     }
 
     [Test]
-    public Task CollectMessagesWithMediaGroup()
+    public Task CollectMessages_WithMediaGroup()
     {
         var mediaGroupCollector = new MediaGroupCollector();
         var firstMsg = new Message { MediaGroupId = "test ID" };
@@ -33,7 +33,7 @@ public class MediaGroupCollectorTests
     }
     
     [Test]
-    public Task CollectMessageIsNotFirstMessage()
+    public Task CollectMessages_IsNotFirstMessage()
     {
         var mediaGroupCollector = new MediaGroupCollector();
         var firstMsg = new Message { MediaGroupId = "test ID" };
@@ -48,9 +48,10 @@ public class MediaGroupCollectorTests
     }
 
     [Test]
-    public Task CollectMultipleMediaGroups()
+    public Task CollectMessages_MultipleMediaGroups()
     {
         var mediaGroupCollector = new MediaGroupCollector();
+        
         var firstMsgFirstGroup = new Message { MediaGroupId = "ID 1" };
         var secondMsgFirstGroup = new Message { MediaGroupId = "ID 1" };
         

@@ -19,7 +19,8 @@ public class CommandHandlerTests
 
     [TestCase("/command")]
     [TestCase("          /command       ")]
-    public async Task HandleExistingCommand(string commandName)
+    [TestCase("/command some text")]
+    public async Task HandleCommand_CommandIsExist(string commandName)
     {
         var fakeCmd = A.Fake<ICommand>();
         var commandHandler = CreateHandler((fakeCmd, new CommandAttribute("/command", "test command")));
@@ -32,36 +33,44 @@ public class CommandHandlerTests
         A.CallTo(() => fakeCmd.Execute(message, bot)).MustHaveHappened();
     }
     
-    [Test]
-    public async Task HandleNonexistentCommand()
+    [TestCase("/fakecmd")]
+    [TestCase("text /command")]
+    public async Task HandleCommand_CommandIsWrong(string commandName)
     {
         var fakeCmd = A.Fake<ICommand>();
-        var commandHandler = CreateHandler();
+        var commandHandler = CreateHandler((fakeCmd, new CommandAttribute("/command", "test command")));
         var message = new Message
         {
-            Text = "/fakecmd",
+            Text = commandName,
         };
         await commandHandler.HandleCommand(message, bot);
         A.CallTo(() => fakeCmd.Execute(message, bot)).MustNotHaveHappened();
     }
 
     [Test]
-    public void IsHighPriorityCommand()
+    public void IsHighPriorityCommand_HighPriority()
     {
         var highPriorityCmd = A.Fake<ICommand>();
+        var commandHandler = CreateHandler(
+            (highPriorityCmd, 
+            new CommandAttribute("/highprioritycmd", "команда с высоким приоритетом")
+                { HighPriority = true }));
+        var highPriorityCmdMessage = new Message { Text = "/highprioritycmd", };
+        
+        Assert.That(commandHandler.IsHighPriorityCommand(highPriorityCmdMessage), Is.True);
+    }
+    
+    [Test]
+    public void IsHighPriorityCommand_LowPriority()
+    {
         var lowPriorityCmd = A.Fake<ICommand>();
         
         var commandHandler = CreateHandler(
-            (highPriorityCmd, new CommandAttribute(
-                "/highprioritycmd", "команда с высоким приоритетом") { HighPriority = true }), 
-            (lowPriorityCmd, new CommandAttribute(
-                "/lowprioritycmd", "команда с низким приоритетом")));
-
-        var highPriorityCmdMessage = new Message { Text = "/highprioritycmd", };
+            (lowPriorityCmd,
+            new CommandAttribute("/lowprioritycmd", "команда с низким приоритетом")));
         var lowPriorityCmdMessage = new Message { Text = "/lowprioritycmd", };
 
-        Assert.That(commandHandler.IsHighPriorityCommand(highPriorityCmdMessage));
-        Assert.That(!commandHandler.IsHighPriorityCommand(lowPriorityCmdMessage));
+        Assert.That(commandHandler.IsHighPriorityCommand(lowPriorityCmdMessage), Is.False);
     }
     
     private CommandHandler CreateHandler(params (ICommand, CommandAttribute)[] commands)
