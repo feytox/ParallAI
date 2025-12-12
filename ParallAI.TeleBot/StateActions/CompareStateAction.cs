@@ -36,7 +36,7 @@ public class CompareStateAction(ComparisonService compareService, MediaGroupColl
         return true;
     }
 
-    protected override async Task<bool> ExecuteAfter(CompareState state, ChatId chatId,
+    protected override async Task<bool> ExecuteAfter(CompareState state, ChatId chatId, Message? prevMessage,
         ITelegramBotClient bot, User user)
     {
         // TODO: change text

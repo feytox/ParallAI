@@ -1,4 +1,5 @@
 ﻿using ParallAI.Core.States.Common;
+using ParallAI.TeleBot.Core.Util;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using User = ParallAI.Core.Entities.User;
@@ -15,9 +16,10 @@ public class SimpleSettingsPart<TValue, TState>(
     ) : SettingsPart<TState>(name), IMessageHandlerPart<TState>, IValidatablePart<TState>
     where TState : SettingsState
 {
-    public override async Task<UserState?> ActivatePart(TState state, ChatId chatId, ITelegramBotClient bot, User user)
+    public override async Task<UserState?> ActivatePart(TState state, CallbackQuery query, ITelegramBotClient bot,
+        User user)
     {
-        await bot.SendMessage(chatId, inputMessage);
+        await bot.EditCallbackMessage(query, inputMessage);
         return null;
     }
     

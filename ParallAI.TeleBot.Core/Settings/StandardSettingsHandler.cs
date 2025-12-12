@@ -1,5 +1,6 @@
 ﻿using ParallAI.Core.States.Common;
 using ParallAI.TeleBot.Core.Callback;
+using ParallAI.TeleBot.Core.Util;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -12,7 +13,8 @@ public abstract class StandardSettingsHandler<TState>(string tag, Action<Setting
 {
     protected abstract string GetPartsMessage(TState state);
     
-    protected override async Task SendPartsList(TState state, ChatId chatId, ITelegramBotClient bot)
+    protected override async Task SendPartsList(TState state, ChatId chatId, Message? prevMessage,
+        ITelegramBotClient bot)
     {
         var isAllValid = Parts
             .OfType<IValidatablePart<TState>>()
@@ -26,7 +28,9 @@ public abstract class StandardSettingsHandler<TState>(string tag, Action<Setting
         bottomButtons.Add(CancelCallback.CreateButton("🔙 Выйти без сохранения"));
         
         var allButtons = partsButtons.Append(bottomButtons.ToArray());
-
+        if (prevMessage is not null)
+            await bot.DeleteMessageOptional(chatId, prevMessage.Id);
+        
         var message = GetPartsMessage(state);
         await bot.SendMessage(chatId, message, replyMarkup: new InlineKeyboardMarkup(allButtons));
     }

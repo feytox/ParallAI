@@ -17,7 +17,7 @@ public class GeminiProviderSettingsHandler()
             text => text, state => state.Token);
     }
 
-    protected override Task<bool> SaveSettingsToUser(GeminiProviderSettingsState state, ChatId chatId,
+    protected override Task<bool> SaveSettingsToUser(GeminiProviderSettingsState state, CallbackQuery query,
         ITelegramBotClient bot, User user)
     {
         return Task.FromResult(true);

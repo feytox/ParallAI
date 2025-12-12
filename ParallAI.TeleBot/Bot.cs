@@ -5,6 +5,7 @@ using ParallAI.Core.Exceptions;
 using ParallAI.TeleBot.Core.Callback.Common;
 using ParallAI.TeleBot.Core.Commands.Common;
 using ParallAI.TeleBot.Core.StateActions;
+using ParallAI.TeleBot.Core.Util;
 using ParallAI.TeleBot.Util;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
@@ -83,15 +84,16 @@ public class Bot(
             await commandHandler.HandleCommand(message, bot);
         
         var mainHandled = await stateHandler.HandleState(message, bot);
-        var postHandled = await stateHandler.HandlePostState(message.From!.Id, bot);
+        var postHandled = await stateHandler.HandlePostState(message.Chat, message.From!.Id, bot);
         if (!mainHandled && !postHandled && !isHighPriorityCommand) 
             await commandHandler.HandleCommand(message, bot);
     }
 
-    private async Task HandleCallbackQuery(ITelegramBotClient bot, CallbackQuery callbackQuery)
+    private async Task HandleCallbackQuery(ITelegramBotClient bot, CallbackQuery query)
     {
-        await callbackQueryHandler.HandleCallbackQuery(callbackQuery, bot);
-        await stateHandler.HandlePostState(callbackQuery.From.Id, bot);
+        var message = query.GetMessage();
+        await callbackQueryHandler.HandleCallbackQuery(query, bot);
+        await stateHandler.HandlePostState(message.Chat, query.From.Id, bot, prevMessage: message);
     }
 
     private Task HandleError(ITelegramBotClient bot, Exception exception, CancellationToken cancellationToken)

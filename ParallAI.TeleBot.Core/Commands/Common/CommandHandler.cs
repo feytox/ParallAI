@@ -24,18 +24,21 @@ public class CommandHandler
     public async Task HandleCommand(Message message, ITelegramBotClient bot)
     {
         var commandText = GetCommandText(message);
-
         if (commandText is null)
         {
             await bot.SendMessage(message.Chat, "В твоём запросе нет текста, я не могу его обработать");
             return;
         }
 
-        
+        await HandleCommand(commandText, message.Chat, message.From!.Id, bot);
+    }
+
+    public async Task HandleCommand(string commandText, ChatId chatId, long userId, ITelegramBotClient bot)
+    {
         if (commands.TryGetValue(commandText, out var command))
-            await command.Execute(message, bot);
+            await command.Execute(chatId, userId, bot);
         else
-            await bot.SendMessage(message.Chat, $"Я не знаю команды `{commandText}`");
+            await bot.SendMessage(chatId, $"Я не знаю команды `{commandText}`");
     }
 
     public bool IsHighPriorityCommand(Message message)

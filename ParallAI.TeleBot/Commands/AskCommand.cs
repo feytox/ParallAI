@@ -14,7 +14,7 @@ namespace ParallAI.TeleBot.Commands;
 [Command("/ask", "выбор режима запроса к модели")]
 public class AskCommand(IRepository<User, long> users) : UserCommand(users)
 {
-    protected override async Task Execute(Message message, ITelegramBotClient bot, User user)
+    protected override async Task Execute(ChatId chatId, ITelegramBotClient bot, User user)
     {
         var buttons = new InlineKeyboardMarkup([
             [AskCallback.Create("Одиночный запрос", "single")],
@@ -22,6 +22,6 @@ public class AskCommand(IRepository<User, long> users) : UserCommand(users)
             [AskCallback.Create("Одиночный запрос с настройкой параметров", "settings")],
         ]);
         
-        await bot.SendMessage(message.Chat, "Выберите режим запросов", replyMarkup: buttons);
+        await bot.SendMessage(chatId, "Выберите режим запросов", replyMarkup: buttons);
     }
 }

@@ -17,7 +17,7 @@ public class RequestSettingsHandler() : StandardSettingsHandler<RequestSettingsS
         return $"Текущие настройки:\n{stateInfo}";
     }
 
-    protected override Task<bool> SaveSettingsToUser(RequestSettingsState state, ChatId chatId,
+    protected override Task<bool> SaveSettingsToUser(RequestSettingsState state, CallbackQuery query,
         ITelegramBotClient bot, User user)
     {
         var config = new RequestConfig(state.Model!, state.Preset, RequestMode.Single);

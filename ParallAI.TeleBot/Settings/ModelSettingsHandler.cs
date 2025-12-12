@@ -1,7 +1,6 @@
-using System.Text;
-using ParallAI.Core.Providers;
 using ParallAI.Core.States;
 using ParallAI.TeleBot.Core.Settings;
+using ParallAI.TeleBot.Core.Util;
 using ParallAI.TeleBot.Settings.Provider;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -13,14 +12,14 @@ public class ModelSettingsHandler() : StandardSettingsHandler<ModelSettingsState
 {
     public const string CallbackTag = "model_settings";
 
-    protected override async Task<bool> SaveSettingsToUser(ModelSettingsState state, ChatId chatId, 
+    protected override async Task<bool> SaveSettingsToUser(ModelSettingsState state, CallbackQuery query,
         ITelegramBotClient bot, User user)
     {
         if (state.Id is null)
             SaveNewModel(state, user);
         else
             ApplyChanges(state, user);
-        await bot.SendMessage(chatId, "Модель сохранена");
+        await bot.EditCallbackMessage(query, "Модель сохранена");
         return true;
     }
 

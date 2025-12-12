@@ -12,14 +12,14 @@ public class ProviderGuideCommand : ICommand
 
     public const string GuideHtmlUrl = $"<a href='{GuideUrl}'><b>*тык*</b></a>";
     
-    public async Task Execute(Message message, ITelegramBotClient bot)
+    public async Task Execute(ChatId chatId, long userId, ITelegramBotClient bot)
     {
         const string text = "📚 <b>Гайд по настройке провайдеров</b>\n\n" +
                             "В этом гайде подробно написано как получить токены для разных провайдеров.\n\n" +
                             $"👉 {GuideHtmlUrl}";
 
         await bot.SendMessage(
-            chatId: message.Chat.Id,
+            chatId: chatId,
             text: text,
             parseMode: ParseMode.Html,
             linkPreviewOptions: new LinkPreviewOptions { IsDisabled = true }

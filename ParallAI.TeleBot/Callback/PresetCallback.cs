@@ -1,22 +1,22 @@
-﻿using System.Text;
-using ParallAI.Core.Entities;
+﻿using ParallAI.Core.Entities;
 using ParallAI.Core.Repositories;
 using ParallAI.Core.States;
-using ParallAI.Core.ValueTypes;
+using ParallAI.TeleBot.Commands;
+using ParallAI.TeleBot.Core.Callback;
 using ParallAI.TeleBot.Core.Callback.Common;
 using ParallAI.TeleBot.Core.Settings;
-using ParallAI.TeleBot.Settings;
+using ParallAI.TeleBot.Core.Util;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.ReplyMarkups;
 using User = ParallAI.Core.Entities.User;
 
 namespace ParallAI.TeleBot.Callback;
 
 [CallbackQuery(Tag)]
-public class PresetCallback(IRepository<User, long> users, PresetSettingsHandler handler)
-    : SettingsElementCallback(users)
+public class PresetCallback(IRepository<User, long> users) : SettingsElementCallback(users)
 {
-    public const string Tag = "preset";
+    private const string Tag = "preset";
 
     protected override string GetElementInfo(int index, User user)
     {
@@ -26,16 +26,15 @@ public class PresetCallback(IRepository<User, long> users, PresetSettingsHandler
                + preset.ToFormattedString();
     }
 
-    protected override async Task HandleChoose(CallbackQuery callbackQuery, int index,
-        ITelegramBotClient bot, User user)
+    protected override async Task HandleChoose(CallbackQuery query, int index, ITelegramBotClient bot, User user)
     {
         var preset = GetPreset(user, index);
         user.ChoosePreset(preset);
 
-        await bot.SendMessage(callbackQuery.From.Id, $"Пресет {preset.Name} выбран");
+        await bot.EditCallbackMessage(query, $"Пресет {preset.Name} выбран");
     }
 
-    protected override Task HandleEdit(CallbackQuery callbackQuery, int index, ITelegramBotClient bot, User user)
+    protected override Task HandleEdit(CallbackQuery query, int index, ITelegramBotClient bot, User user)
     {
         var state = index == -1 ? new PresetSettingsState(null) : GetPreset(user, index).ToState();
         user.StateMachine.Push(state);
@@ -43,19 +42,29 @@ public class PresetCallback(IRepository<User, long> users, PresetSettingsHandler
         return Task.CompletedTask;
     }
 
-    protected override async Task HandleRemove(CallbackQuery callbackQuery, int index,
+    protected override async Task HandleRemove(CallbackQuery query, int index,
         ITelegramBotClient bot, User user)
     {
         var preset = GetPreset(user, index);
         user.DeletePreset(preset);
 
-        await bot.SendMessage(callbackQuery.From.Id, $"Пресет {preset.Name} удалён");
+        await bot.EditCallbackMessage(query, $"Пресет {preset.Name} удалён");
     }
 
+    protected override InlineKeyboardButton CreateBackButton(string text)
+    {
+        return CommandCallback.Create<PresetsCommand>(text);
+    }
+
+    protected override bool ContainsAt<T>(int index, User user) => GetPreset(user, index) is T;
+    
+    public static InlineKeyboardButton Create(string text, string data)
+    {
+        return InlineKeyboardButton.WithCallbackData(text, $"{Tag}:{data}");
+    }
+    
     private static Preset GetPreset(User user, int index)
     {
         return user.UserPresets[index];
     }
-    
-    protected override object GetElement(int index, User user) => GetPreset(user, index);
 }

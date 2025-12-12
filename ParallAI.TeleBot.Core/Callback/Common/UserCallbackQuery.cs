@@ -9,12 +9,12 @@ public abstract class UserCallbackQuery(IRepository<User, long> users) : ICallba
 {
     protected IRepository<User, long> Users { get; } = users;
     
-    protected abstract Task Handle(CallbackQuery callbackQuery, ITelegramBotClient bot, User user);
+    protected abstract Task Handle(CallbackQuery query, ITelegramBotClient bot, User user);
 
-    public async Task Handle(CallbackQuery callbackQuery, ITelegramBotClient bot)
+    public async Task Handle(CallbackQuery query, ITelegramBotClient bot)
     {
-        var user = await Users.GetOrCreate(callbackQuery.From.Id);
-        await Handle(callbackQuery, bot, user);
+        var user = await Users.GetOrCreate(query.From.Id);
+        await Handle(query, bot, user);
         await Users.Update(user);
     }
 }

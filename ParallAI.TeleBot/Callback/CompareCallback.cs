@@ -13,9 +13,9 @@ public class CompareCallback(IRepository<User, long> users) : UserCallbackQuery(
 {
     private const string CallbackTag = "compare";
 
-    protected override Task Handle(CallbackQuery callbackQuery, ITelegramBotClient bot, User user)
+    protected override Task Handle(CallbackQuery query, ITelegramBotClient bot, User user)
     {
-        var content = callbackQuery.Data!.Split(':')[1];
+        var content = query.Data!.Split(':')[1];
         if (content == "+")
             CreateCompareConfig(user);
         else

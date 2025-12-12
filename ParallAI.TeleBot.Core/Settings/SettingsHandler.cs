@@ -8,8 +8,9 @@ namespace ParallAI.TeleBot.Core.Settings;
 
 public abstract class SettingsHandler<TState> where TState : SettingsState
 {
-    protected abstract Task<bool> SaveSettingsToUser(TState state, ChatId chatId, ITelegramBotClient bot, User user);
-    protected abstract Task SendPartsList(TState state, ChatId chatId, ITelegramBotClient bot);
+    protected abstract Task<bool> SaveSettingsToUser(TState state, CallbackQuery query, 
+        ITelegramBotClient bot, User user);
+    protected abstract Task SendPartsList(TState state, ChatId chatId, Message? prevMessage, ITelegramBotClient bot);
 
     protected readonly string Tag;
     protected readonly SettingsPart<TState>[] Parts;
@@ -23,7 +24,7 @@ public abstract class SettingsHandler<TState> where TState : SettingsState
         Parts = builder.Build();
     }
 
-    public async Task ActivatePart(TState state, int partIndex, ChatId chatId, ITelegramBotClient bot, User user)
+    public async Task ActivatePart(TState state, int partIndex, CallbackQuery query, ITelegramBotClient bot, User user)
     {
         if (partIndex >= Parts.Length)
             throw new IndexOutOfRangeException("Invalid settings part index");
@@ -31,7 +32,7 @@ public abstract class SettingsHandler<TState> where TState : SettingsState
         var selectedPart = Parts[partIndex];
         state.CurrentPart = partIndex;
 
-        var nextState = await selectedPart.ActivatePart(state, chatId, bot, user);
+        var nextState = await selectedPart.ActivatePart(state, query, bot, user);
         if (nextState is not null)
             user.StateMachine.Push(nextState);
     }
@@ -59,7 +60,7 @@ public abstract class SettingsHandler<TState> where TState : SettingsState
         return true;
     }
 
-    public async Task<bool> ExecuteAfter(TState state, ChatId chatId, ITelegramBotClient bot)
+    public async Task<bool> ExecuteAfter(TState state, ChatId chatId, Message? prevMessage, ITelegramBotClient bot)
     {
         if (!state.Reactivated)
             return false;
@@ -70,15 +71,15 @@ public abstract class SettingsHandler<TState> where TState : SettingsState
             state.RejectPrevState();
         }
 
-        await SendPartsList(state, chatId, bot);
+        await SendPartsList(state, chatId, prevMessage, bot);
         state.Reactivated = false;
         state.CurrentPart = null;
         return true;
     }
     
-    public async Task FinalizeSettings(TState state, ChatId chatId, ITelegramBotClient bot, User user)
+    public async Task FinalizeSettings(TState state, CallbackQuery query, ITelegramBotClient bot, User user)
     {
-        if (await SaveSettingsToUser(state, chatId, bot, user))
+        if (await SaveSettingsToUser(state, query, bot, user))
             user.StateMachine.Pop();
     }
 

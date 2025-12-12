@@ -5,5 +5,5 @@ namespace ParallAI.TeleBot.Core.Callback.Common;
 
 public interface ICallbackQuery
 {
-    Task Handle(CallbackQuery callbackQuery, ITelegramBotClient bot);
+    Task Handle(CallbackQuery query, ITelegramBotClient bot);
 }

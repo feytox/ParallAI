@@ -34,11 +34,11 @@ public class MainMenuStateAction : StateAction<MainMenuState>
         if (messageText == null || !commands.TryGetValue(messageText, out var command)) 
             return false;
         
-        await command.Execute(message, bot);
+        await command.Execute(message.Chat, message.From!.Id, bot);
         return true;
     }
 
-    protected override async Task<bool> ExecuteAfter(MainMenuState state, ChatId chatId,
+    protected override async Task<bool> ExecuteAfter(MainMenuState state, ChatId chatId, Message? prevMessage,
         ITelegramBotClient bot, User user)
     {
         if (!state.Reactivated)
