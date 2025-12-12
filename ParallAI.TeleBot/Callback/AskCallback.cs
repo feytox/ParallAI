@@ -4,6 +4,7 @@ using ParallAI.Core.ValueTypes;
 using ParallAI.TeleBot.Core.Callback.Common;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.ReplyMarkups;
 using User = ParallAI.Core.Entities.User;
 
 
@@ -12,7 +13,7 @@ namespace ParallAI.TeleBot.Callback;
 [CallbackQuery(CallbackTag)]
 public class AskCallback(IRepository<User, long> users) : UserCallbackQuery(users)
 {
-    public const string CallbackTag = "ask";
+    private const string CallbackTag = "ask";
     
     protected override async Task Handle(CallbackQuery callbackQuery, ITelegramBotClient bot, User user)
     {
@@ -26,13 +27,13 @@ public class AskCallback(IRepository<User, long> users) : UserCallbackQuery(user
                 await ChooseRequestConfig(callbackQuery, bot, user, RequestMode.Continuous);
                 break;
             case "settings":
-                await CreateRequestConfig(user);
+                CreateRequestConfig(user);
                 break;
         }
     }
 
-    private async Task ChooseRequestConfig(
-        CallbackQuery callbackQuery, ITelegramBotClient bot, User user, RequestMode requestMode)
+    private async Task ChooseRequestConfig(CallbackQuery callbackQuery, ITelegramBotClient bot, 
+        User user, RequestMode requestMode)
     {
         if (user.ChosenModel is null)
         {
@@ -47,9 +48,14 @@ public class AskCallback(IRepository<User, long> users) : UserCallbackQuery(user
         user.StateMachine.Push(state);
     }
     
-    private async Task CreateRequestConfig(User user)
+    private void CreateRequestConfig(User user)
     {
         var state = new RequestSettingsState();
         user.StateMachine.Push(state);
+    }
+
+    public static InlineKeyboardButton Create(string text, string content)
+    {
+        return InlineKeyboardButton.WithCallbackData(text, $"{CallbackTag}:{content}");
     }
 }
