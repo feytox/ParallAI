@@ -5,7 +5,6 @@ using ParallAI.Core.States;
 using ParallAI.Core.States.Common;
 using ParallAI.Core.States.Providers;
 using ParallAI.TeleBot.Commands.UI;
-using ParallAI.TeleBot.Core;
 using ParallAI.TeleBot.Core.Callback.Common;
 using ParallAI.TeleBot.Core.Commands.Common;
 using ParallAI.TeleBot.Core.Settings;
@@ -33,6 +32,11 @@ public static class ServiceCollectionExtensions
         services.AddAttribute<ICommand, CommandAttribute>();
         services.AddAttribute<ICommand, MainMenuAttribute>();
         services.AddSingleton<MainMenuCommandsStorage>();
+        services.AddSingleton<Lazy<MainMenuCommandsStorage>>(sp =>
+            new Lazy<MainMenuCommandsStorage>(
+                () => sp.GetRequiredService<MainMenuCommandsStorage>()
+            )
+        );
 
         services.AddScanned<ICallbackQuery>();
         services.AddAttribute<ICallbackQuery, CallbackQueryAttribute>();
