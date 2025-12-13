@@ -26,7 +26,7 @@ public class ComparisonService(GenerationService genService)
             .Select(response => response.Text)
             .Select((text, i) => $"<response_{i + 1}>\n{text}\n</response_{i + 1}>");
 
-        var responsesText = $"\n---\n\n{string.Join("\n\n", formattedResponses)}";
+        var responsesText = $"\n\n---\n\n{string.Join("\n\n", formattedResponses)}";
         return initialPrompt.AppendText(responsesText);
     }
 }

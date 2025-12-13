@@ -17,7 +17,7 @@ public static class DisplayExtensions
             return emptyPlaceholder;
 
         if (maxLength > 0 && value.Length > maxLength)
-            return value[..maxLength] + "...";
+            return value[..maxLength] + $"... (показаны первые {maxLength} символов)";
 
         return value;
     }
