@@ -32,6 +32,7 @@ public static class ServiceCollectionExtensions
         services.AddScanned<ICommand>();
         services.AddAttribute<ICommand, CommandAttribute>();
         services.AddAttribute<ICommand, MainMenuAttribute>();
+        services.AddSingleton<MainMenuCommandsStorage>();
 
         services.AddScanned<ICallbackQuery>();
         services.AddAttribute<ICallbackQuery, CallbackQueryAttribute>();
