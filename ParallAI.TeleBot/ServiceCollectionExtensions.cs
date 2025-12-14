@@ -34,7 +34,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<MainMenuCommandsStorage>();
         services.AddSingleton<Lazy<MainMenuCommandsStorage>>(sp =>
             new Lazy<MainMenuCommandsStorage>(
-                () => sp.GetRequiredService<MainMenuCommandsStorage>()
+                sp.GetRequiredService<MainMenuCommandsStorage>
             )
         );
 

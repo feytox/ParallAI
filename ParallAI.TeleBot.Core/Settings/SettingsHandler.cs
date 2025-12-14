@@ -1,4 +1,5 @@
 ﻿using ParallAI.Core.States.Common;
+using ParallAI.TeleBot.Core.Util;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -58,6 +59,13 @@ public abstract class SettingsHandler<TState> where TState : SettingsState
 
         state.Reactivated = true;
         return true;
+    }
+
+    public async Task HandleCancelPart(TState state, CallbackQuery query, ITelegramBotClient bot, User user)
+    {
+        state.CurrentPart = null;
+        var message = query.GetMessage();
+        await SendPartsList(state, message.Chat, message, bot);
     }
 
     public async Task<bool> ExecuteAfter(TState state, ChatId chatId, Message? prevMessage, ITelegramBotClient bot)
