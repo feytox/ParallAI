@@ -81,7 +81,7 @@ public class Bot(
     private async Task HandleMessage(ITelegramBotClient bot, Message message)
     {
         var isHighPriorityCommand = commandHandler.IsHighPriorityCommand(message);
-        if (isHighPriorityCommand) 
+        if (isHighPriorityCommand)
             await commandHandler.HandleCommand(message, bot);
         
         var mainHandled = await stateHandler.HandleState(message, bot);
@@ -94,7 +94,7 @@ public class Bot(
     {
         var message = query.GetMessage();
         await callbackQueryHandler.HandleCallbackQuery(query, bot);
-        await stateHandler.HandlePostState(message.Chat, query.From.Id, bot, prevMessage: message);
+        await stateHandler.HandlePostState(message.Chat, query.GetChatId().Identifier!.Value, bot, prevMessage: message);
     }
 
     private Task HandleError(ITelegramBotClient bot, Exception exception, CancellationToken cancellationToken)

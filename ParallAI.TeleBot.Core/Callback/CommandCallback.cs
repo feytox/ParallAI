@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using ParallAI.TeleBot.Core.Callback.CallbackArgs;
 using ParallAI.TeleBot.Core.Callback.Common;
 using ParallAI.TeleBot.Core.Commands.Common;
 using ParallAI.TeleBot.Core.Util;
@@ -9,16 +10,16 @@ using Telegram.Bot.Types.ReplyMarkups;
 namespace ParallAI.TeleBot.Core.Callback;
 
 [CallbackQuery(Tag)]
-public class CommandCallback(CommandHandler commandHandler) : ICallbackQuery
+public class CommandCallback(CommandHandler commandHandler) : TypedCallbackQuery<CommandArgs>
 {
     private const string Tag = "command";
-    
-    public async Task Handle(CallbackQuery query, ITelegramBotClient bot)
+
+    protected override async Task Handle(CallbackQuery query, CallbackData<CommandArgs> data, ITelegramBotClient bot)
     {
         await bot.DeleteCallbackMessage(query);
-        
-        var command = query.Data!.Split(':')[1];
-        await commandHandler.HandleCommand(command, query.GetChatId(), query.From.Id, bot);
+
+        var command = data.Args.CommandName;
+        await commandHandler.HandleCommand(command, query.GetChatId(), query.GetChatId().Identifier!.Value, bot);
     }
 
     public static InlineKeyboardButton Create<T>(string text) where T : ICommand
