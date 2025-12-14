@@ -1,5 +1,6 @@
 namespace ParallAI.Core.Exceptions;
 
+// TODO: заменить на нормальную обработку бизнес логики
 public class UserFriendlyException : ParallAIException
 {
     public string UserMessage => userMessage ?? Message;

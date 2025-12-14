@@ -58,7 +58,7 @@ public class GeminiGenHandler(
         var errorResponse = await response.Content.ReadFromJsonAsync<GeminiErrorResponse>(JsonSerializerOptions.Web);
         var message = $"Failed request to Gemini provider with Code: {errorResponse!.Error.Code}, " +
                       $"Status: {errorResponse.Error.Status}, Message: {errorResponse.Error.Message}";
-        var userMessage = $"Произошла ошибка при отправке запроса к модели '{model.DisplayName}' " +
+        var userMessage = $"Произошла ошибка при отправке запроса к модели '{Model.DisplayName}' " +
                           $"провайдера Gemini c текстом:\n'{errorResponse.Error.Message}'";
         throw new UserFriendlyException(message, userMessage);
     }
@@ -104,8 +104,7 @@ public class GeminiGenHandler(
         
         return response.Headers.GetValues("x-goog-upload-url").First();
     }
-
-    // TODO: добавить другие преобразования + возможно, эксепшны
+    
     private static string ToSupportedMimeType(string mimeType)
     {
         if (mimeType.StartsWith("text"))

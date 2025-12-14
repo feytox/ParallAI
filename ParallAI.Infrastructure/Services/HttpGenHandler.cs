@@ -43,8 +43,6 @@ public abstract class HttpGenHandler<TProvider, TRequest, TMessage, TResponse>(
         FillHttpRequest(request);
         request.Content = JsonContent.Create(aiRequest, options: JsonSerializerOptions.Web);
 
-        logger?.LogInformation(JsonSerializer.Serialize(aiRequest, JsonSerializerOptions.Web));
-
         var response = await Client.SendAsync(request);
         if (IsClientError(response.StatusCode))
             await HandleErrorResponse(response);

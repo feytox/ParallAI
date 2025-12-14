@@ -56,8 +56,7 @@ public class Bot(
             catch (Exception ex)
             {
                 logger.LogError(ex.ToString());
-                await TrySendMessage(bot, update,
-                    $"Упс...произошла непредвиденная ошибка {ex.GetType().Name}");
+                await TrySendMessage(bot, update, $"Упс...произошла непредвиденная ошибка {ex.GetType().Name}");
             }
         }, cancellationToken);
         return Task.CompletedTask;
