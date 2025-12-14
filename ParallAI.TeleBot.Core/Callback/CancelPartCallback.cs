@@ -18,6 +18,8 @@ public abstract class CancelPartCallback<TState, THandler>(IRepository<User, lon
         var currentState = user.StateMachine.Current;
         if (currentState is not TState state)
             throw new InvalidOperationException($"{typeof(TState)} callback called for {currentState}");
+            //По-хорошему бы в симпл сеттингс парт удалять кнопку отмены из сообщения а для этого это сообщение нужно как-то хранить.
+            //Пока хз как лучше сделать.
         await handler.HandleCancelPart(state, query, bot, user);
     }
 }

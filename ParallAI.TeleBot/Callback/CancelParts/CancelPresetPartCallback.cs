@@ -6,6 +6,6 @@ using ParallAI.TeleBot.Settings;
 
 namespace ParallAI.TeleBot.Callback.CancelParts;
 
-[CallbackQuery(PresetSettingsHandler.CallbackTag)]
+[CallbackQuery(PresetSettingsHandler.CancelPartTag)]
 public class CancelPresetPartCallback(IRepository<User, long> users, PresetSettingsHandler handler): 
     CancelPartCallback<PresetSettingsState, PresetSettingsHandler>(users, handler);
