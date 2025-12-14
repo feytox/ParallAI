@@ -22,7 +22,7 @@ public class ConfigCommand(IRepository<User, long> users) : UserCommand(users)
         var buttons = new[]
         {
             CommandCallback.Create<ModelsCommand>("Модели"),
-            CommandCallback.Create<ModelsCommand>("Пресеты")
+            CommandCallback.Create<PresetsCommand>("Пресеты")
         };
 
         await bot.SendMessage(chatId,
