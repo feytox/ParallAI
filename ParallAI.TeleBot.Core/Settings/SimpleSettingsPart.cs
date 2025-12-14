@@ -19,7 +19,8 @@ public class SimpleSettingsPart<TValue, TState>(
     where TState : SettingsState
 {
     protected override string InputMessage => inputMessage;
-    protected override IEnumerable<InlineKeyboardButton>? InputButtons => null;
+    
+    protected override IEnumerable<InlineKeyboardButton>? GetInputButtons(User user) => null;
     
     public async Task<bool> HandleMessage(TState state, Message message, ITelegramBotClient bot)
     {

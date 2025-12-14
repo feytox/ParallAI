@@ -10,6 +10,7 @@ namespace ParallAI.TeleBot.Settings;
 public class RequestSettingsHandler() : StandardSettingsHandler<RequestSettingsState>(CallbackTag, CreateParts)
 {
     public const string CallbackTag = "request-settings";
+    public const string CancelPartTag = "cancelPart_request";
 
     protected override string GetPartsMessage(RequestSettingsState state)
     {
@@ -31,9 +32,9 @@ public class RequestSettingsHandler() : StandardSettingsHandler<RequestSettingsS
     private static void CreateParts(SettingsPartsBuilder<RequestSettingsState> builder)
     {
         builder
-            .AddSelect(CallbackTag, "Пресет", "Выберите пресет:", user => user.UserPresets, preset => preset.Name,
+            .AddSelect(CallbackTag, CancelPartTag,"Пресет", "Выберите пресет:", user => user.UserPresets, preset => preset.Name,
                 state => state.Preset)
-            .AddSelect(CallbackTag, "Модель", "Выберите модель:", user => user.UserModels, model => model.DisplayName,
+            .AddSelect(CallbackTag, CancelPartTag,"Модель", "Выберите модель:", user => user.UserModels, model => model.DisplayName,
                 state => state.Model);
     }
 }

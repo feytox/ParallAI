@@ -21,10 +21,9 @@ public class EnumSettingsPart<TEnum, TState>(
     private readonly string[] enumNames = Enum.GetValues<TEnum>().Where(selector).Select(Enum.GetName).ToArray()!;
 
     protected override string InputMessage => inputMessage;
-
-    protected override IEnumerable<InlineKeyboardButton>? InputButtons => enumNames
+    protected override IEnumerable<InlineKeyboardButton>? GetInputButtons(User user) => enumNames
         .Select(name => InlineKeyboardButton.WithCallbackData(name, $"{tag}:{name}"));
-
+    
     public Task<bool> HandleCallBack(TState state, CallbackQuery callback, ITelegramBotClient bot, User user)
     {
         var data = callback.Data!.Split(':');

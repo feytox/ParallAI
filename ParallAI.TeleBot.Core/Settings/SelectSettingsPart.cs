@@ -9,26 +9,21 @@ namespace ParallAI.TeleBot.Core.Settings;
 
 public class SelectSettingsPart<TState, TValue>(
     string tag,
+    string cancelTag,
     string name,
     string inputMessage,
     Func<User, IReadOnlyList<TValue>> elementsProvider,
     Func<TValue, string> nameSelector,
     Func<TState, TValue?> getter,
     Action<TState, TValue> setter)
-    : SettingsPart<TState>(name), ICallbackHandlerPart<TState>, IValidatablePart<TState>
+    : StandardSettingsPart<TState>(name, cancelTag), ICallbackHandlerPart<TState>, IValidatablePart<TState>
     where TState : SettingsState
 {
-    public override async Task<UserState?> ActivatePart(TState state, CallbackQuery query, 
-        ITelegramBotClient bot, User user)
-    {
-        var buttons = elementsProvider(user)
-            .Select(nameSelector)
-            .Select((name, i) => InlineKeyboardButton.WithCallbackData(name, $"{tag}:{i}"))
-            .Chunk(2);
-        
-        await bot.EditCallbackMessage(query, inputMessage, replyMarkup: new InlineKeyboardMarkup(buttons));
-        return null;
-    }
+    protected override string InputMessage => inputMessage;
+
+    protected override IEnumerable<InlineKeyboardButton>? GetInputButtons(User user) => elementsProvider(user)
+        .Select(nameSelector)
+        .Select((name, i) => InlineKeyboardButton.WithCallbackData(name, $"{tag}:{i}"));
 
     public Task<bool> HandleCallBack(TState state, CallbackQuery callback, ITelegramBotClient bot, User user)
     {

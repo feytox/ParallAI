@@ -11,10 +11,12 @@ public abstract class StandardSettingsPart<TState>(string name, string cancelTag
     where TState : SettingsState
 {
     protected abstract string InputMessage { get; }
-    protected abstract IEnumerable<InlineKeyboardButton>? InputButtons { get; }
+    
+    protected abstract IEnumerable<InlineKeyboardButton>? GetInputButtons(User user);
+    
     public override async Task<UserState?> ActivatePart(TState state, CallbackQuery query, ITelegramBotClient bot, User user)
     {
-        var buttons = (InputButtons ?? Enumerable.Empty<InlineKeyboardButton>())
+        var buttons = (GetInputButtons(user) ?? Enumerable.Empty<InlineKeyboardButton>())
             .Chunk(2)
             .Append([InlineKeyboardButton.WithCallbackData("Отмена", $"{cancelTag}")]);
         await bot.EditCallbackMessage(query, InputMessage, replyMarkup: new InlineKeyboardMarkup(buttons));

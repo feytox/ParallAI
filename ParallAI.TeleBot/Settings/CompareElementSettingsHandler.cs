@@ -10,6 +10,7 @@ public class CompareElementSettingsHandler()
     : StandardSettingsHandler<CompareElementSettingsState>(CallbackTag, CreateParts)
 {
     public const string CallbackTag = "compare-element";
+    public const string CancelPartTag = "cancelPart_compareElement";
 
     protected override string GetPartsMessage(CompareElementSettingsState state)
     {
@@ -26,9 +27,9 @@ public class CompareElementSettingsHandler()
     private static void CreateParts(SettingsPartsBuilder<CompareElementSettingsState> builder)
     {
         builder
-            .AddSelect(CallbackTag, "Пресет", "Выберите пресет:", user => user.UserPresets, preset => preset.Name,
-                state => state.Preset)
-            .AddSelect(CallbackTag, "Модель", "Выберите модель:", user => user.UserModels, model => model.DisplayName,
-                state => state.Model);
+            .AddSelect(CallbackTag, CancelPartTag,"Пресет", "Выберите пресет:", 
+                user => user.UserPresets, preset => preset.Name, state => state.Preset)
+            .AddSelect(CallbackTag, CancelPartTag,"Модель", "Выберите модель:", 
+                user => user.UserModels, model => model.DisplayName, state => state.Model);
     }
 }

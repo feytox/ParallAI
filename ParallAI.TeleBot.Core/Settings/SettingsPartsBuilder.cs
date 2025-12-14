@@ -29,14 +29,14 @@ public class SettingsPartsBuilder<TState> where TState : SettingsState
         return this;
     }
 
-    public SettingsPartsBuilder<TState> AddSelect<TValue>(string tag, string name, string inputMessage,
+    public SettingsPartsBuilder<TState> AddSelect<TValue>(string tag, string cancelTag, string name, string inputMessage,
         Func<User, IReadOnlyList<TValue>> elementsProvider, Func<TValue, string> nameSelector,
         Expression<Func<TState, TValue?>> propertySelector)
     {
         var getter = propertySelector.Compile();
         var setter = CreateSetter(propertySelector);
         
-        var part = new SelectSettingsPart<TState, TValue>(tag, name, inputMessage, 
+        var part = new SelectSettingsPart<TState, TValue>(tag, cancelTag, name, inputMessage, 
             elementsProvider, nameSelector, getter, setter);
         parts.Add(part);
         return this;

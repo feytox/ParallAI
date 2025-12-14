@@ -10,6 +10,7 @@ public class OrchestratorSettingsHandler()
     : StandardSettingsHandler<OrchestratorSettingsState>(CallbackTag, CreateParts)
 {
     public const string CallbackTag = "orchestrator-settings";
+    public const string CancelPartTag = "cancelPart_orchestrator";
     private const int Limit = 3;
     
     protected override string GetPartsMessage(OrchestratorSettingsState state) => "Настройки оркестратора:";
@@ -29,9 +30,9 @@ public class OrchestratorSettingsHandler()
     private static void CreateParts(SettingsPartsBuilder<OrchestratorSettingsState> builder)
     {
         builder
-            .AddSelect(CallbackTag, "Пресет", "Выберите пресет:", user => user.UserPresets, preset => preset.Name,
+            .AddSelect(CallbackTag, CancelPartTag,"Пресет","Выберите пресет:", user => user.UserPresets, preset => preset.Name,
                 state => state.Preset)
-            .AddSelect(CallbackTag, "Модель", "Выберите модель:", user => user.UserModels, model => model.DisplayName,
+            .AddSelect(CallbackTag, CancelPartTag,"Модель", "Выберите модель:", user => user.UserModels, model => model.DisplayName,
                 state => state.Model);
     }
 }
