@@ -54,6 +54,6 @@ public class ModelSettingsHandler() : StandardSettingsHandler<ModelSettingsState
             .AddSimple("ID модели", CancelPartTag,"Введите ID модели", "",
                 text => text,
                 state => state.ModelId)
-            .Add(new ProviderSettingsPart("Провайдер"));
+            .Add(new ProviderSettingsPart("Провайдер", CancelPartTag));
     }
 }
