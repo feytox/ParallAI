@@ -11,6 +11,7 @@ namespace ParallAI.TeleBot.Settings;
 public class ModelSettingsHandler() : StandardSettingsHandler<ModelSettingsState>(CallbackTag, CreateParts)
 {
     public const string CallbackTag = "model_settings";
+    public const string CancelPartTag = "cancelPart_model";
 
     protected override async Task<bool> SaveSettingsToUser(ModelSettingsState state, CallbackQuery query,
         ITelegramBotClient bot, User user)
@@ -47,10 +48,10 @@ public class ModelSettingsHandler() : StandardSettingsHandler<ModelSettingsState
     private static void CreateParts(SettingsPartsBuilder<ModelSettingsState> builder)
     {
         builder
-            .AddSimple("Название", "Введите название модели", "",
+            .AddSimple("Название", CancelPartTag,"Введите название модели", "",
                 text => text,
                 state => state.DisplayName)
-            .AddSimple("ID модели", "Введите ID модели", "",
+            .AddSimple("ID модели", CancelPartTag,"Введите ID модели", "",
                 text => text,
                 state => state.ModelId)
             .Add(new ProviderSettingsPart("Провайдер"));

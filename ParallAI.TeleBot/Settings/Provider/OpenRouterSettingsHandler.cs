@@ -10,10 +10,11 @@ public class OpenRouterSettingsHandler()
     : StandardSettingsHandler<OpenRouterProviderSettingsState>(CallbackTag, CreateParts)
 {
     public const string CallbackTag = "openrouter_provider_settings";
+    public const string CancelPartTag = "cancelPart_provider_openRouter";
 
     private static void CreateParts(SettingsPartsBuilder<OpenRouterProviderSettingsState> builder)
     {
-        builder.AddSimple("API ключ", "Введите API ключ провайдера", "",
+        builder.AddSimple("API ключ", CancelPartTag,"Введите API ключ провайдера", "",
             text => text, state => state.Token);
     }
 

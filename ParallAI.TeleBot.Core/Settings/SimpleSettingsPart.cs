@@ -2,26 +2,24 @@
 using ParallAI.TeleBot.Core.Util;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.ReplyMarkups;
 using User = ParallAI.Core.Entities.User;
 
 namespace ParallAI.TeleBot.Core.Settings;
 
 public class SimpleSettingsPart<TValue, TState>(
     string name,
+    string cancelTag,
     string inputMessage,
     string failMessage,
     Func<string, TValue?> parser,
     Func<TState, TValue?> getter,
     Action<TState, TValue> setter
-    ) : SettingsPart<TState>(name), IMessageHandlerPart<TState>, IValidatablePart<TState>
+    ) : StandardSettingsPart<TState>(name, cancelTag), IMessageHandlerPart<TState>, IValidatablePart<TState>
     where TState : SettingsState
 {
-    public override async Task<UserState?> ActivatePart(TState state, CallbackQuery query, ITelegramBotClient bot,
-        User user)
-    {
-        await bot.EditCallbackMessage(query, inputMessage);
-        return null;
-    }
+    protected override string InputMessage => inputMessage;
+    protected override IEnumerable<InlineKeyboardButton>? InputButtons => null;
     
     public async Task<bool> HandleMessage(TState state, Message message, ITelegramBotClient bot)
     {

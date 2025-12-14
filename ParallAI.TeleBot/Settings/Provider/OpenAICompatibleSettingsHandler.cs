@@ -10,12 +10,13 @@ public class OpenAICompatibleSettingsHandler()
     : StandardSettingsHandler<OpenAICompatibleSettingsState>(CallbackTag, CreateParts)
 {
     public const string CallbackTag = "openai_provider_settings";
+    public const string CancelPartTag = "cancelPart_provider_openai";
 
     private static void CreateParts(SettingsPartsBuilder<OpenAICompatibleSettingsState> builder)
     {
-        builder.AddSimple("API ключ", "Введите API ключ провайдера", "",
+        builder.AddSimple("API ключ", CancelPartTag,"Введите API ключ провайдера", "",
             text => text, state => state.Token);
-        builder.AddSimple("Endpoint Url", "Введите Endpoint URL", "Это не похоже на URL. Попробуйте снова", 
+        builder.AddSimple("Endpoint Url", CancelPartTag,"Введите Endpoint URL", "Это не похоже на URL. Попробуйте снова", 
             text => Uri.TryCreate(text, UriKind.Absolute, out var uri) ? uri : null, 
             state => state.Endpoint);
     }

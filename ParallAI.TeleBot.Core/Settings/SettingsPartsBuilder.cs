@@ -9,14 +9,14 @@ public class SettingsPartsBuilder<TState> where TState : SettingsState
 {
     private readonly List<SettingsPart<TState>> parts = [];
 
-    public SettingsPartsBuilder<TState> AddSimple<TValue>(string name, string inputMessage, string failMessage,
+    public SettingsPartsBuilder<TState> AddSimple<TValue>(string name, string cancelTag, string inputMessage, string failMessage,
         Func<string, TValue?> parser, Expression<Func<TState, TValue?>> propertySelector)
     {
         var getter = propertySelector.Compile();
         var setter = CreateSetter(propertySelector);
         
         var part = new SimpleSettingsPart<TValue, TState>(
-            name, inputMessage, failMessage, parser, getter, setter);
+            name, cancelTag, inputMessage, failMessage, parser, getter, setter);
         parts.Add(part);
         return this;
     }

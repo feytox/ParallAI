@@ -12,6 +12,7 @@ namespace ParallAI.TeleBot.Settings;
 public class PresetSettingsHandler() : StandardSettingsHandler<PresetSettingsState>(CallbackTag, CreateParts)
 {
     public const string CallbackTag = "preset_settings";
+    public const string CancelPartTag = "cancelPart_preset";
 
     protected override string GetPartsMessage(PresetSettingsState state)
     {
@@ -48,13 +49,13 @@ public class PresetSettingsHandler() : StandardSettingsHandler<PresetSettingsSta
     private static void CreateParts(SettingsPartsBuilder<PresetSettingsState> builder)
     {
         builder
-            .AddSimple("Название", "Введите название пресета", "",
+            .AddSimple("Название", CancelPartTag,"Введите название пресета", "",
                 text => text,
                 state => state.Name)
-            .AddSimple("Системный промпт", "Введите системный промпт", "",
+            .AddSimple("Системный промпт", CancelPartTag,"Введите системный промпт", "",
                 text => text,
                 state => state.SystemPrompt)
-            .AddSimple("Температура", "Введите температуру (число от 0 до 2)",
+            .AddSimple("Температура", CancelPartTag,"Введите температуру (число от 0 до 2)",
                 "Ошибка: Ожидается числом от 0 до 2. Попробуйте ещё раз",
                 ParseDecimal, 
                 state => state.Temperature)

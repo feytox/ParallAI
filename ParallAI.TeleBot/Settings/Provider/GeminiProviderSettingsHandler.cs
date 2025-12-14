@@ -10,10 +10,12 @@ public class GeminiProviderSettingsHandler()
     : StandardSettingsHandler<GeminiProviderSettingsState>(CallbackTag, CreateParts)
 {
     public const string CallbackTag = "gemini_provider_settings";
+    public const string CancelPartTag = "cancelPart_provider_gemini";
+    
 
     private static void CreateParts(SettingsPartsBuilder<GeminiProviderSettingsState> builder)
     {
-        builder.AddSimple("API ключ", "Введите API ключ провайдера", "",
+        builder.AddSimple("API ключ", CancelPartTag,"Введите API ключ провайдера", "",
             text => text, state => state.Token);
     }
 
