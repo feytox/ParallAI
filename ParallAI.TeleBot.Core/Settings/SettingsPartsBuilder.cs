@@ -21,10 +21,10 @@ public class SettingsPartsBuilder<TState> where TState : SettingsState
         return this;
     }
     
-    public SettingsPartsBuilder<TState> AddEnum<TEnum>(string tag, string name, string inputMessage,
+    public SettingsPartsBuilder<TState> AddEnum<TEnum>(string tag, string cancelTag, string name, string inputMessage,
         Func<TEnum, bool> selector, Action<TState, TEnum> setter) where TEnum : struct, Enum
     {
-        var part = new EnumSettingsPart<TEnum, TState>(tag, name, inputMessage, selector, setter);
+        var part = new EnumSettingsPart<TEnum, TState>(tag, cancelTag, name, inputMessage, selector, setter);
         parts.Add(part);
         return this;
     }

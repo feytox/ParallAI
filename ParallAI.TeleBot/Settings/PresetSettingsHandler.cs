@@ -59,7 +59,7 @@ public class PresetSettingsHandler() : StandardSettingsHandler<PresetSettingsSta
                 "Ошибка: Ожидается числом от 0 до 2. Попробуйте ещё раз",
                 ParseDecimal, 
                 state => state.Temperature)
-            .AddEnum<ThinkingBudget>(CallbackTag, "Размышления",
+            .AddEnum<ThinkingBudget>(CallbackTag, CancelPartTag,"Размышления",
                 "Выберите бюджет размышлений",
                 value => value != ThinkingBudget.Unknown,
                 (state, budget) => state.ThinkingBudget = budget);

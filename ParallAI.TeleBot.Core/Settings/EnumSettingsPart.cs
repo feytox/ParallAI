@@ -9,26 +9,21 @@ namespace ParallAI.TeleBot.Core.Settings;
 
 public class EnumSettingsPart<TEnum, TState>(
     string tag,
+    string cancelTag,
     string name,
     string inputMessage,
     Func<TEnum, bool> selector,
     Action<TState, TEnum> setter) 
-    : SettingsPart<TState>(name), ICallbackHandlerPart<TState>, IValidatablePart<TState>
+    : StandardSettingsPart<TState>(name, cancelTag), ICallbackHandlerPart<TState>, IValidatablePart<TState>
     where TState : SettingsState 
     where TEnum : struct, Enum
 {
     private readonly string[] enumNames = Enum.GetValues<TEnum>().Where(selector).Select(Enum.GetName).ToArray()!;
 
-    public override async Task<UserState?> ActivatePart(TState state, CallbackQuery query, 
-        ITelegramBotClient bot, User user)
-    {
-        var buttons = enumNames
-            .Select(name => InlineKeyboardButton.WithCallbackData(name, $"{tag}:{name}"))
-            .Chunk(2);
+    protected override string InputMessage => inputMessage;
 
-        await bot.EditCallbackMessage(query, inputMessage, replyMarkup: new InlineKeyboardMarkup(buttons));
-        return null;
-    }
+    protected override IEnumerable<InlineKeyboardButton>? InputButtons => enumNames
+        .Select(name => InlineKeyboardButton.WithCallbackData(name, $"{tag}:{name}"));
 
     public Task<bool> HandleCallBack(TState state, CallbackQuery callback, ITelegramBotClient bot, User user)
     {
