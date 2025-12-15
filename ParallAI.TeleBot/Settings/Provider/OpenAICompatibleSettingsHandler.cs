@@ -1,5 +1,6 @@
 using ParallAI.Core.States.Providers;
 using ParallAI.TeleBot.Core.Settings;
+using ParallAI.TeleBot.Util;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using User = ParallAI.Core.Entities.User;
@@ -16,7 +17,7 @@ public class OpenAICompatibleSettingsHandler()
         builder.AddSimple("API ключ", "Введите API ключ провайдера", "",
             text => text, state => state.Token);
         builder.AddSimple("Endpoint Url", "Введите Endpoint URL", "Это не похоже на URL. Попробуйте снова", 
-            text => Uri.TryCreate(text, UriKind.Absolute, out var uri) ? uri : null, 
+            text => UriHelper.TryCreateHttp(text, out var uri) ? uri : null, 
             state => state.Endpoint);
     }
 
