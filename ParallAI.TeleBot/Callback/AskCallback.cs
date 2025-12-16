@@ -21,15 +21,16 @@ public class AskCallback(IRepository<User, long> users) : UserCallbackQuery<AskA
     
     protected override async Task Handle(CallbackQuery query, CallbackData<AskArgs> data, ITelegramBotClient bot, User user)
     {
-        switch (data.Args.RequestMode)
+        var requestMode = data.Args.RequestMode;
+        switch (requestMode)
         {
-            case "single":
-                await ChooseRequestConfig(query, bot, user, RequestMode.Single);
+            case RequestMode.Single:
+                await ChooseRequestConfig(query, bot, user, requestMode);
                 break;
-            case "continuous":
-                await ChooseRequestConfig(query, bot, user, RequestMode.Continuous);
+            case RequestMode.Continuous:
+                await ChooseRequestConfig(query, bot, user, requestMode);
                 break;
-            case "settings":
+            case RequestMode.Settings:
                 CreateRequestConfig(user);
                 break;
         }

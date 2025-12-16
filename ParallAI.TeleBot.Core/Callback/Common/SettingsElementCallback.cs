@@ -67,9 +67,9 @@ public abstract class SettingsElementCallback(IRepository<User, long> users)
         var index = data.Args.Index;
         return data.Args.Action switch
         {
-            "choose" => HandleChoose(query, index, bot, user),
-            "edit" => HandleEdit(query, index, bot, user),
-            "remove" => HandleRemove(query, index, bot, user),
+            SettingsElementAction.Choose => HandleChoose(query, index, bot, user),
+            SettingsElementAction.Edit => HandleEdit(query, index, bot, user),
+            SettingsElementAction.Remove => HandleRemove(query, index, bot, user),
             _ => throw new ArgumentOutOfRangeException($"Invalid callback: {query.Data}")
         };
     }

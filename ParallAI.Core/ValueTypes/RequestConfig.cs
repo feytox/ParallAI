@@ -5,7 +5,8 @@ namespace ParallAI.Core.ValueTypes;
 public enum RequestMode
 {
     Single,
-    Continuous
+    Continuous,
+    Settings
 }
 
 public record RequestConfig(AiModel Model, Preset? Preset, RequestMode RequestMode);

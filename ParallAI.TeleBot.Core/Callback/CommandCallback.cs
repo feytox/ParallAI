@@ -18,8 +18,8 @@ public class CommandCallback(CommandHandler commandHandler) : TypedCallbackQuery
     {
         await bot.DeleteCallbackMessage(query);
 
-        var command = data.Args.CommandName;
-        await commandHandler.HandleCommand(command, query.GetChatId(), query.GetChatId().Identifier!.Value, bot);
+        var commandName = data.Args.CommandName;
+        await commandHandler.HandleCommand(commandName, query.GetChatId(), query.GetChatId().Identifier!.Value, bot);
     }
 
     public static InlineKeyboardButton Create<T>(string text) where T : ICommand
