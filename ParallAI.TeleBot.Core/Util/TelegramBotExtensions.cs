@@ -26,11 +26,26 @@ public static class TelegramBotExtensions
     {
         await bot.DeleteMessages(chatId, [messageId]);
     }
-
-    public static Task<Message> SendMarkdown(this ITelegramBotClient bot, ChatId chatId, string message)
+    
+    public static async Task<List<Message>> SendMarkdown(this ITelegramBotClient bot, ChatId chatId, string message)
     {
-        var text = MarkdownV2Converter.Convert(message);
-        // TODO: использовать ParseMode.MarkdownV2 после реализации конвертера (issue #58)
-        return bot.SendMessage(chatId, text, parseMode: ParseMode.None);
+        var converter = new MarkdownV2Converter();
+
+        var sentElements = converter.Convert(message);
+        
+        var sentMessages = new List<Message>();
+        
+        foreach (var element in sentElements)
+        {
+            var msg = await bot.SendMessage(
+                chatId: chatId, 
+                text: element.Text, 
+                parseMode: ParseMode.MarkdownV2,
+                linkPreviewOptions: new LinkPreviewOptions { IsDisabled = true }
+            );
+            sentMessages.Add(msg);
+        }
+
+        return sentMessages;
     }
 }
