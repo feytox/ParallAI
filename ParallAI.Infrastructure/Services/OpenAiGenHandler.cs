@@ -2,7 +2,6 @@
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
-using Microsoft.Extensions.Logging;
 using ParallAI.Core;
 using ParallAI.Core.Entities;
 using ParallAI.Core.Exceptions;
@@ -19,9 +18,8 @@ public class OpenAiGenHandler(
     OpenAICompatibleProvider provider,
     AiModel model,
     HttpClient client,
-    IFileService fileService,
-    ILogger<OpenAiGenHandler>? logger = null)
-    : HttpGenHandler<OpenAICompatibleProvider, OpenAiRequest, OpenAiMessage, OpenAiResponse>(provider, model, client, logger)
+    IFileService fileService)
+    : HttpGenHandler<OpenAICompatibleProvider, OpenAiRequest, OpenAiMessage, OpenAiResponse>(provider, model, client)
 {
     protected override Uri GetEndpointUrl()
     {
@@ -57,7 +55,7 @@ public class OpenAiGenHandler(
             throw new UserFriendlyException("Failed request to OpenAiCompatible provider with Code: 404 Not Found",
                 $"Произошла ошибка при отправке запроса к модели '{Model.DisplayName}' " +
                 $"провайдера OpenAiCompatible c текстом 'Not Found'.\nВведите корректный Endpoint Url в параметрах модели");
-        
+
         var errorResponse = await response.Content.ReadFromJsonAsync<OpenAiErrorResponse>(JsonSerializerOptions.Web);
         var message = $"Failed request to OpenAiCompatible provider with Code: {errorResponse!.Error.Code}, " +
                       $"Message: {errorResponse.Error.Message}, Type: {errorResponse.Error.Type}, " +

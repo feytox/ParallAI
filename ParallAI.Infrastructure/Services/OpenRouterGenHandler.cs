@@ -1,7 +1,6 @@
 ﻿using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
-using Microsoft.Extensions.Logging;
 using ParallAI.Core;
 using ParallAI.Core.Entities;
 using ParallAI.Core.Exceptions;
@@ -18,14 +17,13 @@ public class OpenRouterGenHandler(
     OpenRouterProvider provider,
     AiModel model,
     HttpClient client,
-    IFileService fileService,
-    ILogger<OpenRouterGenHandler>? logger = null)
-    : HttpGenHandler<OpenRouterProvider, OpenRouterRequest, OpenAiMessage, OpenAiResponse>(provider, model, client, logger)
+    IFileService fileService)
+    : HttpGenHandler<OpenRouterProvider, OpenRouterRequest, OpenAiMessage, OpenAiResponse>(provider, model, client)
 {
     private static readonly Uri BaseUrl = new("https://openrouter.ai/api/v1/chat/completions");
 
     protected override Uri GetEndpointUrl() => BaseUrl;
-    
+
     protected override Task<OpenAiMessage> CreateTextMessage(TextMessage message)
     {
         var content = message.ToOpenAiMessage();

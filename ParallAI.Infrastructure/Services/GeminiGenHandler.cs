@@ -1,7 +1,6 @@
 ﻿using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
-using Microsoft.Extensions.Logging;
 using ParallAI.Core;
 using ParallAI.Core.Entities;
 using ParallAI.Core.Exceptions;
@@ -18,9 +17,8 @@ public class GeminiGenHandler(
     GeminiProvider provider,
     AiModel model,
     HttpClient client,
-    IFileService fileService,
-    ILogger<GeminiGenHandler>? logger = null)
-    : HttpGenHandler<GeminiProvider, GeminiRequest, GeminiContent, GeminiResponse>(provider, model, client, logger)
+    IFileService fileService)
+    : HttpGenHandler<GeminiProvider, GeminiRequest, GeminiContent, GeminiResponse>(provider, model, client)
 {
     private const string BaseUrl = "https://generativelanguage.googleapis.com/v1beta/models";
     private const string UploadUrl = "https://generativelanguage.googleapis.com/upload/v1beta/files";
@@ -73,7 +71,7 @@ public class GeminiGenHandler(
     {
         var uploadUrl = await StartUploading(file.Info, file.Content.Length);
         using var request = new HttpRequestMessage(HttpMethod.Post, uploadUrl);
-        
+
         request.Headers.Add("X-Goog-Upload-Offset", "0");
         request.Headers.Add("X-Goog-Upload-Command", "upload, finalize");
 
@@ -92,19 +90,19 @@ public class GeminiGenHandler(
     {
         using var request = new HttpRequestMessage(HttpMethod.Post, $"{UploadUrl}?key={Provider.Token}");
         var mimeType = ToSupportedMimeType(fileInfo.MimeType);
-        
+
         request.Headers.Add("X-Goog-Upload-Protocol", "resumable");
         request.Headers.Add("X-Goog-Upload-Command", "start");
         request.Headers.Add("X-Goog-Upload-Header-Content-Length", fileSize.ToString());
         request.Headers.Add("X-Goog-Upload-Header-Content-Type", mimeType);
-        request.Content = JsonContent.Create(new {file = new {display_name = fileInfo.FileId}});
+        request.Content = JsonContent.Create(new { file = new { display_name = fileInfo.FileId } });
 
         var response = await Client.SendAsync(request);
         response.EnsureSuccessStatusCode();
-        
+
         return response.Headers.GetValues("x-goog-upload-url").First();
     }
-    
+
     private static string ToSupportedMimeType(string mimeType)
     {
         if (mimeType.StartsWith("text"))

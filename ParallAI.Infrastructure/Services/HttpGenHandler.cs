@@ -1,7 +1,6 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
-using Microsoft.Extensions.Logging;
 using ParallAI.Core.Entities;
 using ParallAI.Core.ValueTypes;
 using ParallAI.Infrastructure.ValueTypes;
@@ -11,8 +10,7 @@ namespace ParallAI.Infrastructure.Services;
 public abstract class HttpGenHandler<TProvider, TRequest, TMessage, TResponse>(
     TProvider provider,
     AiModel model,
-    HttpClient client,
-    ILogger<HttpGenHandler<TProvider, TRequest, TMessage, TResponse>>? logger) 
+    HttpClient client)
     : IGenerationHandler
     where TProvider : AiProvider
     where TResponse : IGenResponse
@@ -20,19 +18,19 @@ public abstract class HttpGenHandler<TProvider, TRequest, TMessage, TResponse>(
     protected TProvider Provider { get; } = provider;
     protected AiModel Model { get; } = model;
     protected HttpClient Client { get; } = client;
-    
+
     protected abstract Uri GetEndpointUrl();
-    
+
     protected abstract Task<TMessage> CreateTextMessage(TextMessage message);
 
     protected abstract Task<TMessage> CreateFileMessage(FileMessage message);
-    
+
     protected abstract TRequest CreateRequest(IEnumerable<TMessage> messages, PromptSettings promptSettings);
 
     protected abstract void FillHttpRequest(HttpRequestMessage request);
-    
+
     protected abstract Task HandleErrorResponse(HttpResponseMessage response);
-    
+
     public async Task<AiResponse> Generate(AiMessage[] aiMessages, PromptSettings promptSettings)
     {
         var url = GetEndpointUrl();
@@ -51,7 +49,7 @@ public abstract class HttpGenHandler<TProvider, TRequest, TMessage, TResponse>(
         var providerResponse = await response.Content.ReadFromJsonAsync<TResponse>(JsonSerializerOptions.Web);
         return providerResponse!.ToTextResponse();
     }
-    
+
     private async Task<TMessage> CreateMessage(AiMessage aiMessage)
     {
         return aiMessage switch
@@ -61,6 +59,6 @@ public abstract class HttpGenHandler<TProvider, TRequest, TMessage, TResponse>(
             _ => throw new ArgumentOutOfRangeException(nameof(aiMessage), aiMessage, null)
         };
     }
-    
+
     private bool IsClientError(HttpStatusCode statusCode) => (int)statusCode >= 400 && (int)statusCode < 500;
 }
