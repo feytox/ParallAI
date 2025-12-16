@@ -27,7 +27,7 @@ public class RequestStateAction(GenerationService genService, MediaGroupCollecto
         var settings = preset is not null ? preset.PromptSettings : PromptSettings.Default;
 
         var response = await genService.Generate(model, [prompt], settings);
-        await bot.SendMessage(message.Chat, response.Text);
+        await bot.SendMarkdown(message.Chat, response.Text);
         if (state.Config.RequestMode == RequestMode.Single)
             user.StateMachine.TryPop();
         return true;

@@ -2,7 +2,6 @@ using ParallAI.Core.Repositories;
 using ParallAI.TeleBot.Callback;
 using ParallAI.TeleBot.Commands.UI;
 using ParallAI.TeleBot.Core.Commands.Common;
-using ParallAI.TeleBot.Core.Util;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -16,16 +15,11 @@ public class ModelsCommand(IRepository<User, long> users) : UserCommand(users)
 {
     protected override async Task Execute(ChatId chatId, ITelegramBotClient bot, User user)
     {
-        await bot.SendMarkdown(chatId, @"Идём **справа налево** и ищем первую цифру, которая **меньше** следующей справа.
+        var buttons = user.UserModels
+            .Select((model, i) => ModelCallback.Create(model.DisplayName, i.ToString()))
+            .Chunk(2)
+            .Append([ModelCallback.Create("Создать", "-1")]);
 
-```
-1 4 3 2
-      ↑
-     3>2 — убывает
-  ↑
-  4>3 — убывает
-↑
-1<4 — нашли место i=0
-```");
+        await bot.SendMessage(chatId, "Ваши модели:", replyMarkup: new InlineKeyboardMarkup(buttons));
     }
 }

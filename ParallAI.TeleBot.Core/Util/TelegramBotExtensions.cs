@@ -27,25 +27,17 @@ public static class TelegramBotExtensions
         await bot.DeleteMessages(chatId, [messageId]);
     }
     
-    public static async Task<List<Message>> SendMarkdown(this ITelegramBotClient bot, ChatId chatId, string message)
+    public static async Task SendMarkdown(this ITelegramBotClient bot, ChatId chatId, string message)
     {
         var converter = new MarkdownV2Converter();
 
         var sentElements = converter.Convert(message);
-        
-        var sentMessages = new List<Message>();
-        
         foreach (var element in sentElements)
-        {
-            var msg = await bot.SendMessage(
+            await bot.SendMessage(
                 chatId: chatId, 
                 text: element.Text, 
                 parseMode: ParseMode.MarkdownV2,
                 linkPreviewOptions: new LinkPreviewOptions { IsDisabled = true }
             );
-            sentMessages.Add(msg);
-        }
-
-        return sentMessages;
     }
 }

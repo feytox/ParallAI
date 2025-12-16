@@ -2,7 +2,7 @@ using System.Text;
 
 namespace ParallAI.MarkdownV2.LatexEscape;
 
-public static partial class LatexHelper
+public static class LatexHelper
 {
     public static string ConvertToUnicode(string latex)
     {

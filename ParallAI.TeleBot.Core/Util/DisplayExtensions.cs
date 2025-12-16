@@ -5,7 +5,7 @@ using ParallAI.Core.States;
 using ParallAI.Core.States.Providers;
 using ParallAI.Core.ValueTypes;
 
-namespace ParallAI.TeleBot.Core.Settings;
+namespace ParallAI.TeleBot.Core.Util;
 
 public static class DisplayExtensions
 {
