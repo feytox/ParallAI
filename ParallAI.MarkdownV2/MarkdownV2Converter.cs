@@ -4,8 +4,6 @@ using ParallAI.MarkdownV2.LatexEscape;
 
 namespace ParallAI.MarkdownV2;
 
-public record SentElement(string Text);
-
 public class MarkdownV2Converter
 {
     private readonly MarkdownPipeline _pipeline;
@@ -22,10 +20,10 @@ public class MarkdownV2Converter
             .Build();
     }
 
-    public List<SentElement> Convert(string markdown)
+    public string Convert(string markdown)
     {
         if (string.IsNullOrWhiteSpace(markdown))
-            return new List<SentElement>();
+            return string.Empty;
 
         // 1. МАСКИРОВКА ССЫЛОК
         var (textWithMaskedUrls, urlMap) = MaskUrls(markdown);
@@ -33,7 +31,7 @@ public class MarkdownV2Converter
         // 2. ОБРАБОТКА LATEX (Только внутри $...$, $$...$$, \[...\])
         // Теперь LatexHelper не трогает обычный текст, а только то, что явно выделено как формула.
         var textWithUnicodeMath = ProcessMathBlocks(textWithMaskedUrls);
-        
+
         // 3. ВОССТАНОВЛЕНИЕ ССЫЛОК
         var cleanMarkdown = RestoreUrls(textWithUnicodeMath, urlMap);
 
@@ -45,13 +43,8 @@ public class MarkdownV2Converter
         var renderer = new TelegramMarkdownRenderer(writer);
         renderer.Render(document);
         writer.Flush();
-        
-        var fullResult = writer.ToString().Trim();
 
-        // 6. Разбиение на части
-        return SplitMessage(fullResult)
-            .Select(text => new SentElement(text))
-            .ToList();
+        return writer.ToString().Trim();
     }
 
     // --- ЛОГИКА ОБРАБОТКИ ФОРМУЛ ---
@@ -61,7 +54,7 @@ public class MarkdownV2Converter
     // 2. \[ ... \] (Блочная)
     // 3. $ ... $   (Инлайн)
     private static readonly Regex MathRegex = new Regex(
-        @"(\$\$[\s\S]+?\$\$)|(\\\[[\s\S]+?\\\])|(\$[^$\n]+?\$)", 
+        @"(\$\$[\s\S]+?\$\$)|(\\\[[\s\S]+?\\\])|(\$[^$\n]+?\$)",
         RegexOptions.Compiled);
 
     private string ProcessMathBlocks(string input)
@@ -70,7 +63,7 @@ public class MarkdownV2Converter
         {
             string rawMatch = match.Value;
             string content;
-            
+
             // Определяем тип и извлекаем контент без оберток
             if (rawMatch.StartsWith("$$"))
             {
@@ -121,50 +114,5 @@ public class MarkdownV2Converter
             input = input.Replace(kvp.Key, kvp.Value);
         }
         return input;
-    }
-
-    // --- SPLIT MESSAGE ---
-    private IEnumerable<string> SplitMessage(string message, int limit = 4096)
-    {
-        if (message.Length <= limit)
-        {
-            yield return message;
-            yield break;
-        }
-
-        var parts = message.Split('\n');
-        var currentChunk = "";
-
-        foreach (var part in parts)
-        {
-            if (currentChunk.Length + part.Length + 1 > limit)
-            {
-                if (!string.IsNullOrEmpty(currentChunk))
-                {
-                    yield return currentChunk;
-                    currentChunk = "";
-                }
-
-                if (part.Length > limit)
-                {
-                    var subParts = Enumerable.Range(0, (int)Math.Ceiling((double)part.Length / limit))
-                        .Select(i => part.Substring(i * limit, Math.Min(limit, part.Length - i * limit)));
-                    foreach (var sub in subParts) yield return sub;
-                }
-                else
-                {
-                    currentChunk = part;
-                }
-            }
-            else
-            {
-                currentChunk += (currentChunk.Length > 0 ? "\n" : "") + part;
-            }
-        }
-
-        if (!string.IsNullOrEmpty(currentChunk))
-        {
-            yield return currentChunk;
-        }
     }
 }

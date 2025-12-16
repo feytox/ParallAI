@@ -1,31 +1,27 @@
 ﻿using NUnit.Framework;
-using ParallAI.MarkdownV2;
 
 namespace ParallAI.MarkdownV2.Tests;
 
 [TestFixture]
 public class MarkdownConverterTests
 {
-    private MarkdownV2Converter converter;
+    private MarkdownV2Converter converter = null!;
 
     [SetUp]
-    public void Setup()
-    {
-        converter = new MarkdownV2Converter();
-    }
-    
-    [TestCase(".", @"\.")] 
-    [TestCase("!", @"\!")] 
-    [TestCase("-", "•")] 
-    [TestCase("+", "•")] 
-    [TestCase("=", @"\=")] 
-    [TestCase("#", "**")] 
-    [TestCase("(", @"\(")] 
-    [TestCase(")", @"\)")] 
-    [TestCase("[", "")] 
-    [TestCase("]", @"\]")] 
-    [TestCase("{", @"\{")] 
-    [TestCase("}", @"\}")] 
+    public void Setup() => converter = new MarkdownV2Converter();
+
+    [TestCase(".", @"\.")]
+    [TestCase("!", @"\!")]
+    [TestCase("-", "•")]
+    [TestCase("+", "•")]
+    [TestCase("=", @"\=")]
+    [TestCase("#", "**")]
+    [TestCase("(", @"\(")]
+    [TestCase(")", @"\)")]
+    [TestCase("[", "")]
+    [TestCase("]", @"\]")]
+    [TestCase("{", @"\{")]
+    [TestCase("}", @"\}")]
     [TestCase("_", @"\_")]
     [TestCase("*", "•")]
     [TestCase("~", @"\~")]
@@ -38,14 +34,11 @@ public class MarkdownConverterTests
     [TestCase("C# is cool", @"C\# is cool")]
     [TestCase("email_address", @"email\_address")]
     [TestCase("(bracket content)", @"\(bracket content\)")]
-    [TestCase(
-        @"_ * [ ] ( ) ~ > # + - = | { } . ! \", 
-        @"\_ \* \[ \] \( \) \~ \> \# \+ \- \=  \{ \} \. \! \\"
-    )]
+    [TestCase(@"_ * [ ] ( ) ~ > # + - = | { } . ! \", @"\_ \* \[ \] \( \) \~ \> \# \+ \- \=  \{ \} \. \! \\")]
     [TestCase("(Parentheses)", @"\(Parentheses\)")]
     [TestCase("[Brackets]", @"\[Brackets\]")]
     [TestCase("{Braces}", @"\{Braces\}")]
-    [TestCase("# Hashtag", "*Hashtag*")] 
+    [TestCase("# Hashtag", "*Hashtag*")]
     [TestCase("> Quote", ">Quote")]
     [TestCase("|Pipe|", "Pipe")]
     [TestCase("Price: $100.00", "Price: $100\\.00")]
@@ -56,9 +49,7 @@ public class MarkdownConverterTests
     [TestCase("```\nMulti-line\nCode\n```", "```\nMulti-line\nCode\n```")]
     public void Convert_AllSpecialCharacters_AreEscaped(string inputMarkdown, string expectedV2)
     {
-        var resultList = converter.Convert(inputMarkdown);
-        var actualText = string.Join("", resultList.Select(x => x.Text));
-        
+        var actualText = converter.Convert(inputMarkdown);
         Assert.That(actualText, Is.EqualTo(expectedV2));
     }
 
@@ -73,13 +64,8 @@ public class MarkdownConverterTests
     [TestCase("...", @"\.\.\.")]
     [TestCase("**Bold _Italic_**", "*Bold _Italic_*")]
     public void Convert_BasicFormatting_ReturnsExpected(string inputMarkdown, string expectedV2)
-    {
-        var resultList = converter.Convert(inputMarkdown);
-        var actualText = string.Join("", resultList.Select(x => x.Text));
-        
-        Assert.That(actualText, Is.EqualTo(expectedV2));
-    }
-    
+        => TestConvert(inputMarkdown, expectedV2);
+
     [TestCase(@"$x^2 + y^3$", @"x² \+ y³")]
     [TestCase(@"$x_1 + x_2$", @"x₁ \+ x₂")]
 
@@ -132,30 +118,21 @@ public class MarkdownConverterTests
 
     [TestCase(@"$$", @"")]
     [TestCase(@"$   $", @"")]
-
     public void Convert_LatexMath_ReturnsUnicodeEscaped(string inputMarkdown, string expectedV2)
-    {
-        var resultList = converter.Convert(inputMarkdown);
-        var actualText = string.Join("", resultList.Select(x => x.Text));
-        
-        Assert.That(actualText, Is.EqualTo(expectedV2));
-    }
-
-    [Test]
+        => TestConvert(inputMarkdown, expectedV2);
+    
     [TestCase("[Google](https://google.com)", "[Google](https://google.com)")]
-    [TestCase(
-        "[Wiki](https://ru.wikipedia.org/wiki/Test_Page)", 
-        "[Wiki](https://ru.wikipedia.org/wiki/Test_Page)"
-    )]
+    [TestCase("[Wiki](https://ru.wikipedia.org/wiki/Test_Page)", "[Wiki](https://ru.wikipedia.org/wiki/Test_Page)")]
     [TestCase("`var x = 1;`", "`var x = 1;`")]
     [TestCase("https://google.com", "[https://google\\.com](https://google.com)")]
     [TestCase("[Google](https://google.com)", "[Google](https://google.com)")]
     [TestCase("user@example.com", "user@example\\.com")]
-    public void Convert_ComplexStructures_ReturnsValidV2(string inputMarkdown, string expectedV2)
+    public void Convert_ComplexStructures_ReturnsValidV2(string inputMarkdown, string expectedV2) 
+        => TestConvert(inputMarkdown, expectedV2);
+
+    private void TestConvert(string inputMarkdown, string expectedV2)
     {
-        var resultList = converter.Convert(inputMarkdown);
-        var actualText = string.Join("", resultList.Select(x => x.Text));
-        
+        var actualText = converter.Convert(inputMarkdown);
         Assert.That(actualText, Is.EqualTo(expectedV2));
     }
 }

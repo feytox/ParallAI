@@ -8,11 +8,11 @@ namespace ParallAI.TeleBot.Core.Util;
 
 public static class TelegramBotExtensions
 {
-    public static async Task<Message> EditCallbackMessage(this ITelegramBotClient bot, CallbackQuery query, 
+    public static async Task<Message> EditCallbackMessage(this ITelegramBotClient bot, CallbackQuery query,
         string text, ParseMode parseMode = ParseMode.None, InlineKeyboardMarkup? replyMarkup = null)
     {
         var message = query.GetMessage();
-        return await bot.EditMessageText(message.Chat, message.Id, text, 
+        return await bot.EditMessageText(message.Chat, message.Id, text,
             parseMode: parseMode, replyMarkup: replyMarkup);
     }
 
@@ -26,16 +26,18 @@ public static class TelegramBotExtensions
     {
         await bot.DeleteMessages(chatId, [messageId]);
     }
-    
+
     public static async Task SendMarkdown(this ITelegramBotClient bot, ChatId chatId, string message)
     {
         var converter = new MarkdownV2Converter();
 
-        var sentElements = converter.Convert(message);
-        foreach (var element in sentElements)
+        var convertedText = converter.Convert(message);
+        var parts = convertedText.SplitMessages();
+
+        foreach (var part in parts)
             await bot.SendMessage(
-                chatId: chatId, 
-                text: element.Text, 
+                chatId: chatId,
+                text: part,
                 parseMode: ParseMode.MarkdownV2,
                 linkPreviewOptions: new LinkPreviewOptions { IsDisabled = true }
             );
