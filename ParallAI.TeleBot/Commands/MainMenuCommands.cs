@@ -2,23 +2,25 @@ using ParallAI.TeleBot.Commands.UI;
 using ParallAI.TeleBot.Core.Commands.Common;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace ParallAI.TeleBot.Commands;
 
-public abstract class GetMainMenuCommand(Lazy<MainMenuCommandsStorage> commandsStorage) : ICommand
+[Command("/start", "выводит главное меню")]
+[Command("/help", "выводит главное меню")]
+public class MainMenuCommand(Lazy<MainMenuCommandsStorage> commandsStorage) : ICommand
 {
     public async Task Execute(ChatId chatId, long userId, ITelegramBotClient bot)
+    {
+        await SendMenu(chatId, bot, commandsStorage.Value.Keyboard);
+    }
+
+    public static async Task SendMenu(ChatId chatId, ITelegramBotClient bot, ReplyKeyboardMarkup keyboardMarkup)
     {
         await bot.SendMessage(
             chatId: chatId,
             text: "\u3164", // TODO: тут мб будет красивое первое сообщение (Дима Комаров обязательно его придумает)
-            replyMarkup: commandsStorage.Value.Keyboard
+            replyMarkup: keyboardMarkup
         );
     }
 }
-
-[Command("/start", "выводит главное меню")]
-public class StartCommand(Lazy<MainMenuCommandsStorage> commandsStorage) : GetMainMenuCommand(commandsStorage);
-
-[Command("/help", "выводит главное меню")]
-public class HelpCommand(Lazy<MainMenuCommandsStorage> commandsStorage) : GetMainMenuCommand(commandsStorage);

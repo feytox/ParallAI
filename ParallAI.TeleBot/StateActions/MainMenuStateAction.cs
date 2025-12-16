@@ -1,4 +1,5 @@
 ﻿using ParallAI.Core.States;
+using ParallAI.TeleBot.Commands;
 using ParallAI.TeleBot.Commands.UI;
 using ParallAI.TeleBot.Core.StateActions;
 using Telegram.Bot;
@@ -24,12 +25,8 @@ public class MainMenuStateAction(MainMenuCommandsStorage commandsStorage) : Stat
     {
         if (!state.Reactivated)
             return false;
-        
-        await bot.SendMessage(
-            chatId: chatId,
-            text: "\u3164", // TODO: тут мб будет красивое первое сообщение (Дима Комаров обязательно его придумает)
-            replyMarkup: commandsStorage.Keyboard
-        );
+
+        await MainMenuCommand.SendMenu(chatId, bot, commandsStorage.Keyboard);
 
         state.Reactivated = false;
         return true;

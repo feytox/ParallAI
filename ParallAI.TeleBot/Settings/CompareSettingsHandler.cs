@@ -25,13 +25,13 @@ public class CompareSettingsHandler() : SettingsHandler<CompareSettingsState>(Ca
     {
         var buttons = state.ConfiguredElements
             .Select(e => $"Модель: {e.Model.DisplayName}    Пресет: {e.Preset.Name}")
-            .Select((elementText, i) => InlineKeyboardButton.WithCallbackData(elementText, $"{CallbackTag}:{-i - 1}"))
+            .Select((elementText, i) => InlineKeyboardButton.WithCallbackData(elementText, $"{Tag}:{-i - 1}"))
             .Concat(CreatePartButtons(state))
             .Chunk(1)
             .ToList();
         
         if (state.ConfiguredElements.Count >= MinElements)
-            buttons.Add([InlineKeyboardButton.WithCallbackData("Начать сравнение", $"{CallbackTag}:s")]);
+            buttons.Add([InlineKeyboardButton.WithCallbackData("Начать сравнение", $"{Tag}:s")]);
 
         buttons.Add([CancelCallback.CreateButton("Выйти без сохранения")]);
 
