@@ -2,6 +2,7 @@ using ParallAI.Core.States;
 using ParallAI.Core.States.Common;
 using ParallAI.Core.States.Providers;
 using ParallAI.TeleBot.Commands;
+using ParallAI.TeleBot.Core.Callback;
 using ParallAI.TeleBot.Core.Settings;
 using ParallAI.TeleBot.Core.Util;
 using Telegram.Bot;
@@ -28,7 +29,8 @@ public class ProviderSettingsPart(string name)
                 InlineKeyboardButton.WithCallbackData("OpenRouter", OpenRouterTag),
                 InlineKeyboardButton.WithCallbackData("OpenAI совместимое", OpenAiTag)
             }
-            .Chunk(2);
+            .Chunk(2)
+            .Append([PartBackCallback.Create()]);
 
         await bot.EditCallbackMessage(query,
             $"Выберите провайдер\n\nГайд на получение API-ключей 👉 {ProviderGuideCommand.GuideHtmlUrl}",
@@ -36,7 +38,7 @@ public class ProviderSettingsPart(string name)
             replyMarkup: new InlineKeyboardMarkup(buttons));
         return null;
     }
-    
+
     public void SaveToState(ModelSettingsState state, ProviderSettingsState prevState)
     {
         state.Provider = prevState switch

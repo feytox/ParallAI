@@ -1,7 +1,9 @@
 ﻿using ParallAI.Core.States.Common;
+using ParallAI.TeleBot.Core.Callback;
 using ParallAI.TeleBot.Core.Util;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.ReplyMarkups;
 using User = ParallAI.Core.Entities.User;
 
 namespace ParallAI.TeleBot.Core.Settings;
@@ -19,15 +21,17 @@ public class SimpleSettingsPart<TValue, TState>(
     public override async Task<UserState?> ActivatePart(TState state, CallbackQuery query, ITelegramBotClient bot,
         User user)
     {
-        await bot.EditCallbackMessage(query, inputMessage);
+        var keyboard = new InlineKeyboardMarkup(PartBackCallback.Create());
+        await bot.EditCallbackMessage(query, inputMessage, replyMarkup: keyboard);
         return null;
     }
-    
+
     public async Task<bool> HandleMessage(TState state, Message message, ITelegramBotClient bot)
     {
         if (!TryParse(message, out var value))
         {
-            await bot.SendMessage(message.Chat, failMessage);
+            var keyboard = new InlineKeyboardMarkup(PartBackCallback.Create());
+            await bot.SendMessage(message.Chat, failMessage, replyMarkup: keyboard);
             return false;
         }
 
@@ -52,9 +56,9 @@ public class SimpleSettingsPart<TValue, TState>(
     public bool Validate(TState state)
     {
         var value = getter(state);
-        if (value is null) 
+        if (value is null)
             return false;
-        
+
         return value is not string s || !string.IsNullOrWhiteSpace(s);
     }
 }

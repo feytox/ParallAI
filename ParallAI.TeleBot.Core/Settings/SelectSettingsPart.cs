@@ -1,4 +1,5 @@
 ﻿using ParallAI.Core.States.Common;
+using ParallAI.TeleBot.Core.Callback;
 using ParallAI.TeleBot.Core.Util;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -18,14 +19,15 @@ public class SelectSettingsPart<TState, TValue>(
     : SettingsPart<TState>(name), ICallbackHandlerPart<TState>, IValidatablePart<TState>
     where TState : SettingsState
 {
-    public override async Task<UserState?> ActivatePart(TState state, CallbackQuery query, 
+    public override async Task<UserState?> ActivatePart(TState state, CallbackQuery query,
         ITelegramBotClient bot, User user)
     {
         var buttons = elementsProvider(user)
             .Select(nameSelector)
             .Select((name, i) => InlineKeyboardButton.WithCallbackData(name, $"{tag}:{i}"))
-            .Chunk(2);
-        
+            .Chunk(2)
+            .Append([PartBackCallback.Create()]);
+
         await bot.EditCallbackMessage(query, inputMessage, replyMarkup: new InlineKeyboardMarkup(buttons));
         return null;
     }

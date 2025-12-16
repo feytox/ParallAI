@@ -1,4 +1,5 @@
 using ParallAI.Core.States.Common;
+using ParallAI.TeleBot.Core.Callback;
 using ParallAI.TeleBot.Core.Util;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -12,19 +13,20 @@ public class EnumSettingsPart<TEnum, TState>(
     string name,
     string inputMessage,
     Func<TEnum, bool> selector,
-    Action<TState, TEnum> setter) 
+    Action<TState, TEnum> setter)
     : SettingsPart<TState>(name), ICallbackHandlerPart<TState>, IValidatablePart<TState>
-    where TState : SettingsState 
+    where TState : SettingsState
     where TEnum : struct, Enum
 {
     private readonly string[] enumNames = Enum.GetValues<TEnum>().Where(selector).Select(Enum.GetName).ToArray()!;
 
-    public override async Task<UserState?> ActivatePart(TState state, CallbackQuery query, 
+    public override async Task<UserState?> ActivatePart(TState state, CallbackQuery query,
         ITelegramBotClient bot, User user)
     {
         var buttons = enumNames
             .Select(name => InlineKeyboardButton.WithCallbackData(name, $"{tag}:{name}"))
-            .Chunk(2);
+            .Chunk(2)
+            .Append([PartBackCallback.Create()]);
 
         await bot.EditCallbackMessage(query, inputMessage, replyMarkup: new InlineKeyboardMarkup(buttons));
         return null;
