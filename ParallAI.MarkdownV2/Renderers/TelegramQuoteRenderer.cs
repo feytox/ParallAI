@@ -10,8 +10,6 @@ public class TelegramQuoteRenderer : MarkdownObjectRenderer<TelegramMarkdownRend
         foreach (var block in obj)
         {
             renderer.Write(">");
-            if (renderer.Options.CiteExpandable)
-                renderer.Write(" ");
             renderer.Render(block);
         }
 

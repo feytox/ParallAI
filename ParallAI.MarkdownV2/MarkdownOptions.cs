@@ -13,6 +13,10 @@ public class MarkdownOptions
     public string HeadLevel3 { get; set; } = "";
 
     public string HeadLevel4 { get; set; } = "";
+    
+    public string HeadLevel5 { get; set; } = "";
+
+    public string HeadLevel6 { get; set; } = "";
 
     /// <summary>
     /// Symbol for completed task (- [x])
@@ -23,16 +27,6 @@ public class MarkdownOptions
     /// Symbol for uncompleted task (- [ ])
     /// </summary>
     public string TaskUncompleted { get; set; } = "⬜";
-
-    /// <summary>
-    /// Icon for images when they are rendered as links
-    /// </summary>
-    public string Image { get; set; } = "🖼";
-
-    /// <summary>
-    /// If true, long quotes will be wrapped in spoiler ||...||
-    /// </summary>
-    public bool CiteExpandable { get; set; } = false;
 
     /// <summary>
     /// Default options

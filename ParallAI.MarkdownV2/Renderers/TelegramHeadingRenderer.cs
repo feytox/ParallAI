@@ -24,6 +24,8 @@ public class TelegramHeadingRenderer : MarkdownObjectRenderer<TelegramMarkdownRe
             1 => options.HeadLevel1,
             2 => options.HeadLevel2,
             3 => options.HeadLevel3,
-            _ => options.HeadLevel4
+            4 => options.HeadLevel4,
+            5 => options.HeadLevel5,
+            _ => options.HeadLevel6
         };
 }

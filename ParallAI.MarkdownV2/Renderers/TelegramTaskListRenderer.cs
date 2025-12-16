@@ -7,7 +7,8 @@ public class TelegramTaskListRenderer : MarkdownObjectRenderer<TelegramMarkdownR
 {
     protected override void Write(TelegramMarkdownRenderer renderer, TaskList obj)
     {
+        renderer.TrimEnd(2);
         var symbol = obj.Checked ? renderer.Options.TaskCompleted : renderer.Options.TaskUncompleted;
-        renderer.Write(symbol + " ");
+        renderer.Write(symbol);
     }
 }

@@ -62,11 +62,11 @@ public class TelegramMarkdownRenderer : TextRendererBase<TelegramMarkdownRendere
         if (string.IsNullOrEmpty(url))
             return "";
 
-        return url.Replace("\\", "\\\\").Replace(")", "\\)");
+        return url.Replace("\\", @"\\").Replace(")", "\\)");
     }
 
     public static string EscapeCodeContent(string content) =>
-        content.Replace("\\", "\\\\").Replace("`", "\\`");
+        content.Replace("\\", @"\\").Replace("`", "\\`");
 
     public void WriteCodeBlock(string code, string language = "")
     {
@@ -80,5 +80,16 @@ public class TelegramMarkdownRenderer : TextRendererBase<TelegramMarkdownRendere
         if (!code.EndsWith("\n"))
             Write("\n");
         Write("```\n\n");
+    }
+    
+    public void TrimEnd(int count)
+    {
+        if (Writer is not StringWriter stringWriter) return;
+        
+        var sb = stringWriter.GetStringBuilder();
+        if (sb.Length >= count)
+        {
+            sb.Length -= count;
+        }
     }
 }

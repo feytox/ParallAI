@@ -3,21 +3,16 @@ using ParallAI.MarkdownV2.Utils;
 
 namespace ParallAI.MarkdownV2;
 
-public class MarkdownV2Converter
+public class MarkdownV2Converter(MarkdownOptions? options = null)
 {
-    private readonly MarkdownPipeline pipeline;
-
-    public MarkdownV2Converter()
-    {
-        pipeline = new MarkdownPipelineBuilder()
-            .UsePipeTables()
-            .UseTaskLists()
-            .UseAutoLinks()
-            .UseEmphasisExtras()
-            .UseMathematics()
-            .UseSoftlineBreakAsHardlineBreak()
-            .Build();
-    }
+    private readonly MarkdownPipeline pipeline = new MarkdownPipelineBuilder()
+        .UsePipeTables()
+        .UseTaskLists()
+        .UseAutoLinks()
+        .UseEmphasisExtras()
+        .UseMathematics()
+        .UseSoftlineBreakAsHardlineBreak()
+        .Build();
 
     public string Convert(string markdown)
     {
@@ -31,7 +26,7 @@ public class MarkdownV2Converter
         var document = Markdown.Parse(cleanMarkdown, pipeline);
 
         using var writer = new StringWriter();
-        var renderer = new TelegramMarkdownRenderer(writer);
+        var renderer = new TelegramMarkdownRenderer(writer, options);
         renderer.Render(document);
         writer.Flush();
 

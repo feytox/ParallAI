@@ -26,12 +26,6 @@ public static partial class UrlProtector
 
     public static string RestoreUrls(string input, Dictionary<string, string> map)
     {
-        var result = input;
-        foreach (var kvp in map)
-        {
-            result = result.Replace(kvp.Key, kvp.Value);
-        }
-
-        return result;
+        return map.Aggregate(input, (current, kvp) => current.Replace(kvp.Key, kvp.Value));
     }
 }

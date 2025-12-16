@@ -27,73 +27,77 @@ public static class LatexHelper
         {
             var c = latex[i];
 
-            if (c == '\\')
+            switch (c)
             {
-                var (command, nextI) = ParseCommandManual(latex, i);
-                var (handledStr, afterCmdIndex) = HandleCommand(command, latex, nextI);
-
-                if (command == "\\frac" && result.Length > 0 && char.IsDigit(result[^1]) &&
-                    handledStr.Length > 0 && char.IsDigit(handledStr[0]))
+                case '\\':
                 {
-                    result.Append(' ');
-                }
+                    var (command, nextI) = ParseCommandManual(latex, i);
+                    var (handledStr, afterCmdIndex) = HandleCommand(command, latex, nextI);
 
-                result.Append(handledStr);
-                i = afterCmdIndex;
-            }
-
-            else if (c == '_' || c == '^')
-            {
-                var isSub = c == '_';
-
-                if (isSub)
-                {
-                    bool isStartOfWord = (i == 0) || char.IsWhiteSpace(latex[i - 1]);
-                    bool isNextEmpty = (i + 1 >= len) || char.IsWhiteSpace(latex[i + 1]);
-                    if (isStartOfWord || isNextEmpty)
+                    if (command == "\\frac" && result.Length > 0 && char.IsDigit(result[^1]) &&
+                        handledStr.Length > 0 && char.IsDigit(handledStr[0]))
                     {
-                        result.Append(c);
-                        i++;
-                        continue;
+                        result.Append(' ');
                     }
-                }
 
-                var nextI = i + 1;
-                string arg;
-
-                if (nextI < len && latex[nextI] == '{')
-                {
-                    var (blockContent, blockEnd) = ParseBlock(latex, nextI);
-                    arg = blockContent;
-                    nextI = blockEnd;
+                    result.Append(handledStr);
+                    i = afterCmdIndex;
+                    break;
                 }
-                else if (nextI < len)
+                case '_':
+                case '^':
                 {
-                    if (latex[nextI] == '\\')
+                    var isSub = c == '_';
+
+                    if (isSub)
                     {
-                        var (cmd, cmdEnd) = ParseCommandManual(latex, nextI);
-                        var (val, _) = HandleCommand(cmd, latex, cmdEnd);
-                        arg = val;
-                        nextI = cmdEnd;
+                        var isStartOfWord = (i == 0) || char.IsWhiteSpace(latex[i - 1]);
+                        var isNextEmpty = (i + 1 >= len) || char.IsWhiteSpace(latex[i + 1]);
+                        if (isStartOfWord || isNextEmpty)
+                        {
+                            result.Append(c);
+                            i++;
+                            continue;
+                        }
+                    }
+
+                    var nextI = i + 1;
+                    string arg;
+
+                    if (nextI < len && latex[nextI] == '{')
+                    {
+                        var (blockContent, blockEnd) = ParseBlock(latex, nextI);
+                        arg = blockContent;
+                        nextI = blockEnd;
+                    }
+                    else if (nextI < len)
+                    {
+                        if (latex[nextI] == '\\')
+                        {
+                            var (cmd, cmdEnd) = ParseCommandManual(latex, nextI);
+                            var (val, _) = HandleCommand(cmd, latex, cmdEnd);
+                            arg = val;
+                            nextI = cmdEnd;
+                        }
+                        else
+                        {
+                            arg = latex[nextI].ToString();
+                            nextI++;
+                        }
                     }
                     else
                     {
-                        arg = latex[nextI].ToString();
-                        nextI++;
+                        arg = "";
                     }
-                }
-                else
-                {
-                    arg = "";
-                }
 
-                result.Append(isSub ? MakeSubscript(arg) : MakeSuperscript(arg));
-                i = nextI;
-            }
-            else
-            {
-                result.Append(c);
-                i++;
+                    result.Append(isSub ? MakeSubscript(arg) : MakeSuperscript(arg));
+                    i = nextI;
+                    break;
+                }
+                default:
+                    result.Append(c);
+                    i++;
+                    break;
             }
         }
 
@@ -102,11 +106,11 @@ public static class LatexHelper
 
     private static (string Command, int NextIndex) ParseCommandManual(string latex, int start)
     {
-        int i = start + 1;
-        int len = latex.Length;
+        var i = start + 1;
+        var len = latex.Length;
         if (i >= len) return ("\\", len);
 
-        char first = latex[i];
+        var first = latex[i];
         if (!char.IsLetter(first))
         {
             return (latex.Substring(start, 2), i + 1);
@@ -126,19 +130,14 @@ public static class LatexHelper
 
         if (start >= latex.Length || latex[start] != '{')
         {
-            if (start < latex.Length)
-            {
-                if (latex[start] == '\\')
-                {
-                    var (cmd, end) = ParseCommandManual(latex, start);
-                    var (res, next) = HandleCommand(cmd, latex, end);
-                    return (res, next);
-                }
+            if (start >= latex.Length) return ("", start);
+            
+            if (latex[start] != '\\') return (latex[start].ToString(), start + 1);
+            
+            var (cmd, end) = ParseCommandManual(latex, start);
+            var (res, next) = HandleCommand(cmd, latex, end);
+            return (res, next);
 
-                return (latex[start].ToString(), start + 1);
-            }
-
-            return ("", start);
         }
 
         var level = 1;
@@ -146,33 +145,35 @@ public static class LatexHelper
 
         while (pos < latex.Length && level > 0)
         {
-            if (latex[pos] == '\\')
+            switch (latex[pos])
             {
-                pos += 2;
-                continue;
+                case '\\':
+                    pos += 2;
+                    continue;
+                case '{':
+                    level++;
+                    break;
+                case '}':
+                    level--;
+                    break;
             }
-
-            if (latex[pos] == '{') level++;
-            else if (latex[pos] == '}') level--;
 
             pos++;
         }
 
-        int contentEnd = pos - 1;
+        var contentEnd = pos - 1;
         if (level > 0)
             contentEnd = pos;
 
-        int contentStart = start + 1;
-        int length = contentEnd - contentStart;
+        var contentStart = start + 1;
+        var length = contentEnd - contentStart;
 
-        if (length > 0)
-        {
-            var rawContent = latex.Substring(contentStart, length);
-            var convertedContent = Parse(rawContent);
-            return (convertedContent, pos);
-        }
+        if (length <= 0) return ("", pos);
+        
+        var rawContent = latex.Substring(contentStart, length);
+        var convertedContent = Parse(rawContent);
+        return (convertedContent, pos);
 
-        return ("", pos);
     }
 
     private static (string Result, int NextIndex) HandleCommand(string command, string latex, int index)
@@ -187,16 +188,18 @@ public static class LatexHelper
                 var (n, idx1) = ParseBlock(latex, index);
                 var (k, idx2) = ParseBlock(latex, idx1);
                 return ($"C({n}, {k})", idx2);
+            
             case "\\frac":
                 var (numer, i1) = ParseBlock(latex, index);
                 var (denom, i2) = ParseBlock(latex, i1);
                 return (MakeFraction(numer, denom), i2);
+            
             case "\\sqrt":
-                int cur = index;
-                string deg = "";
+                var cur = index;
+                var deg = "";
                 if (cur < latex.Length && latex[cur] == '[')
                 {
-                    int close = latex.IndexOf(']', cur);
+                    var close = latex.IndexOf(']', cur);
                     if (close != -1)
                     {
                         deg = latex.Substring(cur + 1, close - cur - 1);
@@ -206,14 +209,16 @@ public static class LatexHelper
 
                 var (p, end) = ParseBlock(latex, cur);
                 return (MakeSqrt(deg, p), end);
+            
             case "\\text":
             case "\\mathrm":
                 return ParseBlock(latex, index);
+            
             case "\\left":
             case "\\right":
                 return ("", index);
             case "\\":
-            case "\\\\":
+            case @"\\":
                 return ("\n", index);
         }
 
@@ -233,7 +238,7 @@ public static class LatexHelper
         {
             string charToNegate;
             int nextI;
-            int tempIdx = index;
+            var tempIdx = index;
             while (tempIdx < latex.Length && char.IsWhiteSpace(latex[tempIdx])) tempIdx++;
             if (tempIdx < latex.Length && latex[tempIdx] == '\\')
             {
@@ -255,7 +260,7 @@ public static class LatexHelper
         var currentIdx = index;
         while (true)
         {
-            int peekIdx = currentIdx;
+            var peekIdx = currentIdx;
             while (peekIdx < latex.Length && char.IsWhiteSpace(latex[peekIdx])) peekIdx++;
             if (peekIdx < latex.Length && latex[peekIdx] == '{')
             {
