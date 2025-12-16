@@ -3,8 +3,8 @@ namespace ParallAI.MarkdownV2;
 public class MarkdownOptions
 {
     /// <summary>
-    /// Иконка или текст перед заголовком 1 уровня.
-    /// В Telegram нет заголовков, поэтому обычно используют жирный текст + иконку.
+    /// Icon or text before heading level 1.
+    /// Telegram doesn't support headings, so bold text with an icon is typically used.
     /// </summary>
     public string HeadLevel1 { get; set; } = "";
 
@@ -15,27 +15,27 @@ public class MarkdownOptions
     public string HeadLevel4 { get; set; } = "";
 
     /// <summary>
-    /// Символ для выполненной задачи (- [x])
+    /// Symbol for completed task (- [x])
     /// </summary>
     public string TaskCompleted { get; set; } = "✅";
 
     /// <summary>
-    /// Символ для невыполненной задачи (- [ ])
+    /// Symbol for uncompleted task (- [ ])
     /// </summary>
     public string TaskUncompleted { get; set; } = "⬜";
 
     /// <summary>
-    /// Иконка для обозначения картинок, если они идут ссылкой
+    /// Icon for images when they are rendered as links
     /// </summary>
     public string Image { get; set; } = "🖼";
 
     /// <summary>
-    /// Если true, длинные цитаты будут оборачиваться в спойлер ||...||
+    /// If true, long quotes will be wrapped in spoiler ||...||
     /// </summary>
     public bool CiteExpandable { get; set; } = false;
 
     /// <summary>
-    /// Стандартные настройки
+    /// Default options
     /// </summary>
-    public static MarkdownOptions Default => new MarkdownOptions();
+    public static MarkdownOptions Default => new();
 }

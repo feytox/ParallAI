@@ -1,0 +1,26 @@
+using Markdig.Renderers;
+using Markdig.Syntax.Inlines;
+
+namespace ParallAI.MarkdownV2.Renderers;
+
+public class TelegramEmphasisRenderer : MarkdownObjectRenderer<TelegramMarkdownRenderer, EmphasisInline>
+{
+    protected override void Write(TelegramMarkdownRenderer renderer, EmphasisInline obj)
+    {
+        var tag = GetEmphasisTag(obj);
+        renderer.Write(tag);
+        renderer.WriteChildren(obj);
+        renderer.Write(tag);
+    }
+
+    private static string GetEmphasisTag(EmphasisInline emphasis)
+    {
+        if (emphasis.DelimiterChar is '*' or '_')
+            return emphasis.DelimiterCount == 2 ? "*" : "_";
+
+        if (emphasis.DelimiterChar == '~')
+            return "~";
+
+        return "";
+    }
+}
