@@ -9,6 +9,7 @@ using ParallAI.Core.ValueTypes;
 using ParallAI.Infrastructure.Config;
 using ParallAI.Infrastructure.Mongo;
 using ParallAI.Infrastructure.Services;
+using ParallAI.Metrics;
 
 namespace ParallAI.Infrastructure;
 
@@ -18,24 +19,27 @@ public static class ServiceCollectionExtensions
     {
         MongoMappings.Setup();
         services.AddSingleton<IConfig>(EnvConfig.Load());
-        
+
         services.AddHttpClient();
-        
+
         services.AddSingleton<IMongoClient>(sp => GetMongoClient(sp.GetRequiredService<IConfig>()));
         services.AddSingleton<IMongoDatabase>(sp =>
             sp.GetRequiredService<IMongoClient>().GetDatabase("ParallAIDB"));
-        
+
         services.AddSingleton<IRepository<User, long>>(sp =>
             new MongoRepository<User, long>(
                 sp.GetRequiredService<IMongoDatabase>(),
                 sp.GetRequiredService<IConfig>().UsersCollection
             ));
-        
+
+        services.AddSingleton<IRequestMetricRepository, RequestMetricRepository>();
+        services.AddSingleton<IMetricService, MetricService>();
+
         services.AddProvider<GeminiGenHandler, GeminiProvider>();
         services.AddProvider<OpenAiGenHandler, OpenAICompatibleProvider>();
         services.AddProvider<OpenRouterGenHandler, OpenRouterProvider>();
     }
-    
+
     private static MongoClient GetMongoClient(IConfig config)
     {
         var settings = MongoClientSettings.FromConnectionString(config.MongoConnectionString);
@@ -51,7 +55,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddTransient<THandler>();
         services.AddTransient<IGenerationHandler>(sp => sp.GetRequiredService<THandler>());
-        
+
         services.AddSingleton<Func<TProvider, AiModel, THandler>>(sp =>
             (provider, model) => ActivatorUtilities.CreateInstance<THandler>(sp, provider, model));
 

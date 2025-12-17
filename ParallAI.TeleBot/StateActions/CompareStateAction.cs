@@ -11,7 +11,7 @@ using User = ParallAI.Core.Entities.User;
 
 namespace ParallAI.TeleBot.StateActions;
 
-public class CompareStateAction(ComparisonService compareService, MediaGroupCollector groupCollector)
+public class CompareStateAction(ComparisonService compareService, MediaGroupCollector groupCollector, IMetricService metricService)
     : StateAction<CompareState>
 {
     protected override async Task<bool> Execute(CompareState state, Message message, ITelegramBotClient bot, User user)
@@ -22,10 +22,13 @@ public class CompareStateAction(ComparisonService compareService, MediaGroupColl
 
         var aiMessage = AiMessageHelper.CreateAiMessage(messages);
         var sentMessage = await bot.SendMessage(message.Chat, "Ваш запрос отправлен к моделям, ожидайте...");
-        
+
+        var requestId = Guid.NewGuid();
         var result = await compareService.Generate(aiMessage, state.Config);
+        metricService.SaveComparison(requestId, user);
+
         await bot.DeleteMessageOptional(sentMessage.Chat, sentMessage.Id);
-        
+
         for (var i = 0; i < result.Responses.Length; i++)
         {
             var response = result.Responses[i];
