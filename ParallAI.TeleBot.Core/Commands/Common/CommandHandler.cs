@@ -50,6 +50,6 @@ public class CommandHandler
     private static string? GetCommandText(Message message)
     {
         var messageText = message.Text ?? message.Caption;
-        return messageText?.Split(' ')[0];
+        return messageText?.Trim(' ').Split(' ')[0];
     }
 }
