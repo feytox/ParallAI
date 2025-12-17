@@ -16,8 +16,8 @@ using RichardSzalay.MockHttp;
 namespace ParallAI.Infrastructure.Tests;
 
 [TestFixture]
-public abstract class HttpGenHandlerTests<THandler, TProvider, TRequest, TMessage, TResponse> 
-    where THandler : HttpGenHandler<TProvider, TRequest, TMessage, TResponse> 
+public abstract class HttpGenHandlerTests<THandler, TProvider, TRequest, TMessage, TResponse>
+    where THandler : HttpGenHandler<TProvider, TRequest, TMessage, TResponse>
     where TProvider : AiProvider
     where TResponse : IGenResponse
 {
@@ -45,39 +45,39 @@ public abstract class HttpGenHandlerTests<THandler, TProvider, TRequest, TMessag
         var provider = CreateProvider();
         var model = new AiModel(Guid.NewGuid(), ModelId, ModelName, provider);
         Handler = CreateHandler(httpClient, model, provider);
-        
+
         DefaultMessage = new TextMessage("prompt");
         DefaultSettings = PromptSettings.Default;
     }
-    
+
     protected abstract THandler CreateHandler(HttpClient client, AiModel model, TProvider provider);
-    
+
     protected abstract TProvider CreateProvider();
-    
+
     public abstract Task Generate_WhenApiCallIsSuccessful_FormsRequestCorrectlyAndReturnsResponse();
-    
+
     [TestCase(HttpStatusCode.Unauthorized)]
     [TestCase(HttpStatusCode.Forbidden)]
     [TestCase(HttpStatusCode.BadRequest)]
     public async Task Generate_WhenApiReturnsClientError_ThrowsUserFriendlyException(HttpStatusCode statusCode)
     {
         MockHttp.When(HttpMethod.Post, ExpectedUrl)
-            .Respond(statusCode,"application/json", DefaultErrorContent);
-        
+            .Respond(statusCode, "application/json", DefaultErrorContent);
+
         await Handler.Awaiting(s => s.Generate([DefaultMessage], DefaultSettings))
-            .Should().ThrowAsync<UserFriendlyException>();
+            .Should().ThrowAsync<GenerationException>();
     }
-    
+
     [TestCase(HttpStatusCode.InternalServerError)]
     public async Task Generate_WhenApiReturnsNotClientError_HttpRequestException(HttpStatusCode statusCode)
     {
         MockHttp.When(HttpMethod.Post, ExpectedUrl)
-            .Respond(statusCode,"application/json", DefaultErrorContent);
-        
+            .Respond(statusCode, "application/json", DefaultErrorContent);
+
         await Handler.Awaiting(s => s.Generate([DefaultMessage], DefaultSettings))
             .Should().ThrowAsync<HttpRequestException>();
     }
-    
+
     [Test]
     public async Task Generate_WhenApiResponseIsMalformedJson_ThrowsJsonException()
     {
@@ -85,7 +85,7 @@ public abstract class HttpGenHandlerTests<THandler, TProvider, TRequest, TMessag
 
         MockHttp.When(HttpMethod.Post, ExpectedUrl)
             .Respond("application/json", malformedJson);
-        
+
         await Handler.Awaiting(s => s.Generate([DefaultMessage], DefaultSettings))
             .Should().ThrowAsync<JsonException>();
     }

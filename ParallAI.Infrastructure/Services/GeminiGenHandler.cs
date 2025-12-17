@@ -56,9 +56,12 @@ public class GeminiGenHandler(
         var errorResponse = await response.Content.ReadFromJsonAsync<GeminiErrorResponse>(JsonSerializerOptions.Web);
         var message = $"Failed request to Gemini provider with Code: {errorResponse!.Error.Code}, " +
                       $"Status: {errorResponse.Error.Status}, Message: {errorResponse.Error.Message}";
-        var userMessage = $"Произошла ошибка при отправке запроса к модели '{Model.DisplayName}' " +
-                          $"провайдера Gemini c текстом:\n'{errorResponse.Error.Message}'";
-        throw new UserFriendlyException(message, userMessage);
+
+        throw new GenerationException(
+            message,
+            errorResponse.Error.Message,
+            "Gemini",
+            Model.DisplayName);
     }
 
     private async Task<string> DownloadAndUploadFile(AiFileInfo fileInfo)

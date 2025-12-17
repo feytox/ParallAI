@@ -52,16 +52,21 @@ public class OpenAiGenHandler(
     protected override async Task HandleErrorResponse(HttpResponseMessage response)
     {
         if (response.StatusCode == HttpStatusCode.NotFound)
-            throw new UserFriendlyException("Failed request to OpenAiCompatible provider with Code: 404 Not Found",
-                $"Произошла ошибка при отправке запроса к модели '{Model.DisplayName}' " +
-                $"провайдера OpenAiCompatible c текстом 'Not Found'.\nВведите корректный Endpoint Url в параметрах модели");
+            throw new GenerationException(
+                "Failed request to OpenAiCompatible provider with Code: 404 Not Found",
+                "Not Found. Введите корректный Endpoint Url в параметрах модели",
+                "OpenAiCompatible",
+                Model.DisplayName);
 
         var errorResponse = await response.Content.ReadFromJsonAsync<OpenAiErrorResponse>(JsonSerializerOptions.Web);
         var message = $"Failed request to OpenAiCompatible provider with Code: {errorResponse!.Error.Code}, " +
                       $"Message: {errorResponse.Error.Message}, Type: {errorResponse.Error.Type}, " +
                       $"Param: {errorResponse!.Error.Param}";
-        var userMessage = $"Произошла ошибка при отправке запроса к модели '{Model.DisplayName}' " +
-                          $"провайдера OpenAiCompatible c текстом:\n'{errorResponse.Error.Message}'";
-        throw new UserFriendlyException(message, userMessage);
+
+        throw new GenerationException(
+            message,
+            errorResponse.Error.Message,
+            "OpenAi Compatible",
+            Model.DisplayName);
     }
 }

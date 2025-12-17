@@ -35,7 +35,7 @@ public class Bot(
 
         var commands = commandsDescription.Select(t => new BotCommand(t.attribute.Name, t.attribute.Description));
         await client.SetMyCommands(commands, cancellationToken: cancellationToken);
-        
+
         logger.LogInformation("Bot has been started.");
     }
 
@@ -48,10 +48,13 @@ public class Bot(
             {
                 await HandleUpdateOrThrow(bot, update);
             }
-            catch (UserFriendlyException ex)
+            catch (GenerationException ex)
             {
                 logger.LogError(ex.ToString());
-                await TrySendMessage(bot, update, ex.UserMessage);
+                var userMessage = $"Произошла ошибка при отправке запроса к модели '{ex.ModelName}' " +
+                                  $"провайдера {ex.ProviderName} c текстом:\n'{ex.ApiMessage}'";
+
+                await TrySendMessage(bot, update, userMessage);
             }
             catch (Exception ex)
             {
@@ -82,10 +85,10 @@ public class Bot(
         var isHighPriorityCommand = commandHandler.IsHighPriorityCommand(message);
         if (isHighPriorityCommand)
             await commandHandler.HandleCommand(message, bot);
-        
+
         var mainHandled = await stateHandler.HandleState(message, bot);
         var postHandled = await stateHandler.HandlePostState(message.Chat, message.From!.Id, bot);
-        if (!mainHandled && !postHandled && !isHighPriorityCommand) 
+        if (!mainHandled && !postHandled && !isHighPriorityCommand)
             await commandHandler.HandleCommand(message, bot);
     }
 

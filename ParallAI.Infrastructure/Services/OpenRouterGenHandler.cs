@@ -52,10 +52,11 @@ public class OpenRouterGenHandler(
         var errorResponse = await response.Content.ReadFromJsonAsync<OpenRouterErrorResponse>(JsonSerializerOptions.Web);
         var message = $"Failed request to OpenRouter provider with Code: {errorResponse!.Error.Code}, " +
                       $"Message: {errorResponse.Error.Message}";
-        var userMessage = $"Произошла ошибка при отправке запроса к модели '{Model.DisplayName}' " +
-                          $"провайдера OpenRouter c текстом:\n'{errorResponse.Error.Message}'. ";
-        if (errorResponse.Error.Code == 401)
-            throw new UserFriendlyException(message, userMessage + "Введите корректный API ключ провайдера модели");
-        throw new UserFriendlyException(message, userMessage);
+
+        throw new GenerationException(
+            message,
+            errorResponse.Error.Message,
+            "OpenRouter",
+            Model.DisplayName);
     }
 }
