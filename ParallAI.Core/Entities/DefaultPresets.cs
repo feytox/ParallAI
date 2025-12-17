@@ -8,7 +8,7 @@ public static class DefaultPresets
         "Default", PromptSettings.Default);
 
     private static readonly ImmutablePreset DefaultCompare = new(new Guid("00000000-0000-0000-0000-000000000002"),
-        "Default Compare", new PromptSettings(DefaultComparePrompt, 0.3m, ThinkingBudget.Medium));
+        "Оркестратор", new PromptSettings(DefaultComparePrompt, 0.3m, ThinkingBudget.Medium));
 
     public static readonly ImmutablePreset[] Presets = [Default, DefaultCompare];
     
