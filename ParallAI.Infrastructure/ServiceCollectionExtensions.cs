@@ -9,6 +9,7 @@ using ParallAI.Core.ValueTypes;
 using ParallAI.Infrastructure.Config;
 using ParallAI.Infrastructure.Mongo;
 using ParallAI.Infrastructure.Services;
+using ParallAI.Metrics;
 
 namespace ParallAI.Infrastructure;
 
@@ -18,7 +19,7 @@ public static class ServiceCollectionExtensions
     {
         MongoMappings.Setup();
         services.AddSingleton<IConfig>(EnvConfig.Load());
-        services.AddSingleton(_ => new HttpClient { Timeout = TimeSpan.FromMinutes(5) });
+        services.AddHttpClient();
 
         services.AddSingleton<IMongoClient>(sp => GetMongoClient(sp.GetRequiredService<IConfig>()));
         services.AddSingleton<IMongoDatabase>(sp =>
@@ -31,6 +32,9 @@ public static class ServiceCollectionExtensions
             ));
 
         services.AddSingleton<CancelTokenSourceStorage>();
+        
+        services.AddSingleton<IRequestMetricRepository, RequestMetricRepository>();
+        services.AddSingleton<IMetricService, MetricService>();
 
         services.AddProvider<GeminiGenHandler, GeminiProvider>();
         services.AddProvider<OpenAiGenHandler, OpenAICompatibleProvider>();

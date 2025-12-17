@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParallAI.TeleBot.Tests", "P
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParallAI.Core.Tests", "ParallAI.Core.Tests\ParallAI.Core.Tests.csproj", "{D36A01DC-098B-4FC1-BB44-8C24887B12FF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParallAI.Metrics", "ParallAI.Metrics\ParallAI.Metrics.csproj", "{EB0CF0CE-2407-4A5F-A4FB-598F37FBD7B5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,5 +73,9 @@ Global
 		{D36A01DC-098B-4FC1-BB44-8C24887B12FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D36A01DC-098B-4FC1-BB44-8C24887B12FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D36A01DC-098B-4FC1-BB44-8C24887B12FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB0CF0CE-2407-4A5F-A4FB-598F37FBD7B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB0CF0CE-2407-4A5F-A4FB-598F37FBD7B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB0CF0CE-2407-4A5F-A4FB-598F37FBD7B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB0CF0CE-2407-4A5F-A4FB-598F37FBD7B5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

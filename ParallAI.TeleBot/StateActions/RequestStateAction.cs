@@ -18,7 +18,8 @@ namespace ParallAI.TeleBot.StateActions;
 public class RequestStateAction(
     IGenerationService genService,
     IMediaGroupCollector groupCollector,
-    CancelTokenSourceStorage cancelTokenStorage)
+    CancelTokenSourceStorage cancelTokenStorage,
+    IMetricService metricService)
     : StateAction<RequestState>
 {
     protected override async Task<bool> Execute(RequestState state, Message message, ITelegramBotClient bot, User user)
@@ -29,6 +30,7 @@ public class RequestStateAction(
 
         var prompt = AiMessageHelper.CreateAiMessage(messages);
 
+
         var cts = new CancellationTokenSource();
         var ctsId = Guid.NewGuid();
         cancelTokenStorage.AddSource(ctsId, cts);
@@ -37,7 +39,9 @@ public class RequestStateAction(
 
         try
         {
+            var requestId = Guid.NewGuid();
             await GenerateAndSendResponse(state, prompt, bot, message.Chat, cts.Token);
+            metricService.SaveGeneration(requestId, user);
         }
         catch (TaskCanceledException)
         {
@@ -48,6 +52,7 @@ public class RequestStateAction(
             cancelTokenStorage.DeleteSource(ctsId);
             await bot.DeleteMessageOptional(sentMessage.Chat, sentMessage.Id);
         }
+
 
         if (state.Config.RequestMode == RequestMode.Single)
             user.StateMachine.TryPop();
@@ -77,6 +82,8 @@ public class RequestStateAction(
     protected override async Task<bool> ExecuteAfter(RequestState state, ChatId chatId, Message? prevMessage,
         ITelegramBotClient bot, User user)
     {
+        if (prevMessage is not null)
+            await bot.DeleteMessageOptional(chatId, prevMessage.Id);
         var presetText = state.Config.Preset?.Name ?? "не выбран";
         var cancelText = state.Config.RequestMode == RequestMode.Single ? "Отменить" : "Выйти из режима запросов";
 

@@ -15,6 +15,7 @@ public class CompareStateActionTests
     private ComparisonService comparisonService;
     private IMediaGroupCollector mediaGroupCollector;
     private CancelTokenSourceStorage cancelTokenSourceStorage;
+    private IMetricService metricService;
     private ITelegramBotClient bot;
     private CompareStateAction action;
     private User user;
@@ -25,9 +26,10 @@ public class CompareStateActionTests
         comparisonService = A.Fake<ComparisonService>();
         mediaGroupCollector = A.Fake<IMediaGroupCollector>();
         cancelTokenSourceStorage = A.Fake<CancelTokenSourceStorage>();
+        metricService = A.Fake<IMetricService>();
         bot = A.Fake<ITelegramBotClient>();
 
-        action = new CompareStateAction(comparisonService, mediaGroupCollector, cancelTokenSourceStorage);
+        action = new CompareStateAction(comparisonService, mediaGroupCollector, cancelTokenSourceStorage, metricService);
         user = new User(1);
     }
 

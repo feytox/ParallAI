@@ -30,7 +30,7 @@ public static class MongoMappings
             cm.MapProperty("States");
         });
 
-        RegisterAutoMaps(typeof(AiModel), typeof(Preset));
+        RegisterAutoMaps(typeof(AiModel), typeof(Preset), typeof(RequestMetric));
 
         RegisterProviders();
         RegisterStates();

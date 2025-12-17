@@ -17,7 +17,8 @@ namespace ParallAI.TeleBot.StateActions;
 public class CompareStateAction(
     ComparisonService compareService,
     IMediaGroupCollector groupCollector,
-    CancelTokenSourceStorage cancelTokenStorage)
+    CancelTokenSourceStorage cancelTokenStorage,
+    IMetricService metricService)
     : StateAction<CompareState>
 {
     protected override async Task<bool> Execute(CompareState state, Message message, ITelegramBotClient bot, User user)
@@ -36,7 +37,9 @@ public class CompareStateAction(
 
         try
         {
+            var requestId = Guid.NewGuid();
             await GenerateAndSendResponses(state, aiMessage, bot, message.Chat, cts.Token);
+            metricService.SaveComparison(requestId, user);
         }
         catch (TaskCanceledException)
         {

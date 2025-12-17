@@ -15,6 +15,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\ParallAI.Core\ParallAI.Core.csproj" />
+      <ProjectReference Include="..\ParallAI.Metrics\ParallAI.Metrics.csproj" />
     </ItemGroup>
 
 </Project>

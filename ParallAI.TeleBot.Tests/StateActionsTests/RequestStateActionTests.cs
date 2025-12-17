@@ -17,6 +17,7 @@ public class RequestStateActionTests
     private IGenerationService genService;
     private IMediaGroupCollector mediaGroupCollector;
     private CancelTokenSourceStorage cancelTokenSourceStorage;
+    private IMetricService metricService;
     private ITelegramBotClient bot;
     private RequestStateAction action;
     private User user;
@@ -27,9 +28,10 @@ public class RequestStateActionTests
         genService = A.Fake<IGenerationService>();
         mediaGroupCollector = A.Fake<IMediaGroupCollector>();
         cancelTokenSourceStorage = A.Fake<CancelTokenSourceStorage>();
+        metricService = A.Fake<IMetricService>();
         bot = A.Fake<ITelegramBotClient>();
 
-        action = new RequestStateAction(genService, mediaGroupCollector, cancelTokenSourceStorage);
+        action = new RequestStateAction(genService, mediaGroupCollector, cancelTokenSourceStorage, metricService);
         user = new User(1);
     }
 
