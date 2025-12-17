@@ -5,7 +5,7 @@ using Telegram.Bot.Types;
 namespace ParallAI.TeleBot.Core.Callback.Common;
 
 public abstract class TypedCallbackQuery<TArgs> : ICallbackQuery
-    where TArgs : ICallbackArgs, new()
+    where TArgs : ICallbackArgs<TArgs>
 {
     protected abstract Task Handle(CallbackQuery query, CallbackData<TArgs> data, ITelegramBotClient bot);
 

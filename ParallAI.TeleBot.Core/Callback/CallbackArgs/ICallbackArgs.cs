@@ -1,6 +1,6 @@
 namespace ParallAI.TeleBot.Core.Callback.CallbackArgs;
 
-public interface ICallbackArgs
+public interface ICallbackArgs<TSelf> where TSelf : ICallbackArgs<TSelf>
 {
-    void Parse(string[] args);
+    static abstract TSelf Parse(string[] args);
 }

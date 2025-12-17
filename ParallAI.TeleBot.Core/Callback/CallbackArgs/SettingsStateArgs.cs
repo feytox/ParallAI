@@ -1,12 +1,11 @@
 namespace ParallAI.TeleBot.Core.Callback.CallbackArgs;
 
-public class SettingsStateArgs : ICallbackArgs
+public record SettingsStateArgs(string Content) : ICallbackArgs<SettingsStateArgs>
 {
-    public string Content { get; private set; } = string.Empty;
-    
-    public void Parse(string[] args)
+    public static SettingsStateArgs Parse(string[] args)
     {
-        if (args.Length != 1) throw new ArgumentException($"Invalid settings state args: {args}");
-        Content = args[0];
+        return args.Length == 1
+            ? new SettingsStateArgs(args[0])
+            : throw new ArgumentException($"Invalid settings state args: {string.Join(", ", args)}");
     }
 }

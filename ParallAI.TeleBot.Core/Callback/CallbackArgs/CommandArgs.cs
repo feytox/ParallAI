@@ -1,14 +1,11 @@
-using ParallAI.TeleBot.Core.Callback.Common;
-
 namespace ParallAI.TeleBot.Core.Callback.CallbackArgs;
 
-public class CommandArgs : ICallbackArgs
+public record CommandArgs(string CommandName) : ICallbackArgs<CommandArgs>
 {
-    public string CommandName { get; private set; } = string.Empty;
-    
-    public void Parse(string[] args)
+    public static CommandArgs Parse(string[] args)
     {
-        if (args.Length != 1) throw new ArgumentException($"Invalid command args: {args}");
-        CommandName = args[0];
+        return args.Length == 1
+            ? new CommandArgs(args[0])
+            : throw new ArgumentException($"Invalid command args: {string.Join(", ", args)}");
     }
 }

@@ -15,15 +15,8 @@ public class CallbackData
     }
 }
 
-public class CallbackData<TArgs> where TArgs : ICallbackArgs, new()
+public class CallbackData<TArgs>(CallbackData source) where TArgs : ICallbackArgs<TArgs>
 {
-    public string Key { get; }
-    public TArgs Args { get; }
-    
-    public CallbackData(CallbackData source)
-    {
-        Key = source.Key;
-        Args = new TArgs();
-        Args.Parse(source.Args);
-    }
+    public string Key { get; } = source.Key;
+    public TArgs Args { get; } = TArgs.Parse(source.Args);
 }
