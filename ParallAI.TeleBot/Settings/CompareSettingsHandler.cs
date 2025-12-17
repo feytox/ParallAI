@@ -36,7 +36,7 @@ public class CompareSettingsHandler() : SettingsHandler<CompareSettingsState>(Ca
         buttons.Add([CancelCallback.CreateButton("Выйти без сохранения")]);
 
         if (prevMessage is not null)
-            await bot.DeleteMessage(chatId, prevMessage.Id);
+            await bot.DeleteMessageOptional(chatId, prevMessage.Id);
         
         // TODO: rewrite text
         await bot.SendMessage(chatId, 

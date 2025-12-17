@@ -24,7 +24,7 @@ public class CompareStateAction(ComparisonService compareService, MediaGroupColl
         var sentMessage = await bot.SendMessage(message.Chat, "Ваш запрос отправлен к моделям, ожидайте...");
         
         var result = await compareService.Generate(aiMessage, state.Config);
-        await bot.DeleteMessage(sentMessage.Chat, sentMessage.Id);
+        await bot.DeleteMessageOptional(sentMessage.Chat, sentMessage.Id);
         
         for (var i = 0; i < result.Responses.Length; i++)
         {

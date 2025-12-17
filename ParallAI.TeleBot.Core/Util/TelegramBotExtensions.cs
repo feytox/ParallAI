@@ -19,7 +19,7 @@ public static class TelegramBotExtensions
     public static async Task DeleteCallbackMessage(this ITelegramBotClient bot, CallbackQuery query)
     {
         var message = query.GetMessage();
-        await bot.DeleteMessage(message.Chat, message.Id);
+        await bot.DeleteMessageOptional(message.Chat, message.Id);
     }
 
     public static async Task DeleteMessageOptional(this ITelegramBotClient bot, ChatId chatId, int messageId)
