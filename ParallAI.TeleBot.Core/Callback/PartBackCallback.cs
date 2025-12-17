@@ -13,7 +13,7 @@ public class PartBackCallback(IRepository<User, long> users) : UserCallbackQuery
 {
     private const string Tag = "part_back";
 
-    protected override Task Handle(CallbackQuery query, ITelegramBotClient bot, User user)
+    protected override Task Handle(CallbackQuery query, CallbackData data, ITelegramBotClient bot, User user)
     {
         if (user.StateMachine.Current is SettingsState settingsState)
             settingsState.Reactivated = true;
