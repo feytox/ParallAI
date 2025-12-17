@@ -1,5 +1,6 @@
 ﻿using ParallAI.Core.Repositories;
 using ParallAI.Core.States;
+using ParallAI.TeleBot.Callback.CallbackArgs;
 using ParallAI.TeleBot.Core.Callback.Common;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -9,17 +10,16 @@ using User = ParallAI.Core.Entities.User;
 namespace ParallAI.TeleBot.Callback;
 
 [CallbackQuery(CallbackTag)]
-public class CompareCallback(IRepository<User, long> users) : UserCallbackQuery(users)
+public class CompareCallback(IRepository<User, long> users) : UserCallbackQuery<CompareArgs>(users)
 {
     private const string CallbackTag = "compare";
 
-    protected override Task Handle(CallbackQuery query, ITelegramBotClient bot, User user)
+    protected override Task Handle(CallbackQuery query, CallbackData<CompareArgs> data, ITelegramBotClient bot, User user)
     {
-        var content = query.Data!.Split(':')[1];
-        if (content == "+")
+        if (data.Args.IsAddingNewConfig)
             CreateCompareConfig(user);
         else
-            ChooseCompareConfig(user, int.Parse(content));
+            ChooseCompareConfig(user, data.Args.Index);
         
         return Task.CompletedTask;
     }

@@ -13,9 +13,9 @@ public class CancelCallback(IRepository<User, long> users) : UserCallbackQuery(u
 {
     private const string Tag = "cancel";
     
-    protected override async Task Handle(CallbackQuery query, ITelegramBotClient bot, User user)
+    protected override async Task Handle(CallbackQuery query, CallbackData data, ITelegramBotClient bot, User user)
     {
-        await CancelHelper.Cancel(query.From.Id, query.Message, bot, user);
+        await CancelHelper.Cancel(query.GetChatId(), query.Message, bot, user);
     }
 
     public static InlineKeyboardMarkup CreateMarkup(string text) => new(CreateButton(text));

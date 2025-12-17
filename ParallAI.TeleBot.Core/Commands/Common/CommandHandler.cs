@@ -33,12 +33,12 @@ public class CommandHandler
         await HandleCommand(commandText, message.Chat, message.From!.Id, bot);
     }
 
-    public async Task HandleCommand(string commandText, ChatId chatId, long userId, ITelegramBotClient bot)
+    public async Task HandleCommand(string commandName, ChatId chatId, long userId, ITelegramBotClient bot)
     {
-        if (commands.TryGetValue(commandText, out var command))
+        if (commands.TryGetValue(commandName, out var command))
             await command.Execute(chatId, userId, bot);
         else
-            await bot.SendMessage(chatId, $"Я не знаю команды `{commandText}`");
+            await bot.SendMessage(chatId, $"Я не знаю команды `{commandName}`");
     }
 
     public bool IsHighPriorityCommand(Message message)

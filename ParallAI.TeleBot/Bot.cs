@@ -80,7 +80,7 @@ public class Bot(
     private async Task HandleMessage(ITelegramBotClient bot, Message message)
     {
         var isHighPriorityCommand = commandHandler.IsHighPriorityCommand(message);
-        if (isHighPriorityCommand) 
+        if (isHighPriorityCommand)
             await commandHandler.HandleCommand(message, bot);
         
         var mainHandled = await stateHandler.HandleState(message, bot);

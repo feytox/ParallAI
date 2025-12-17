@@ -1,6 +1,7 @@
 using ParallAI.Core.Repositories;
 using ParallAI.Core.States;
 using ParallAI.Core.ValueTypes;
+using ParallAI.TeleBot.Callback.CallbackArgs;
 using ParallAI.TeleBot.Commands;
 using ParallAI.TeleBot.Core.Callback;
 using ParallAI.TeleBot.Core.Callback.Common;
@@ -14,22 +15,22 @@ using User = ParallAI.Core.Entities.User;
 namespace ParallAI.TeleBot.Callback;
 
 [CallbackQuery(Tag)]
-public class AskCallback(IRepository<User, long> users) : UserCallbackQuery(users)
+public class AskCallback(IRepository<User, long> users) : UserCallbackQuery<AskArgs>(users)
 {
     private const string Tag = "ask";
     
-    protected override async Task Handle(CallbackQuery query, ITelegramBotClient bot, User user)
+    protected override async Task Handle(CallbackQuery query, CallbackData<AskArgs> data, ITelegramBotClient bot, User user)
     {
-        var content = query.Data!.Split(':')[1];
-        switch (content)
+        var requestMode = data.Args.RequestMode;
+        switch (requestMode)
         {
-            case "single":
-                await ChooseRequestConfig(query, bot, user, RequestMode.Single);
+            case RequestMode.Single:
+                await ChooseRequestConfig(query, bot, user, requestMode);
                 break;
-            case "continuous":
-                await ChooseRequestConfig(query, bot, user, RequestMode.Continuous);
+            case RequestMode.Continuous:
+                await ChooseRequestConfig(query, bot, user, requestMode);
                 break;
-            case "settings":
+            case RequestMode.Settings:
                 CreateRequestConfig(user);
                 break;
         }
