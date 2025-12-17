@@ -1,10 +1,35 @@
-﻿namespace ParallAI.MarkdownV2;
+﻿using Markdig;
+using ParallAI.MarkdownV2.Utils;
 
-public class MarkdownV2Converter
+namespace ParallAI.MarkdownV2;
+
+public class MarkdownV2Converter(MarkdownOptions? options = null)
 {
-    public static string Convert(string text)
+    private readonly MarkdownPipeline pipeline = new MarkdownPipelineBuilder()
+        .UsePipeTables()
+        .UseTaskLists()
+        .UseAutoLinks()
+        .UseEmphasisExtras()
+        .UseMathematics()
+        .UseSoftlineBreakAsHardlineBreak()
+        .Build();
+
+    public string Convert(string markdown)
     {
-        // TODO: implement markdownV2 converter (issue #58)
-        return text;
+        if (string.IsNullOrWhiteSpace(markdown))
+            return string.Empty;
+
+        var (textWithMaskedUrls, urlMap) = UrlProtector.MaskUrls(markdown);
+        var textWithUnicodeMath = MathProcessor.ProcessMathBlocks(textWithMaskedUrls);
+        var cleanMarkdown = UrlProtector.RestoreUrls(textWithUnicodeMath, urlMap);
+
+        var document = Markdown.Parse(cleanMarkdown, pipeline);
+
+        using var writer = new StringWriter();
+        var renderer = new TelegramMarkdownRenderer(writer, options);
+        renderer.Render(document);
+        writer.Flush();
+
+        return writer.ToString().Trim();
     }
 }

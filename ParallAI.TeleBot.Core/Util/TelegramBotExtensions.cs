@@ -8,11 +8,11 @@ namespace ParallAI.TeleBot.Core.Util;
 
 public static class TelegramBotExtensions
 {
-    public static async Task<Message> EditCallbackMessage(this ITelegramBotClient bot, CallbackQuery query, 
+    public static async Task<Message> EditCallbackMessage(this ITelegramBotClient bot, CallbackQuery query,
         string text, ParseMode parseMode = ParseMode.None, InlineKeyboardMarkup? replyMarkup = null)
     {
         var message = query.GetMessage();
-        return await bot.EditMessageText(message.Chat, message.Id, text, 
+        return await bot.EditMessageText(message.Chat, message.Id, text,
             parseMode: parseMode, replyMarkup: replyMarkup);
     }
 
@@ -27,10 +27,19 @@ public static class TelegramBotExtensions
         await bot.DeleteMessages(chatId, [messageId]);
     }
 
-    public static Task<Message> SendMarkdown(this ITelegramBotClient bot, ChatId chatId, string message)
+    public static async Task SendMarkdown(this ITelegramBotClient bot, ChatId chatId, string message)
     {
-        var text = MarkdownV2Converter.Convert(message);
-        // TODO: использовать ParseMode.MarkdownV2 после реализации конвертера (issue #58)
-        return bot.SendMessage(chatId, text, parseMode: ParseMode.None);
+        var converter = new MarkdownV2Converter();
+
+        var convertedText = converter.Convert(message);
+        var parts = convertedText.SplitMessages();
+
+        foreach (var part in parts)
+            await bot.SendMessage(
+                chatId: chatId,
+                text: part,
+                parseMode: ParseMode.MarkdownV2,
+                linkPreviewOptions: new LinkPreviewOptions { IsDisabled = true }
+            );
     }
 }

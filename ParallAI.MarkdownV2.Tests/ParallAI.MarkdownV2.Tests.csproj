@@ -4,13 +4,16 @@
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <RootNamespace>ParallAI.MarkdownV2</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Markdig" Version="0.44.0" />
       <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
       <PackageReference Include="NUnit" Version="4.4.0" />
+      <PackageReference Include="NUnit3TestAdapter" Version="6.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\ParallAI.MarkdownV2\ParallAI.MarkdownV2.csproj" />
     </ItemGroup>
 
 </Project>
