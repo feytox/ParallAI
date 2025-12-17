@@ -18,7 +18,7 @@ public class TelegramTableRenderer : MarkdownObjectRenderer<TelegramMarkdownRend
                 continue;
 
             var cells = ExtractRowCells(row);
-            sb.AppendLine(string.Join(" | ", cells));
+            sb.Append(string.Join(" | ", cells)).Append('\n');
         }
 
         var code = sb.ToString();
