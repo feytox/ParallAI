@@ -1,5 +1,5 @@
 using System.Text.RegularExpressions;
-using ParallAI.MarkdownV2.LatexEscape;
+using ParallAI.MarkdownV2.Latex;
 
 namespace ParallAI.MarkdownV2.Utils;
 

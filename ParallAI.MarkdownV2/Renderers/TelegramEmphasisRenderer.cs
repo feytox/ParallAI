@@ -15,12 +15,11 @@ public class TelegramEmphasisRenderer : MarkdownObjectRenderer<TelegramMarkdownR
 
     private static string GetEmphasisTag(EmphasisInline emphasis)
     {
-        if (emphasis.DelimiterChar is '*' or '_')
-            return emphasis.DelimiterCount == 2 ? "*" : "_";
-
-        if (emphasis.DelimiterChar == '~')
-            return "~";
-
-        return "";
+        return emphasis.DelimiterChar switch
+        {
+            '*' or '_' => emphasis.DelimiterCount == 2 ? "*" : "_",
+            '~' => "~",
+            _ => ""
+        };
     }
 }

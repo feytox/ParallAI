@@ -24,11 +24,10 @@ public class TelegramListRenderer : MarkdownObjectRenderer<TelegramMarkdownRende
         if (isOrdered)
         {
             renderer.Write($"{number}\\. ");
+            return;
         }
-        else
-        {
-            renderer.WriteEscaped("•");
-            renderer.Write(" ");
-        }
+
+        renderer.WriteEscaped("•");
+        renderer.Write(" ");
     }
 }

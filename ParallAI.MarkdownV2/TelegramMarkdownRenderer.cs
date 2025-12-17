@@ -42,7 +42,7 @@ public class TelegramMarkdownRenderer : TextRendererBase<TelegramMarkdownRendere
 
     public override string ToString() => (Writer as StringWriter)?.ToString() ?? "";
 
-    public void Render(MarkdownObject document) => Write(document);
+    public new void Render(MarkdownObject document) => Write(document);
 
     public void WriteEscaped(string? text)
     {

@@ -1,4 +1,4 @@
-namespace ParallAI.MarkdownV2.LatexEscape;
+namespace ParallAI.MarkdownV2.Latex;
 
 public enum CombiningType
 {
