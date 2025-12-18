@@ -61,9 +61,6 @@ public class RequestStateAction(GenerationService genService, MediaGroupCollecto
     protected override async Task<bool> ExecuteAfter(RequestState state, ChatId chatId, Message? prevMessage, 
         ITelegramBotClient bot, User user)
     {
-        if (prevMessage is not null)
-            await bot.DeleteMessageOptional(chatId, prevMessage.Id);
-        
         var presetText = state.Config.Preset?.Name ?? "не выбран";
         var cancelText = state.Config.RequestMode == RequestMode.Single ? "Отменить" : "Выйти из режима запросов";
         

@@ -95,8 +95,8 @@ public class Bot(
     private async Task HandleCallbackQuery(ITelegramBotClient bot, CallbackQuery query)
     {
         var message = query.GetMessage();
-        await callbackQueryHandler.HandleCallbackQuery(query, bot);
-        await stateHandler.HandlePostState(message.Chat, query.From.Id, bot, prevMessage: message);
+        if (await callbackQueryHandler.HandleCallbackQuery(query, bot))
+            await stateHandler.HandlePostState(message.Chat, query.From.Id, bot, prevMessage: message);
     }
 
     private Task HandleError(ITelegramBotClient bot, Exception exception, CancellationToken cancellationToken)

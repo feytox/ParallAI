@@ -13,12 +13,12 @@ public class CallbackQueryHandler
             .ToDictionary(t => t.attribute.Key, t => t.callback, StringComparer.OrdinalIgnoreCase);
     }
 
-    public async Task HandleCallbackQuery(CallbackQuery callbackQuery, ITelegramBotClient bot)
+    public async Task<bool> HandleCallbackQuery(CallbackQuery callbackQuery, ITelegramBotClient bot)
     {
         if (string.IsNullOrEmpty(callbackQuery.Data))
         {
             await bot.AnswerCallbackQuery(callbackQuery.Id);
-            return;
+            return true;
         }
         
         var data = new CallbackData(callbackQuery.Data);
@@ -26,5 +26,6 @@ public class CallbackQueryHandler
             await callbackQueryObject.Handle(callbackQuery, data, bot);
         
         await bot.AnswerCallbackQuery(callbackQuery.Id);
+        return callbackQueryObject is not CancelTaskCallBack;
     }
 }
