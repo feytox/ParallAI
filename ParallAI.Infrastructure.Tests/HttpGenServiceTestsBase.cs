@@ -79,7 +79,7 @@ public abstract class HttpGenHandlerTests<THandler, TProvider, TRequest, TMessag
     }
 
     [Test]
-    public async Task Generate_WhenApiResponseIsMalformedJson_ThrowsJsonException()
+    public async Task Generate_WhenApiResponseIsMalformedJson_ThrowsGenerationException()
     {
         const string malformedJson = "{ \"invalid_json\": ";
 
@@ -87,6 +87,6 @@ public abstract class HttpGenHandlerTests<THandler, TProvider, TRequest, TMessag
             .Respond("application/json", malformedJson);
 
         await Handler.Awaiting(s => s.Generate([DefaultMessage], DefaultSettings))
-            .Should().ThrowAsync<JsonException>();
+            .Should().ThrowAsync<GenerationException>();
     }
 }

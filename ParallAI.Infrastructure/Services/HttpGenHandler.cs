@@ -2,6 +2,7 @@
 using System.Net.Http.Json;
 using System.Text.Json;
 using ParallAI.Core.Entities;
+using ParallAI.Core.Exceptions;
 using ParallAI.Core.ValueTypes;
 using ParallAI.Infrastructure.ValueTypes;
 
@@ -43,12 +44,24 @@ public abstract class HttpGenHandler<TProvider, TRequest, TMessage, TResponse>(
         request.Content = JsonContent.Create(aiRequest, options: JsonSerializerOptions.Web);
 
         var response = await Client.SendAsync(request, cancellationToken);
-        if (IsClientError(response.StatusCode))
-            await HandleErrorResponse(response, cancellationToken);
-        response.EnsureSuccessStatusCode();
+        //try аналога ReadFromJsonAsync нет
+        try
+        {
+            if (IsClientError(response.StatusCode))
+                await HandleErrorResponse(response, cancellationToken);
+            response.EnsureSuccessStatusCode();
 
-        var providerResponse = await response.Content.ReadFromJsonAsync<TResponse>(JsonSerializerOptions.Web, cancellationToken);
-        return providerResponse!.ToTextResponse();
+            var providerResponse = await response.Content.ReadFromJsonAsync<TResponse>(JsonSerializerOptions.Web, cancellationToken);
+            return providerResponse!.ToTextResponse();
+        }
+        catch (JsonException)
+        {
+            throw new GenerationException(
+                $"Can't deserialize answer {await response.Content.ReadAsStringAsync(cancellationToken)}",
+                "Не удалось распознать ответ",
+                typeof(TProvider).Name,
+                model.DisplayName);
+        }
     }
 
     private async Task<TMessage> CreateMessage(AiMessage aiMessage)
