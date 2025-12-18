@@ -1,11 +1,11 @@
+using FakeItEasy;
 using ParallAI.Core.States.Common;
 using ParallAI.TeleBot.Core.Settings;
-using FakeItEasy;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using User = ParallAI.Core.Entities.User;
 
-namespace ParallAI.TeleBot.Tests;
+namespace ParallAI.TeleBot.Tests.SettingsHandlersTests;
 
 [TestFixture]
 public abstract class SettingsHandlerTests<THandler, TState>

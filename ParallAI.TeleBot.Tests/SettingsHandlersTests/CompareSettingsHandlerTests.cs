@@ -5,8 +5,7 @@ using ParallAI.Core.ValueTypes;
 using ParallAI.TeleBot.Settings;
 using Telegram.Bot.Types;
 
-
-namespace ParallAI.TeleBot.Tests;
+namespace ParallAI.TeleBot.Tests.SettingsHandlersTests;
 
 [TestFixture]
 public class CompareSettingsHandlerTests : SettingsHandlerTests<CompareSettingsHandler, CompareSettingsState>

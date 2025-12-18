@@ -5,7 +5,7 @@ using ParallAI.Core.ValueTypes;
 using ParallAI.TeleBot.Settings;
 using Telegram.Bot.Types;
 
-namespace ParallAI.TeleBot.Tests;
+namespace ParallAI.TeleBot.Tests.SettingsHandlersTests;
 
 public class OrchestratorSettingsHandlerTests : SettingsHandlerTests<OrchestratorSettingsHandler, OrchestratorSettingsState>
 {
