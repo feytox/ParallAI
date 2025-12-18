@@ -10,6 +10,8 @@ namespace ParallAI.TeleBot.Core.Util;
 public static class DisplayExtensions
 {
     private const string EmptyPlaceholder = "(не задано)";
+    private const string SelfHostInfo = "Боитесь за безопасность API-ключа? " +
+                                        "<a href='https://github.com/feytox/ParallAI'><b>Захостите</b></a> бота сами!";
 
     public static string ToDisplay(this string? value, int maxLength = 0, string emptyPlaceholder = EmptyPlaceholder)
     {
@@ -63,24 +65,22 @@ public static class DisplayExtensions
 
     public static string ToFormattedString(this GeminiProviderSettingsState state)
     {
-        var sb = new StringBuilder();
-        sb.AppendLine($"🔑 Токен: {state.Token.ToMaskedDisplay()}");
-        return sb.ToString();
+        return $"🔑 API-ключ: {state.Token.ToMaskedDisplay()}\n\n" +
+               $"{SelfHostInfo}";
     }
 
     public static string ToFormattedString(this OpenRouterProviderSettingsState state)
     {
-        var sb = new StringBuilder();
-        sb.AppendLine($"🔑 Токен: {state.Token.ToMaskedDisplay()}");
-        return sb.ToString();
+        return $"🔑 API-ключ: {state.Token.ToMaskedDisplay()}\n\n" +
+               $"{SelfHostInfo}";
     }
 
     public static string ToFormattedString(this OpenAICompatibleSettingsState state)
     {
-        var sb = new StringBuilder();
-        sb.AppendLine($"🔑 Токен: {state.Token.ToMaskedDisplay()}");
-        sb.AppendLine($"🌐 Endpoint Url: {state.Endpoint?.AbsoluteUri.ToDisplay(maxLength: 60)}");
-        return sb.ToString();
+        var endpoint = state.Endpoint?.AbsoluteUri;
+        return $"🔑 API-ключ: {state.Token.ToMaskedDisplay()}\n" +
+               $"🌐 Endpoint Url: {endpoint.ToDisplay(maxLength: 60)}\n\n" +
+               $"{SelfHostInfo}";
     }
 
     private static string ToMaskedDisplay(this string? value)

@@ -3,6 +3,7 @@ using ParallAI.TeleBot.Core.Callback;
 using ParallAI.TeleBot.Core.Util;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace ParallAI.TeleBot.Core.Settings;
@@ -32,6 +33,8 @@ public abstract class StandardSettingsHandler<TState>(string tag, Action<Setting
             await bot.DeleteMessageOptional(chatId, prevMessage.Id);
         
         var message = GetPartsMessage(state);
-        await bot.SendMessage(chatId, message, replyMarkup: new InlineKeyboardMarkup(allButtons));
+        await bot.SendMessage(chatId, message, 
+            parseMode: ParseMode.Html, 
+            replyMarkup: new InlineKeyboardMarkup(allButtons));
     }
 }
