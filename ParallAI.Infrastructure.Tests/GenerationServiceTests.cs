@@ -33,11 +33,13 @@ public class GenerationServiceTests
             .Returns(typeof(GigaChatProvider));
 
         fakeDuckDuckGoResponse = new AiResponse("Ответ ДакДакича: Я на самом деле Юра");
-        A.CallTo(() => fakeDuckDuckGoService.Generate(A<AiProvider>._, A<AiModel>._, A<AiMessage[]>._, A<PromptSettings>._))
+        A.CallTo(() => fakeDuckDuckGoService
+                .Generate(A<AiProvider>._, A<AiModel>._, A<AiMessage[]>._, A<PromptSettings>._, CancellationToken.None))
             .Returns(Task.FromResult(fakeDuckDuckGoResponse));
 
         fakeGigaChatResponse = new AiResponse("Ответ ГигаЧата: Я на самом деле Павел Васильев");
-        A.CallTo(() => fakeGigaChatService.Generate(A<AiProvider>._, A<AiModel>._, A<AiMessage[]>._, A<PromptSettings>._))
+        A.CallTo(() => fakeGigaChatService
+                .Generate(A<AiProvider>._, A<AiModel>._, A<AiMessage[]>._, A<PromptSettings>._, CancellationToken.None))
             .Returns(Task.FromResult(fakeGigaChatResponse));
 
         generationService = new GenerationService(
@@ -55,9 +57,11 @@ public class GenerationServiceTests
 
         actualResponse.Should().Be(fakeGigaChatResponse);
 
-        A.CallTo(() => fakeDuckDuckGoService.Generate(A<AiProvider>._, A<AiModel>._, A<AiMessage[]>._, A<PromptSettings>._))
+        A.CallTo(() => fakeDuckDuckGoService
+                .Generate(A<AiProvider>._, A<AiModel>._, A<AiMessage[]>._, A<PromptSettings>._, CancellationToken.None))
             .MustNotHaveHappened();
-        A.CallTo(() => fakeGigaChatService.Generate(A<AiProvider>._, A<AiModel>._, A<AiMessage[]>._, A<PromptSettings>._))
+        A.CallTo(() => fakeGigaChatService
+                .Generate(A<AiProvider>._, A<AiModel>._, A<AiMessage[]>._, A<PromptSettings>._, CancellationToken.None))
             .MustHaveHappenedOnceExactly();
     }
 

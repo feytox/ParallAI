@@ -29,9 +29,10 @@ public abstract class HttpGenHandler<TProvider, TRequest, TMessage, TResponse>(
 
     protected abstract void FillHttpRequest(HttpRequestMessage request);
 
-    protected abstract Task HandleErrorResponse(HttpResponseMessage response);
+    protected abstract Task HandleErrorResponse(HttpResponseMessage response, CancellationToken cancellationToken);
 
-    public async Task<AiResponse> Generate(AiMessage[] aiMessages, PromptSettings promptSettings)
+    public async Task<AiResponse> Generate(AiMessage[] aiMessages, PromptSettings promptSettings, 
+        CancellationToken cancellationToken = default)
     {
         var url = GetEndpointUrl();
         using var request = new HttpRequestMessage(HttpMethod.Post, url);
@@ -41,12 +42,12 @@ public abstract class HttpGenHandler<TProvider, TRequest, TMessage, TResponse>(
         FillHttpRequest(request);
         request.Content = JsonContent.Create(aiRequest, options: JsonSerializerOptions.Web);
 
-        var response = await Client.SendAsync(request);
+        var response = await Client.SendAsync(request, cancellationToken);
         if (IsClientError(response.StatusCode))
-            await HandleErrorResponse(response);
+            await HandleErrorResponse(response, cancellationToken);
         response.EnsureSuccessStatusCode();
 
-        var providerResponse = await response.Content.ReadFromJsonAsync<TResponse>(JsonSerializerOptions.Web);
+        var providerResponse = await response.Content.ReadFromJsonAsync<TResponse>(JsonSerializerOptions.Web, cancellationToken);
         return providerResponse!.ToTextResponse();
     }
 

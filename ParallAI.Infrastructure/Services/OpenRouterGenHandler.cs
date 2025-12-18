@@ -47,9 +47,10 @@ public class OpenRouterGenHandler(
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", Provider.Token);
     }
 
-    protected override async Task HandleErrorResponse(HttpResponseMessage response)
+    protected override async Task HandleErrorResponse(HttpResponseMessage response, CancellationToken cancellationToken)
     {
-        var errorResponse = await response.Content.ReadFromJsonAsync<OpenRouterErrorResponse>(JsonSerializerOptions.Web);
+        var errorResponse = await response.Content
+            .ReadFromJsonAsync<OpenRouterErrorResponse>(JsonSerializerOptions.Web, cancellationToken);
         var message = $"Failed request to OpenRouter provider with Code: {errorResponse!.Error.Code}, " +
                       $"Message: {errorResponse.Error.Message}";
 

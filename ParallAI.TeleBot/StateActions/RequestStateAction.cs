@@ -2,6 +2,7 @@
 using ParallAI.Core.States;
 using ParallAI.Core.ValueTypes;
 using ParallAI.TeleBot.Core.Callback;
+using ParallAI.TeleBot.Core.Callback.Common;
 using ParallAI.TeleBot.Core.StateActions;
 using ParallAI.TeleBot.Core.Util;
 using ParallAI.TeleBot.Services;
@@ -9,11 +10,14 @@ using ParallAI.TeleBot.Util;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.ReplyMarkups;
 using User = ParallAI.Core.Entities.User;
 
 namespace ParallAI.TeleBot.StateActions;
 
-public class RequestStateAction(GenerationService genService, MediaGroupCollector groupCollector) : StateAction<RequestState>
+public class RequestStateAction(GenerationService genService, MediaGroupCollector groupCollector, 
+    CancelTokenSourceStorage cancelTokenStorage) 
+    : StateAction<RequestState>
 {
     protected override async Task<bool> Execute(RequestState state, Message message, ITelegramBotClient bot, User user)
     {
@@ -25,9 +29,30 @@ public class RequestStateAction(GenerationService genService, MediaGroupCollecto
         var preset = state.Config.Preset;
         var prompt = AiMessageHelper.CreateAiMessage(messages);
         var settings = preset is not null ? preset.PromptSettings : PromptSettings.Default;
-
-        var response = await genService.Generate(model, [prompt], settings);
-        await bot.SendMarkdown(message.Chat, response.Text);
+        
+        var cts = new CancellationTokenSource();
+        var ctsId = Guid.NewGuid();
+        cancelTokenStorage.AddSource(ctsId, cts);
+        
+        var sentMessage = await bot.SendMessage(message.Chat, 
+            "Ваш запрос отправлен к моделям, ожидайте...",
+            replyMarkup: new InlineKeyboardMarkup(
+                InlineKeyboardButton.WithCallbackData("Отмена", $"{CancelTaskCallBack.Tag}:{ctsId}")));
+        try
+        {
+            var response = await genService.Generate(model, [prompt], settings, cts.Token);
+            await bot.SendMarkdown(message.Chat, response.Text);
+        }
+        catch (TaskCanceledException)
+        {
+            await bot.SendMessage(message.Chat, "Запрос отменен");
+        }
+        finally
+        {
+            cancelTokenStorage.DeleteSource(ctsId);
+            await bot.DeleteMessageOptional(sentMessage.Chat, sentMessage.Id);
+        }
+        
         if (state.Config.RequestMode == RequestMode.Single)
             user.StateMachine.TryPop();
         return true;

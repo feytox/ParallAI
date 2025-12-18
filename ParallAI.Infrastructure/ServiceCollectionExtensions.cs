@@ -31,6 +31,8 @@ public static class ServiceCollectionExtensions
                 sp.GetRequiredService<IConfig>().UsersCollection
             ));
         
+        services.AddSingleton<CancelTokenSourceStorage>();
+        
         services.AddProvider<GeminiGenHandler, GeminiProvider>();
         services.AddProvider<OpenAiGenHandler, OpenAICompatibleProvider>();
         services.AddProvider<OpenRouterGenHandler, OpenRouterProvider>();

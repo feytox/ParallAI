@@ -49,7 +49,7 @@ public class OpenAiGenHandler(
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", Provider.Token);
     }
 
-    protected override async Task HandleErrorResponse(HttpResponseMessage response)
+    protected override async Task HandleErrorResponse(HttpResponseMessage response, CancellationToken cancellationToken)
     {
         if (response.StatusCode == HttpStatusCode.NotFound)
             throw new GenerationException(
@@ -58,7 +58,8 @@ public class OpenAiGenHandler(
                 "OpenAiCompatible",
                 Model.DisplayName);
 
-        var errorResponse = await response.Content.ReadFromJsonAsync<OpenAiErrorResponse>(JsonSerializerOptions.Web);
+        var errorResponse = await response.Content
+            .ReadFromJsonAsync<OpenAiErrorResponse>(JsonSerializerOptions.Web, cancellationToken);
         var message = $"Failed request to OpenAiCompatible provider with Code: {errorResponse!.Error.Code}, " +
                       $"Message: {errorResponse.Error.Message}, Type: {errorResponse.Error.Type}, " +
                       $"Param: {errorResponse!.Error.Param}";
