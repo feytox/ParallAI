@@ -1,6 +1,6 @@
 ﻿using ParallAI.Core.ValueTypes;
 
-namespace ParallAI.Infrastructure.Services;
+namespace ParallAI.Core.Services;
 
 public interface IGenerationHandler
 {

@@ -2,6 +2,7 @@
 using System.Net.Http.Json;
 using System.Text.Json;
 using ParallAI.Core.Entities;
+using ParallAI.Core.Services;
 using ParallAI.Core.ValueTypes;
 using ParallAI.Infrastructure.ValueTypes;
 

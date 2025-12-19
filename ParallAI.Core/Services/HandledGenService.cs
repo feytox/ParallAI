@@ -1,8 +1,7 @@
 ﻿using ParallAI.Core.Entities;
-using ParallAI.Core.Services;
 using ParallAI.Core.ValueTypes;
 
-namespace ParallAI.Infrastructure.Services;
+namespace ParallAI.Core.Services;
 
 public class HandledGenService<THandler, TProvider>(Func<TProvider, AiModel, THandler> handlerFactory)
     : IProviderGenService<TProvider>
