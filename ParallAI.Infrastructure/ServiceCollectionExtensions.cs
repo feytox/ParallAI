@@ -18,7 +18,7 @@ public static class ServiceCollectionExtensions
     {
         MongoMappings.Setup();
         services.AddSingleton<IConfig>(EnvConfig.Load());
-        services.AddHttpClient<HttpClient>(client => client.Timeout = TimeSpan.FromMinutes(5));
+        services.AddSingleton(_ => new HttpClient { Timeout = TimeSpan.FromMinutes(5) });
         
         services.AddSingleton<IMongoClient>(sp => GetMongoClient(sp.GetRequiredService<IConfig>()));
         services.AddSingleton<IMongoDatabase>(sp =>

@@ -1,5 +1,6 @@
 ﻿using ParallAI.Core.Services;
 using ParallAI.Core.States;
+using ParallAI.Core.ValueTypes;
 using ParallAI.TeleBot.Core.Callback;
 using ParallAI.TeleBot.Core.Callback.Common;
 using ParallAI.TeleBot.Core.StateActions;
@@ -13,7 +14,7 @@ using User = ParallAI.Core.Entities.User;
 
 namespace ParallAI.TeleBot.StateActions;
 
-public class CompareStateAction(ComparisonService compareService, MediaGroupCollector groupCollector, 
+public class CompareStateAction(ComparisonService compareService, MediaGroupCollector groupCollector,
     CancelTokenSourceStorage cancelTokenStorage)
     : StateAction<CompareState>
 {
@@ -24,27 +25,16 @@ public class CompareStateAction(ComparisonService compareService, MediaGroupColl
             return false;
 
         var aiMessage = AiMessageHelper.CreateAiMessage(messages);
-        
+
         var cts = new CancellationTokenSource();
         var ctsId = Guid.NewGuid();
         cancelTokenStorage.AddSource(ctsId, cts);
-        
-        var sentMessage = await bot.SendMessage(message.Chat, 
-            "Ваш запрос отправлен к моделям, ожидайте...",
-            replyMarkup: new InlineKeyboardMarkup(
-                InlineKeyboardButton.WithCallbackData("Отмена", $"{CancelTaskCallBack.Tag}:{ctsId}")));
+
+        var sentMessage = await SendProcessingMessage(bot, message.Chat, ctsId);
 
         try
         {
-            var result = await compareService.Generate(aiMessage, state.Config, cts.Token);
-
-            for (var i = 0; i < result.Responses.Length; i++)
-            {
-                var response = result.Responses[i];
-                await bot.SendMarkdown(message.Chat, $"**Ответ {i + 1} модели:**\n\n{response.Text}");
-            }
-
-            await bot.SendMarkdown(message.Chat, $"**Ответ оркестратора:**\n\n{result.OrchestratorResponse.Text}");
+            await GenerateAndSendResponses(state, aiMessage, bot, message.Chat, cts.Token);
         }
         catch (TaskCanceledException)
         {
@@ -56,6 +46,28 @@ public class CompareStateAction(ComparisonService compareService, MediaGroupColl
             await bot.DeleteMessageOptional(sentMessage.Chat, sentMessage.Id);
         }
         return true;
+    }
+
+    private async Task<Message> SendProcessingMessage(ITelegramBotClient bot, ChatId chatId, Guid ctsId)
+    {
+        return await bot.SendMessage(chatId,
+            "Ваш запрос отправлен к моделям, ожидайте...",
+            replyMarkup: new InlineKeyboardMarkup(
+                InlineKeyboardButton.WithCallbackData("Отмена", $"{CancelTaskCallBack.Tag}:{ctsId}")));
+    }
+
+    private async Task GenerateAndSendResponses(CompareState state, AiMessage aiMessage, ITelegramBotClient bot, ChatId chatId,
+        CancellationToken token)
+    {
+        var result = await compareService.Generate(aiMessage, state.Config, token);
+
+        for (var i = 0; i < result.Responses.Length; i++)
+        {
+            var response = result.Responses[i];
+            await bot.SendMarkdown(chatId, $"**Ответ {i + 1} модели:**\n\n{response.Text}");
+        }
+
+        await bot.SendMarkdown(chatId, $"**Ответ оркестратора:**\n\n{result.OrchestratorResponse.Text}");
     }
 
     protected override async Task<bool> ExecuteAfter(CompareState state, ChatId chatId, Message? prevMessage,
