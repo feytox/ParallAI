@@ -30,9 +30,9 @@ public abstract class HttpGenHandler<TProvider, TRequest, TMessage, TResponse>(
 
     protected abstract void FillHttpRequest(HttpRequestMessage request);
 
-    protected abstract Task HandleErrorResponse(HttpResponseMessage response, CancellationToken cancellationToken);
+    protected abstract Task HandleErrorResponse(HttpResponseMessage response, string content);
 
-    public async Task<AiResponse> Generate(AiMessage[] aiMessages, PromptSettings promptSettings, 
+    public async Task<AiResponse> Generate(AiMessage[] aiMessages, PromptSettings promptSettings,
         CancellationToken cancellationToken = default)
     {
         var url = GetEndpointUrl();
@@ -44,24 +44,29 @@ public abstract class HttpGenHandler<TProvider, TRequest, TMessage, TResponse>(
         request.Content = JsonContent.Create(aiRequest, options: JsonSerializerOptions.Web);
 
         var response = await Client.SendAsync(request, cancellationToken);
-        //try аналога ReadFromJsonAsync нет
+        var content = await response.Content.ReadAsStringAsync(cancellationToken);
         try
         {
-            if (IsClientError(response.StatusCode))
-                await HandleErrorResponse(response, cancellationToken);
-            response.EnsureSuccessStatusCode();
-
-            var providerResponse = await response.Content.ReadFromJsonAsync<TResponse>(JsonSerializerOptions.Web, cancellationToken);
-            return providerResponse!.ToTextResponse();
+            return await HandleResponse(response, content);
         }
-        catch (JsonException)
+        catch (NullReferenceException e)
         {
-            throw new GenerationException(
-                $"Can't deserialize answer {await response.Content.ReadAsStringAsync(cancellationToken)}",
-                "Не удалось распознать ответ",
-                typeof(TProvider).Name,
-                model.DisplayName);
+            throw CreateDeserializeException(content, e);
         }
+        catch (JsonException e)
+        {
+            throw CreateDeserializeException(content, e);
+        }
+    }
+
+    private async Task<AiResponse> HandleResponse(HttpResponseMessage response, string content)
+    {
+        if (IsClientError(response.StatusCode))
+            await HandleErrorResponse(response, content);
+        response.EnsureSuccessStatusCode();
+
+        var providerResponse = JsonSerializer.Deserialize<TResponse>(content, JsonSerializerOptions.Web);
+        return providerResponse!.ToTextResponse();
     }
 
     private async Task<TMessage> CreateMessage(AiMessage aiMessage)
@@ -74,5 +79,11 @@ public abstract class HttpGenHandler<TProvider, TRequest, TMessage, TResponse>(
         };
     }
 
-    private bool IsClientError(HttpStatusCode statusCode) => (int)statusCode >= 400 && (int)statusCode < 500;
+    private GenerationException CreateDeserializeException(string content, Exception innerException)
+    {
+        throw new GenerationException($"Unable to deserialize answer '{content}'", "Unable to deserialize answer", 
+            typeof(TProvider).Name, model.DisplayName, innerException);
+    }
+
+    private static bool IsClientError(HttpStatusCode statusCode) => (int)statusCode >= 400 && (int)statusCode < 500;
 }

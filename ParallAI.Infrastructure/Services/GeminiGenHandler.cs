@@ -51,18 +51,13 @@ public class GeminiGenHandler(
         request.Headers.Add("x-goog-api-key", Provider.Token);
     }
 
-    protected override async Task HandleErrorResponse(HttpResponseMessage response, CancellationToken cancellationToken)
+    protected override Task HandleErrorResponse(HttpResponseMessage response, string content)
     {
-        var errorResponse = await response.Content
-            .ReadFromJsonAsync<GeminiErrorResponse>(JsonSerializerOptions.Web, cancellationToken);
+        var errorResponse = JsonSerializer.Deserialize<GeminiErrorResponse>(content, JsonSerializerOptions.Web);
         var message = $"Failed request to Gemini provider with Code: {errorResponse!.Error.Code}, " +
                       $"Status: {errorResponse.Error.Status}, Message: {errorResponse.Error.Message}";
 
-        throw new GenerationException(
-            message,
-            errorResponse.Error.Message,
-            "Gemini",
-            Model.DisplayName);
+        throw new GenerationException(message, errorResponse.Error.Message, "Gemini", Model.DisplayName);
     }
 
     private async Task<string> DownloadAndUploadFile(AiFileInfo fileInfo)
