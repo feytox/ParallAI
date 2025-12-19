@@ -10,7 +10,7 @@ using User = ParallAI.Core.Entities.User;
 
 namespace ParallAI.TeleBot.Commands;
 
-[MainMenu("🆚 Режим сравнения", MenuOrder.Compare)]
+[MainMenu("⚖️ Режим сравнения", MenuOrder.Compare)]
 [Command("/compare", "глубокое сравнение запроса")]
 public class CompareCommand(IRepository<User, long> users) : UserCommand(users)
 {
@@ -44,7 +44,7 @@ public class CompareCommand(IRepository<User, long> users) : UserCommand(users)
     {
         if (user.UserPresets.Count > 0)
             return true;
-        
+
         var markup = new InlineKeyboardMarkup(CommandCallback.Create<PresetsCommand>("Настроить"));
         await bot.SendMessage(chatId, "У вас 0 настроенных пресетов", replyMarkup: markup);
         return false;
