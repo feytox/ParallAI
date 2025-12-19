@@ -1,6 +1,5 @@
 ﻿using System.Net;
 using System.Net.Http.Headers;
-using System.Net.Http.Json;
 using System.Text.Json;
 using ParallAI.Core;
 using ParallAI.Core.Entities;
@@ -49,24 +48,20 @@ public class OpenAiGenHandler(
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", Provider.Token);
     }
 
-    protected override async Task HandleErrorResponse(HttpResponseMessage response)
+    protected override Task HandleErrorResponse(HttpResponseMessage response, string content)
     {
         if (response.StatusCode == HttpStatusCode.NotFound)
             throw new GenerationException(
                 "Failed request to OpenAiCompatible provider with Code: 404 Not Found",
-                "Not Found. Введите корректный Endpoint Url в параметрах модели",
-                "OpenAiCompatible",
+                "404 Not Found. Invalid Endpoint URL",
+                "OpenAi Compatible",
                 Model.DisplayName);
 
-        var errorResponse = await response.Content.ReadFromJsonAsync<OpenAiErrorResponse>(JsonSerializerOptions.Web);
+        var errorResponse = JsonSerializer.Deserialize<OpenAiErrorResponse>(content, JsonSerializerOptions.Web);
         var message = $"Failed request to OpenAiCompatible provider with Code: {errorResponse!.Error.Code}, " +
                       $"Message: {errorResponse.Error.Message}, Type: {errorResponse.Error.Type}, " +
                       $"Param: {errorResponse!.Error.Param}";
 
-        throw new GenerationException(
-            message,
-            errorResponse.Error.Message,
-            "OpenAi Compatible",
-            Model.DisplayName);
+        throw new GenerationException(message, errorResponse.Error.Message, "OpenAi Compatible", Model.DisplayName);
     }
 }

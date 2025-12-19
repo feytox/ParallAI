@@ -1,5 +1,4 @@
 ﻿using System.Net.Http.Headers;
-using System.Net.Http.Json;
 using System.Text.Json;
 using ParallAI.Core;
 using ParallAI.Core.Entities;
@@ -47,16 +46,12 @@ public class OpenRouterGenHandler(
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", Provider.Token);
     }
 
-    protected override async Task HandleErrorResponse(HttpResponseMessage response)
+    protected override Task HandleErrorResponse(HttpResponseMessage response, string content)
     {
-        var errorResponse = await response.Content.ReadFromJsonAsync<OpenRouterErrorResponse>(JsonSerializerOptions.Web);
-        var message = $"Failed request to OpenRouter provider with Code: {errorResponse!.Error.Code}, " +
-                      $"Message: {errorResponse.Error.Message}";
+        var errorResponse = JsonSerializer.Deserialize<OpenRouterErrorResponse>(content, JsonSerializerOptions.Web);
+        var message = $"Failed request to OpenRouter provider with Code: '{errorResponse!.Error.Code}', " +
+                      $"Message: '{errorResponse.Error.Message}'";
 
-        throw new GenerationException(
-            message,
-            errorResponse.Error.Message,
-            "OpenRouter",
-            Model.DisplayName);
+        throw new GenerationException(message, errorResponse.Error.Message, "OpenRouter", Model.DisplayName);
     }
 }

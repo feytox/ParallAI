@@ -2,6 +2,7 @@
 using System.Net.Http.Json;
 using System.Text.Json;
 using ParallAI.Core.Entities;
+using ParallAI.Core.Exceptions;
 using ParallAI.Core.Services;
 using ParallAI.Core.ValueTypes;
 using ParallAI.Infrastructure.ValueTypes;
@@ -30,9 +31,10 @@ public abstract class HttpGenHandler<TProvider, TRequest, TMessage, TResponse>(
 
     protected abstract void FillHttpRequest(HttpRequestMessage request);
 
-    protected abstract Task HandleErrorResponse(HttpResponseMessage response);
+    protected abstract Task HandleErrorResponse(HttpResponseMessage response, string content);
 
-    public async Task<AiResponse> Generate(AiMessage[] aiMessages, PromptSettings promptSettings)
+    public async Task<AiResponse> Generate(AiMessage[] aiMessages, PromptSettings promptSettings,
+        CancellationToken cancellationToken = default)
     {
         var url = GetEndpointUrl();
         using var request = new HttpRequestMessage(HttpMethod.Post, url);
@@ -42,12 +44,29 @@ public abstract class HttpGenHandler<TProvider, TRequest, TMessage, TResponse>(
         FillHttpRequest(request);
         request.Content = JsonContent.Create(aiRequest, options: JsonSerializerOptions.Web);
 
-        var response = await Client.SendAsync(request);
+        var response = await Client.SendAsync(request, cancellationToken);
+        var content = await response.Content.ReadAsStringAsync(cancellationToken);
+        try
+        {
+            return await HandleResponse(response, content);
+        }
+        catch (NullReferenceException e)
+        {
+            throw CreateDeserializeException(content, e);
+        }
+        catch (JsonException e)
+        {
+            throw CreateDeserializeException(content, e);
+        }
+    }
+
+    private async Task<AiResponse> HandleResponse(HttpResponseMessage response, string content)
+    {
         if (IsClientError(response.StatusCode))
-            await HandleErrorResponse(response);
+            await HandleErrorResponse(response, content);
         response.EnsureSuccessStatusCode();
 
-        var providerResponse = await response.Content.ReadFromJsonAsync<TResponse>(JsonSerializerOptions.Web);
+        var providerResponse = JsonSerializer.Deserialize<TResponse>(content, JsonSerializerOptions.Web);
         return providerResponse!.ToTextResponse();
     }
 
@@ -61,5 +80,11 @@ public abstract class HttpGenHandler<TProvider, TRequest, TMessage, TResponse>(
         };
     }
 
-    private bool IsClientError(HttpStatusCode statusCode) => (int)statusCode >= 400 && (int)statusCode < 500;
+    private GenerationException CreateDeserializeException(string content, Exception innerException)
+    {
+        throw new GenerationException($"Unable to deserialize answer '{content}'", "Unable to deserialize answer", 
+            typeof(TProvider).Name, Model.DisplayName, innerException);
+    }
+
+    private static bool IsClientError(HttpStatusCode statusCode) => (int)statusCode >= 400 && (int)statusCode < 500;
 }

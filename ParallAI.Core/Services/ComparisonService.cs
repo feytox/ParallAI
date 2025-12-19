@@ -6,16 +6,18 @@ public record CompareResult(AiResponse[] Responses, AiResponse OrchestratorRespo
 
 public class ComparisonService(GenerationService genService)
 {
-    public async Task<CompareResult> Generate(AiMessage prompt, CompareConfig config)
+    public async Task<CompareResult> Generate(AiMessage prompt, CompareConfig config, 
+        CancellationToken cancellationToken)
     {
         var request = new[] { prompt };
         var responses = await Task.WhenAll(config.Elements
-            .Select(async element => await genService.Generate(element.Model, request, element.Preset.PromptSettings)));
+            .Select(async element => await genService.Generate(element.Model, request, element.Preset.PromptSettings, 
+                cancellationToken)));
         
         var orchestrator = config.Orchestrator;
         var orchestratorMessage = CombineResponses(prompt, responses);
         var response = await genService.Generate(orchestrator.Model, [orchestratorMessage], 
-            orchestrator.Preset.PromptSettings);
+            orchestrator.Preset.PromptSettings, cancellationToken);
 
         return new CompareResult(responses, response);
     }

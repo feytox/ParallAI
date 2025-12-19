@@ -18,8 +18,7 @@ public static class ServiceCollectionExtensions
     {
         MongoMappings.Setup();
         services.AddSingleton<IConfig>(EnvConfig.Load());
-        
-        services.AddHttpClient();
+        services.AddSingleton(_ => new HttpClient { Timeout = TimeSpan.FromMinutes(5) });
         
         services.AddSingleton<IMongoClient>(sp => GetMongoClient(sp.GetRequiredService<IConfig>()));
         services.AddSingleton<IMongoDatabase>(sp =>
@@ -30,6 +29,8 @@ public static class ServiceCollectionExtensions
                 sp.GetRequiredService<IMongoDatabase>(),
                 sp.GetRequiredService<IConfig>().UsersCollection
             ));
+        
+        services.AddSingleton<CancelTokenSourceStorage>();
         
         services.AddProvider<GeminiGenHandler, GeminiProvider>();
         services.AddProvider<OpenAiGenHandler, OpenAICompatibleProvider>();
