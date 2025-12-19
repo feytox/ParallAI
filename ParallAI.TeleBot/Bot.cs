@@ -2,6 +2,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using ParallAI.Core;
 using ParallAI.Core.Exceptions;
+using ParallAI.TeleBot.Core.Callback;
 using ParallAI.TeleBot.Core.Callback.Common;
 using ParallAI.TeleBot.Core.Commands.Common;
 using ParallAI.TeleBot.Core.StateActions;
@@ -54,12 +55,12 @@ public class Bot(
                 var userMessage = $"Произошла ошибка при отправке запроса к модели '{ex.ModelName}' " +
                                   $"провайдера {ex.ProviderName} c текстом:\n'{ex.ApiMessage}'";
 
-                await TrySendMessage(bot, update, userMessage);
+                await TrySendError(bot, update, userMessage);
             }
             catch (Exception ex)
             {
                 logger.LogError(ex.ToString());
-                await TrySendMessage(bot, update, $"Упс...произошла непредвиденная ошибка {ex.GetType().Name}");
+                await TrySendError(bot, update, $"Упс...произошла непредвиденная ошибка {ex.GetType().Name}");
             }
         }, cancellationToken);
         return Task.CompletedTask;
@@ -111,11 +112,11 @@ public class Bot(
         return Task.CompletedTask;
     }
 
-    private static async Task TrySendMessage(ITelegramBotClient bot, Update update, string message)
+    private static async Task TrySendError(ITelegramBotClient bot, Update update, string message)
     {
         var chatId = update.GetChatId();
         if (chatId is not null)
-            await bot.SendMessage(chatId, message);
+            await bot.SendMessage(chatId, message, replyMarkup: CancelCallback.CreateMarkup("🔙 Назад"));
     }
 
     public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;

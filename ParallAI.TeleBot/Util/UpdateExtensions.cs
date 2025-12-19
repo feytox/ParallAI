@@ -9,8 +9,8 @@ public static class UpdateExtensions
     {
         return update.Type switch
         {
-            UpdateType.Message => update.Message!.Chat,
-            UpdateType.CallbackQuery => update.CallbackQuery!.Message?.Chat,
+            UpdateType.Message => update.Message?.Chat,
+            UpdateType.CallbackQuery => update.GetChatId(),
             _ => null
         };
     }
