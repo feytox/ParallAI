@@ -3,6 +3,7 @@ using ParallAI.TeleBot.Core.Callback;
 using ParallAI.TeleBot.Core.Util;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 using User = ParallAI.Core.Entities.User;
 
@@ -22,7 +23,7 @@ public class SimpleSettingsPart<TValue, TState>(
         User user)
     {
         var keyboard = new InlineKeyboardMarkup(PartBackCallback.Create());
-        await bot.EditCallbackMessage(query, inputMessage, replyMarkup: keyboard);
+        await bot.EditCallbackMessage(query, inputMessage, parseMode: ParseMode.Html, replyMarkup: keyboard);
         return null;
     }
 
@@ -31,7 +32,7 @@ public class SimpleSettingsPart<TValue, TState>(
         if (!TryParse(message, out var value))
         {
             var keyboard = new InlineKeyboardMarkup(PartBackCallback.Create());
-            await bot.SendMessage(message.Chat, failMessage, replyMarkup: keyboard);
+            await bot.SendMessage(message.Chat, failMessage, parseMode: ParseMode.Html, replyMarkup: keyboard);
             return false;
         }
 

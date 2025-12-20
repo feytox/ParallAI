@@ -50,7 +50,11 @@ public class ModelSettingsHandler() : StandardSettingsHandler<ModelSettingsState
             .AddSimple("Название", "Введите название модели", "",
                 text => text,
                 state => state.DisplayName)
-            .AddSimple("ID модели", "Введите ID модели", "",
+            .AddSimple("ID модели",
+                "Введите ID модели\n\n" +
+                "<b>ВАЖНО:</b> Это технический ID, скопируйте его из документации.\n" +
+                "Например: <code>gemini-2.5-flash</code>",
+                "",
                 text => text,
                 state => state.ModelId)
             .Add(new ProviderSettingsPart("Провайдер"));
