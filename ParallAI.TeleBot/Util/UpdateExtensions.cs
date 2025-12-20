@@ -1,4 +1,5 @@
-﻿using Telegram.Bot.Types;
+﻿using ParallAI.TeleBot.Core.Util;
+using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
 namespace ParallAI.TeleBot.Util;
@@ -10,7 +11,7 @@ public static class UpdateExtensions
         return update.Type switch
         {
             UpdateType.Message => update.Message?.Chat,
-            UpdateType.CallbackQuery => update.GetChatId(),
+            UpdateType.CallbackQuery => update.CallbackQuery!.GetChatId(),
             _ => null
         };
     }
