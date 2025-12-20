@@ -9,5 +9,6 @@ public static class ServiceCollectionExtensions
     {
         services.AddSingleton<GenerationService>();
         services.AddSingleton<ComparisonService>();
+        services.AddSingleton<IGenerationService, GenerationService>();
     }
 }

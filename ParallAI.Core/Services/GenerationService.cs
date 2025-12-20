@@ -3,7 +3,7 @@ using ParallAI.Core.ValueTypes;
 
 namespace ParallAI.Core.Services;
 
-public class GenerationService(IEnumerable<IGenService> genServices)
+public class GenerationService(IEnumerable<IGenService> genServices) : IGenerationService
 {
     public async Task<AiResponse> Generate(AiModel model, AiMessage[] aiMessage, PromptSettings promptSettings, 
         CancellationToken cancellationToken = default)

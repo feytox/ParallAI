@@ -18,5 +18,5 @@ public static class OrchestratorSettingsStateExtensions
         var creationTime = DateTime.UtcNow;
         var orchestrator = new CompareElement(state.Preset!, state.Model!);
         return new CompareConfig(state.ConfiguredElements, orchestrator, creationTime);
-    }
+    }   
 }

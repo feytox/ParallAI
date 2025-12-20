@@ -1,13 +1,12 @@
 using FakeItEasy;
 using FluentAssertions;
-using NUnit.Framework;
 using ParallAI.Core.Entities;
 using ParallAI.Core.Services;
 using ParallAI.Core.ValueTypes;
 
 #pragma warning disable CS8618
 
-namespace ParallAI.Infrastructure.Tests;
+namespace ParallAI.Core.Tests.ServicesTests;
 
 [TestFixture]
 public class GenerationServiceTests
