@@ -13,9 +13,9 @@ public class MainMenuStateAction(MainMenuCommandsStorage commandsStorage) : Stat
     protected override async Task<bool> Execute(MainMenuState state, Message message, ITelegramBotClient bot, User user)
     {
         var messageText = message.Text ?? message.Caption;
-        if (messageText == null || !commandsStorage.Commands.TryGetValue(messageText, out var command)) 
+        if (messageText == null || !commandsStorage.Commands.TryGetValue(messageText, out var command))
             return false;
-        
+
         await command.Execute(message.Chat, message.From!.Id, bot);
         return true;
     }

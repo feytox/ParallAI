@@ -21,7 +21,7 @@ public class AskCommand(IRepository<User, long> users) : UserCommand(users)
             [AskCallback.Create("Непрерывные запросы", "continuous")],
             [AskCallback.Create("Одиночный запрос с настройкой параметров", "settings")],
         ]);
-        
+
         await bot.SendMessage(chatId, "Выберите режим запросов", replyMarkup: buttons);
     }
 }

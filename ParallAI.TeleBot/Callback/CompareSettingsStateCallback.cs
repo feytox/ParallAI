@@ -9,12 +9,11 @@ using User = ParallAI.Core.Entities.User;
 namespace ParallAI.TeleBot.Callback;
 
 [CallbackQuery(CompareSettingsHandler.CallbackTag)]
-public class CompareSettingsStateCallback(IRepository<User, long> users, CompareSettingsHandler handler) 
+public class CompareSettingsStateCallback(IRepository<User, long> users, CompareSettingsHandler handler)
     : SettingsStateCallback<CompareSettingsState, CompareSettingsHandler>(users, handler)
 {
     protected override async Task<bool> HandleDataContent(CompareSettingsState state, CallbackQuery query,
-        string content,
-        ITelegramBotClient bot, User user)
+        string content, ITelegramBotClient bot, User user)
     {
         if (content == "s")
         {

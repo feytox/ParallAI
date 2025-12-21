@@ -9,7 +9,7 @@ using ParallAI.TeleBot.Settings.Provider;
 namespace ParallAI.TeleBot.Callback.Providers;
 
 [CallbackQuery(ProviderSettingsPart.OpenRouterTag)]
-public class OpenRouterChooseCallBack(IRepository<User, long> users) 
+public class OpenRouterChooseCallBack(IRepository<User, long> users)
     : ProviderChooseCallback<OpenRouterProviderSettingsState>(users)
 {
     protected override OpenRouterProviderSettingsState ToSettingsState(AiProvider provider)

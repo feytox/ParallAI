@@ -7,7 +7,7 @@ using User = ParallAI.Core.Entities.User;
 
 namespace ParallAI.TeleBot.Settings.Provider;
 
-public class OpenAICompatibleSettingsHandler() 
+public class OpenAICompatibleSettingsHandler()
     : StandardSettingsHandler<OpenAICompatibleSettingsState>(CallbackTag, CreateParts)
 {
     public const string CallbackTag = "openai_provider_settings";
@@ -16,8 +16,8 @@ public class OpenAICompatibleSettingsHandler()
     {
         builder.AddSimple("API ключ", "Введите API ключ провайдера", "",
             text => text, state => state.Token);
-        builder.AddSimple("Endpoint Url", "Введите Endpoint URL", "Это не похоже на URL. Попробуйте снова", 
-            text => Uri.TryCreate(text, UriKind.Absolute, out var uri) ? uri : null, 
+        builder.AddSimple("Endpoint Url", "Введите Endpoint URL", "Это не похоже на URL. Попробуйте снова",
+            text => Uri.TryCreate(text, UriKind.Absolute, out var uri) ? uri : null,
             state => state.Endpoint);
     }
 

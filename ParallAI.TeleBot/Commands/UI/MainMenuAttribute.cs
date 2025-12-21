@@ -4,6 +4,6 @@ namespace ParallAI.TeleBot.Commands.UI;
 public class MainMenuAttribute(string name, MenuOrder weight) : Attribute
 {
     public string NameUI { get; } = name;
-    
+
     public int Weight { get; } = (int)weight;
 }

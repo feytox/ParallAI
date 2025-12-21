@@ -7,7 +7,7 @@ using User = ParallAI.Core.Entities.User;
 
 namespace ParallAI.TeleBot.Settings.Provider;
 
-public class OpenRouterSettingsHandler() 
+public class OpenRouterSettingsHandler()
     : StandardSettingsHandler<OpenRouterProviderSettingsState>(CallbackTag, CreateParts)
 {
     public const string CallbackTag = "openrouter_provider_settings";

@@ -16,11 +16,10 @@ public class RequestSettingsStateCallback(IRepository<User, long> users, Request
         string content,
         ITelegramBotClient bot, User user)
     {
-        if (content != "c") 
+        if (content != "c")
             return content.StartsWith('-');
-        
+
         await Handler.FinalizeSettings(state, query, bot, user);
         return true;
     }
 }
-    

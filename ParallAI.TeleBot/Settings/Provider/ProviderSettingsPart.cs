@@ -14,7 +14,8 @@ using User = ParallAI.Core.Entities.User;
 namespace ParallAI.TeleBot.Settings.Provider;
 
 public class ProviderSettingsPart(string name)
-    : SettingsPart<ModelSettingsState>(name), ICanSavePart<ModelSettingsState, ProviderSettingsState>, IValidatablePart<ModelSettingsState>
+    : SettingsPart<ModelSettingsState>(name), ICanSavePart<ModelSettingsState, ProviderSettingsState>,
+        IValidatablePart<ModelSettingsState>
 {
     public const string GeminiTag = "choose_gemini";
     public const string OpenAiTag = "choose_openai";

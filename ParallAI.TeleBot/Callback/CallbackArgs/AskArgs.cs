@@ -7,9 +7,9 @@ public record AskArgs(RequestMode RequestMode) : ICallbackArgs<AskArgs>
 {
     public static AskArgs Parse(string[] args)
     {
-        if (args.Length != 1) 
+        if (args.Length != 1)
             throw new ArgumentException($"Invalid ask args: {string.Join(", ", args)}");
-        
+
         var requestModeStr = args[0];
         var requestMode = requestModeStr switch
         {

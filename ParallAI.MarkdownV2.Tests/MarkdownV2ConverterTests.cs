@@ -5,7 +5,7 @@ namespace ParallAI.MarkdownV2.Tests;
 [TestFixture]
 public class MarkdownConverterTests
 {
-    private MarkdownV2Converter converter;
+    private MarkdownV2Converter converter = null!;
 
     [SetUp]
     public void Setup() => converter = new MarkdownV2Converter();
@@ -42,7 +42,7 @@ public class MarkdownConverterTests
     [TestCase("-", "•")]
     [TestCase("+", "•")]
     [TestCase("*", "•")]
-    [TestCase("Item-1", @"Item\-1")] 
+    [TestCase("Item-1", @"Item\-1")]
     public void Convert_ListMarkers_ShouldBecomeBullets(string input, string expected)
         => AssertConversion(input, expected);
 
@@ -58,7 +58,7 @@ public class MarkdownConverterTests
     [TestCase("[", "")]
     public void Convert_UnsupportedOrSpecificTags_ShouldBeStrippedOrAdapted(string input, string expected)
         => AssertConversion(input, expected);
-    
+
     [TestCase("**Bold**", "*Bold*")]
     [TestCase("_Italic_", "_Italic_")]
     [TestCase("~Strike~", "~Strike~")]
@@ -74,14 +74,14 @@ public class MarkdownConverterTests
     [TestCase("```\nMulti-line\nCode\n```", "```\nMulti-line\nCode\n```")]
     public void Convert_CodeBlocks_ShouldPreserveContent(string input, string expected)
         => AssertConversion(input, expected);
-    
+
     [TestCase("[Google](https://google.com)", "[Google](https://google.com)")]
     [TestCase("[Wiki](https://ru.wikipedia.org/wiki/Test_Page)", "[Wiki](https://ru.wikipedia.org/wiki/Test_Page)")]
     [TestCase("https://google.com", "[https://google\\.com](https://google.com)")]
     [TestCase("user@example.com", "user@example\\.com")]
     public void Convert_LinksAndEmails_ShouldFormatCorrectly(string input, string expected)
         => AssertConversion(input, expected);
-    
+
     [TestCase("$x^2 + y^3$", @"x² \+ y³")]
     [TestCase("$x_1 + x_2$", @"x₁ \+ x₂")]
     [TestCase(@"\[x^2 + y^3\]", @"x² \+ y³")]
@@ -96,7 +96,7 @@ public class MarkdownConverterTests
     [TestCase(@"$E = mc^2$", @"E \= mc²")]
     public void Convert_MathOperations_ShouldConvertToUnicode(string input, string expected)
         => AssertConversion(input, expected);
-    
+
     [TestCase(@"$\frac{1}{2}$", @"½")]
     [TestCase(@"$\frac{3}{4}$", @"¾")]
     [TestCase(@"$\frac{a}{b}$", "a/b")]
@@ -113,7 +113,7 @@ public class MarkdownConverterTests
     [TestCase(@"$\sqrt[4]{x}$", @"∜\(x\)")]
     public void Convert_MathRoots_ShouldConvertToUnicode(string input, string expected)
         => AssertConversion(input, expected);
-    
+
     [TestCase(@"$\leq$", @"≤")]
     [TestCase(@"$\geq$", @"≥")]
     [TestCase(@"$\neq$", @"≠")]
@@ -123,7 +123,7 @@ public class MarkdownConverterTests
     [TestCase(@"$\gamma \delta \varepsilon$", @"γ δ ε")]
     public void Convert_MathSetsAndSymbols_ShouldConvertToUnicode(string input, string expected)
         => AssertConversion(input, expected);
-    
+
     [TestCase(@"$\mathbb{N}$", "ℕ")]
     [TestCase(@"$\textbb{Z}$", "ℤ")]
     [TestCase(@"$\mathbb{QR}$", "ℚℝ")]
@@ -168,7 +168,7 @@ public class MarkdownConverterTests
     [TestCase(@"$(Полагаем \mathbb{N} = \{1, 2, \dots\})$", @"\(Полагаем ℕ \= \{1, 2, …\}\)")]
     public void Convert_MathComplexExpressions_ShouldConvertToUnicode(string input, string expected)
         => AssertConversion(input, expected);
-    
+
     [TestCase(@"$Hello {world}$", @"Hello \{world\}")]
     [TestCase(@"${unclosed$", @"\{unclosed")]
     [TestCase(@"$\frac{1}{$", @"1/")]
@@ -176,8 +176,9 @@ public class MarkdownConverterTests
     [TestCase(@"$   $", @"")]
     public void Convert_MalformedOrEdgeCaseMath_ShouldHandleGracefully(string input, string expected)
         => AssertConversion(input, expected);
-    
-    [TestCase("| Header 1 | Header 2 |\n|---|---|\n| Cell 1 | Cell 2 |", "```\nHeader 1 | Header 2\nCell 1 | Cell 2\n```")]
+
+    [TestCase("| Header 1 | Header 2 |\n|---|---|\n| Cell 1 | Cell 2 |",
+        "```\nHeader 1 | Header 2\nCell 1 | Cell 2\n```")]
     [TestCase("| Col 1 | Col 2 |\n| :--- | ---: |\n| Left | Right |", "```\nCol 1 | Col 2\nLeft | Right\n```")]
     public void Convert_Tables_ShouldRenderReadableFormat(string input, string expected)
         => AssertConversion(input, expected);
@@ -187,7 +188,7 @@ public class MarkdownConverterTests
     [TestCase("- [ ] Item with **bold**", @"⬜ Item with *bold*")]
     public void Convert_TaskLists_ShouldUseDefaultIcons(string input, string expected)
         => AssertConversion(input, expected);
-    
+
     [Test]
     public void Convert_WithCustomOptions_ShouldApplyCustomSettings()
     {
@@ -204,30 +205,30 @@ public class MarkdownConverterTests
         };
 
         var customConverter = new MarkdownV2Converter(customOptions);
-        
+
         var h1Result = customConverter.Convert("# King");
         Assert.That(h1Result, Is.EqualTo("👑 *King*"));
 
         var h2Result = customConverter.Convert("## Next");
         Assert.That(h2Result, Is.EqualTo("➡️ *Next*"));
-        
+
         var h3Result = customConverter.Convert("### Next");
         Assert.That(h3Result, Is.EqualTo("🥀 *Next*"));
-        
+
         var h4Result = customConverter.Convert("#### Next");
         Assert.That(h4Result, Is.EqualTo("📝️ *Next*"));
-        
+
         var h5Result = customConverter.Convert("##### Next");
         Assert.That(h5Result, Is.EqualTo("🥶 *Next*"));
-        
+
         var h6Result = customConverter.Convert("###### Next");
         Assert.That(h6Result, Is.EqualTo("😈️ *Next*"));
-        
+
         var tasksResult = customConverter.Convert("- [ ] Work\n- [x] Sleep");
         Assert.That(tasksResult, Does.Contain("[TODO] Work"));
         Assert.That(tasksResult, Does.Contain("[DONE] Sleep"));
     }
-    
+
     private void AssertConversion(string input, string expected)
     {
         var actual = converter.Convert(input);

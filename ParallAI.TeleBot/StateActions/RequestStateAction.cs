@@ -15,7 +15,9 @@ using User = ParallAI.Core.Entities.User;
 
 namespace ParallAI.TeleBot.StateActions;
 
-public class RequestStateAction(GenerationService genService, MediaGroupCollector groupCollector,
+public class RequestStateAction(
+    GenerationService genService,
+    MediaGroupCollector groupCollector,
     CancelTokenSourceStorage cancelTokenStorage)
     : StateAction<RequestState>
 {
@@ -61,8 +63,8 @@ public class RequestStateAction(GenerationService genService, MediaGroupCollecto
                 InlineKeyboardButton.WithCallbackData("Отмена", $"{CancelTaskCallBack.Tag}:{ctsId}")));
     }
 
-    private async Task GenerateAndSendResponse(RequestState state, AiMessage prompt, ITelegramBotClient bot, ChatId chatId,
-        CancellationToken token)
+    private async Task GenerateAndSendResponse(RequestState state, AiMessage prompt, ITelegramBotClient bot,
+        ChatId chatId, CancellationToken token)
     {
         var model = state.Config.Model;
         var preset = state.Config.Preset;
@@ -71,6 +73,7 @@ public class RequestStateAction(GenerationService genService, MediaGroupCollecto
         var response = await genService.Generate(model, [prompt], settings, token);
         await bot.SendMarkdown(chatId, response.Text);
     }
+
     protected override async Task<bool> ExecuteAfter(RequestState state, ChatId chatId, Message? prevMessage,
         ITelegramBotClient bot, User user)
     {

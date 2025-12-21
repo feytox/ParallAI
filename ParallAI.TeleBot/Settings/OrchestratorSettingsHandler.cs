@@ -6,12 +6,12 @@ using User = ParallAI.Core.Entities.User;
 
 namespace ParallAI.TeleBot.Settings;
 
-public class OrchestratorSettingsHandler() 
+public class OrchestratorSettingsHandler()
     : StandardSettingsHandler<OrchestratorSettingsState>(CallbackTag, CreateParts)
 {
     public const string CallbackTag = "orchestrator-settings";
     private const int Limit = 3;
-    
+
     protected override string GetPartsMessage(OrchestratorSettingsState state) => "Настройки оркестратора:";
 
     protected override Task<bool> SaveSettingsToUser(OrchestratorSettingsState state, CallbackQuery query,
@@ -20,12 +20,12 @@ public class OrchestratorSettingsHandler()
         var config = state.Build();
         user.AddComparison(config, Limit);
         user.StateMachine.Pop(reactivate: false);
-        
+
         var nextState = new CompareState(config);
         user.StateMachine.Push(nextState);
         return Task.FromResult(false);
     }
-    
+
     private static void CreateParts(SettingsPartsBuilder<OrchestratorSettingsState> builder)
     {
         builder

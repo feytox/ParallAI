@@ -9,7 +9,7 @@ using User = ParallAI.Core.Entities.User;
 namespace ParallAI.TeleBot.Callback.Providers;
 
 public abstract class ProviderChooseCallback<TProviderSettingsState>(IRepository<User, long> users)
-    : UserCallbackQuery(users) 
+    : UserCallbackQuery(users)
     where TProviderSettingsState : ProviderSettingsState, new()
 {
     protected abstract TProviderSettingsState ToSettingsState(AiProvider provider);
@@ -22,7 +22,7 @@ public abstract class ProviderChooseCallback<TProviderSettingsState>(IRepository
         var aiProvider = modelSettings.Provider;
         var state = aiProvider is null ? new TProviderSettingsState() : ToSettingsState(aiProvider);
         user.StateMachine.Push(state);
-        
+
         return Task.CompletedTask;
     }
 }

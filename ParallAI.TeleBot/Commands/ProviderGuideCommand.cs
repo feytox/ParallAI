@@ -11,7 +11,7 @@ public class ProviderGuideCommand : ICommand
     private const string GuideUrl = "https://github.com/feytox/ParallAI/blob/main/ProviderGuide/PROVIDERGUIDE.md";
 
     public const string GuideHtmlUrl = $"<a href='{GuideUrl}'><b>*тык*</b></a>";
-    
+
     public async Task Execute(ChatId chatId, long userId, ITelegramBotClient bot)
     {
         const string text = "📚 <b>Гайд по настройке провайдеров</b>\n\n" +

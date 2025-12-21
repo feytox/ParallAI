@@ -7,5 +7,5 @@ using ParallAI.TeleBot.Settings;
 namespace ParallAI.TeleBot.Callback;
 
 [CallbackQuery(OrchestratorSettingsHandler.CallbackTag)]
-public class OrchestratorSettingsStateCallback(IRepository<User, long> users, OrchestratorSettingsHandler handler) 
+public class OrchestratorSettingsStateCallback(IRepository<User, long> users, OrchestratorSettingsHandler handler)
     : StandardSettingsStateCallback<OrchestratorSettingsState, OrchestratorSettingsHandler>(users, handler);

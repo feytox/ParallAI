@@ -14,13 +14,14 @@ public class CompareCallback(IRepository<User, long> users) : UserCallbackQuery<
 {
     private const string CallbackTag = "compare";
 
-    protected override Task Handle(CallbackQuery query, CallbackData<CompareArgs> data, ITelegramBotClient bot, User user)
+    protected override Task Handle(CallbackQuery query, CallbackData<CompareArgs> data,
+        ITelegramBotClient bot, User user)
     {
         if (data.Args.IsAddingNewConfig)
             CreateCompareConfig(user);
         else
             ChooseCompareConfig(user, data.Args.Index);
-        
+
         return Task.CompletedTask;
     }
 

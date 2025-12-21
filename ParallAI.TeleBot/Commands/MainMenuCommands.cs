@@ -19,7 +19,7 @@ public class MainMenuCommand(Lazy<MainMenuCommandsStorage> commandsStorage) : IC
     {
         await bot.SendMessage(
             chatId: chatId,
-            text: "\u3164", // TODO: тут мб будет красивое первое сообщение (Дима Комаров обязательно его придумает)
+            text: "\u3164",
             replyMarkup: keyboardMarkup
         );
     }

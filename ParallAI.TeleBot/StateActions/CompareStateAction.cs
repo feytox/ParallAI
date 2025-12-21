@@ -14,7 +14,9 @@ using User = ParallAI.Core.Entities.User;
 
 namespace ParallAI.TeleBot.StateActions;
 
-public class CompareStateAction(ComparisonService compareService, MediaGroupCollector groupCollector,
+public class CompareStateAction(
+    ComparisonService compareService,
+    MediaGroupCollector groupCollector,
     CancelTokenSourceStorage cancelTokenStorage)
     : StateAction<CompareState>
 {
@@ -45,6 +47,7 @@ public class CompareStateAction(ComparisonService compareService, MediaGroupColl
             cancelTokenStorage.DeleteSource(ctsId);
             await bot.DeleteMessageOptional(sentMessage.Chat, sentMessage.Id);
         }
+
         return true;
     }
 
@@ -56,8 +59,8 @@ public class CompareStateAction(ComparisonService compareService, MediaGroupColl
                 InlineKeyboardButton.WithCallbackData("Отмена", $"{CancelTaskCallBack.Tag}:{ctsId}")));
     }
 
-    private async Task GenerateAndSendResponses(CompareState state, AiMessage aiMessage, ITelegramBotClient bot, ChatId chatId,
-        CancellationToken token)
+    private async Task GenerateAndSendResponses(CompareState state, AiMessage aiMessage, ITelegramBotClient bot,
+        ChatId chatId, CancellationToken token)
     {
         var result = await compareService.Generate(aiMessage, state.Config, token);
 
@@ -73,7 +76,6 @@ public class CompareStateAction(ComparisonService compareService, MediaGroupColl
     protected override async Task<bool> ExecuteAfter(CompareState state, ChatId chatId, Message? prevMessage,
         ITelegramBotClient bot, User user)
     {
-        // TODO: change text
         await bot.SendMessage(chatId, "Введи новый запрос. Также можешь прикрепить файл",
             replyMarkup: CancelCallback.CreateMarkup("Выйти из режима сравнения"));
         return true;

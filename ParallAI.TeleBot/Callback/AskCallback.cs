@@ -18,8 +18,9 @@ namespace ParallAI.TeleBot.Callback;
 public class AskCallback(IRepository<User, long> users) : UserCallbackQuery<AskArgs>(users)
 {
     private const string Tag = "ask";
-    
-    protected override async Task Handle(CallbackQuery query, CallbackData<AskArgs> data, ITelegramBotClient bot, User user)
+
+    protected override async Task Handle(CallbackQuery query, CallbackData<AskArgs> data,
+        ITelegramBotClient bot, User user)
     {
         var requestMode = data.Args.RequestMode;
         switch (requestMode)
@@ -35,13 +36,13 @@ public class AskCallback(IRepository<User, long> users) : UserCallbackQuery<AskA
                 break;
         }
     }
-    
+
     public static InlineKeyboardButton Create(string text, string content)
     {
         return InlineKeyboardButton.WithCallbackData(text, $"{Tag}:{content}");
     }
 
-    private static async Task ChooseRequestConfig(CallbackQuery query, ITelegramBotClient bot, 
+    private static async Task ChooseRequestConfig(CallbackQuery query, ITelegramBotClient bot,
         User user, RequestMode requestMode)
     {
         if (user.ChosenModel is null)
@@ -60,11 +61,11 @@ public class AskCallback(IRepository<User, long> users) : UserCallbackQuery<AskA
     private static async Task HandleNotSetModel(CallbackQuery query, ITelegramBotClient bot)
     {
         var markup = new InlineKeyboardMarkup(CommandCallback.Create<ModelsCommand>("Выбрать модель"));
-        await bot.EditCallbackMessage(query, 
-            "Чтобы отправлять одиночные запросы, выберите модель", 
+        await bot.EditCallbackMessage(query,
+            "Чтобы отправлять одиночные запросы, выберите модель",
             replyMarkup: markup);
     }
-    
+
     private static void CreateRequestConfig(User user)
     {
         var state = new RequestSettingsState();

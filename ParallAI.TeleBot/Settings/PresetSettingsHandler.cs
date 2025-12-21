@@ -56,7 +56,7 @@ public class PresetSettingsHandler() : StandardSettingsHandler<PresetSettingsSta
                 state => state.SystemPrompt)
             .AddSimple("Температура", "Введите температуру (число от 0 до 2)",
                 "Ошибка: Ожидается числом от 0 до 2. Попробуйте ещё раз",
-                ParseDecimal, 
+                ParseDecimal,
                 state => state.Temperature)
             .AddEnum<ThinkingBudget>(CallbackTag, "Размышления",
                 "Выберите бюджет размышлений",

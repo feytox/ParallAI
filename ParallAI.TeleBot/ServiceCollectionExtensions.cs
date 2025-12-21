@@ -20,8 +20,6 @@ public static class ServiceCollectionExtensions
 {
     public static void AddTeleBot(this IServiceCollection services)
     {
-        var assembly = typeof(Bot).Assembly;
-
         services.AddSingleton<Bot>()
             .AddHostedService(sp => sp.GetRequiredService<Bot>());
 
@@ -33,14 +31,12 @@ public static class ServiceCollectionExtensions
         services.AddAttribute<ICommand, MainMenuAttribute>();
         services.AddSingleton<MainMenuCommandsStorage>();
         services.AddSingleton<Lazy<MainMenuCommandsStorage>>(sp =>
-            new Lazy<MainMenuCommandsStorage>(
-                () => sp.GetRequiredService<MainMenuCommandsStorage>()
-            )
+            new Lazy<MainMenuCommandsStorage>(sp.GetRequiredService<MainMenuCommandsStorage>)
         );
 
         services.AddScanned<ICallbackQuery>();
         services.AddAttribute<ICallbackQuery, CallbackQueryAttribute>();
-        
+
         services.AddSingleton<IStateAction, MainMenuStateAction>();
         services.AddSingleton<IStateAction, CompareStateAction>();
         services.AddSingleton<IStateAction, RequestStateAction>();

@@ -42,7 +42,6 @@ public class Bot(
 
     private Task HandleUpdate(ITelegramBotClient bot, Update update, CancellationToken cancellationToken)
     {
-        // TODO: maybe change (issue #48)
         Task.Run(async () =>
         {
             try

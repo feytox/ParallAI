@@ -9,7 +9,7 @@ using ParallAI.TeleBot.Settings.Provider;
 namespace ParallAI.TeleBot.Callback.Providers;
 
 [CallbackQuery(ProviderSettingsPart.OpenAiTag)]
-public class OpenAiChooseCallback(IRepository<User, long> users) 
+public class OpenAiChooseCallback(IRepository<User, long> users)
     : ProviderChooseCallback<OpenAICompatibleSettingsState>(users)
 {
     protected override OpenAICompatibleSettingsState ToSettingsState(AiProvider provider)
