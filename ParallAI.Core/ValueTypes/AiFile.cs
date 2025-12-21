@@ -1,6 +1,5 @@
 ﻿namespace ParallAI.Core.ValueTypes;
 
-
 public record AiFile(byte[] Content, AiFileInfo Info)
 {
     public bool IsImage => Info.IsImage;

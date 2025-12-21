@@ -16,7 +16,7 @@ public static class CompareElementSettingsStateExtensions
     {
         if (state.Model is not null)
             yield return $"Модель: {state.Model.DisplayName}";
-        
+
         if (state.Preset is not null)
             yield return $"Пресет: {state.Preset.Name}";
     }

@@ -3,7 +3,7 @@ namespace ParallAI.Core.States.Common;
 public class UserStateMachine
 {
     public UserState Current => States[^1];
-    
+
     private List<UserState> States { get; set; } = [new MainMenuState()];
 
     public void Push(UserState state)

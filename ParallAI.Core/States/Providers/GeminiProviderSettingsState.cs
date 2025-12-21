@@ -10,7 +10,7 @@ public class GeminiProviderSettingsState : ProviderSettingsState
 public static class GeminiProviderSettingsExtensions
 {
     public static GeminiProvider ToProvider(this GeminiProviderSettingsState state) => new(state.Token!);
-    
+
     public static GeminiProviderSettingsState ToState(this GeminiProvider provider) => new()
     {
         Token = provider.Token

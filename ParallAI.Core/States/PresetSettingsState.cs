@@ -40,5 +40,5 @@ public static class PresetSettingsStateExtensions
     private static PromptSettings CreateSettings(this PresetSettingsState state)
     {
         return new PromptSettings(state.SystemPrompt!, state.Temperature!.Value, state.ThinkingBudget);
-    } 
+    }
 }

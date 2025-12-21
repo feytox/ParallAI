@@ -11,9 +11,9 @@ public abstract class Entity<TId>(TId id) : IEntity<TId> where TId : notnull
 
     public override bool Equals(object? obj)
     {
-        if (ReferenceEquals(null, obj)) 
+        if (ReferenceEquals(null, obj))
             return false;
-        if (ReferenceEquals(this, obj)) 
+        if (ReferenceEquals(this, obj))
             return true;
         return obj.GetType() == GetType() && Equals((Entity<TId>)obj);
     }

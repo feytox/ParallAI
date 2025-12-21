@@ -11,7 +11,7 @@ internal static class CompareConfigExtensions
         var elements = config.Elements
             .Select(element => element.MapToDto())
             .ToArray();
-        
+
         return new CompareConfigDto(elements, config.Orchestrator.MapToDto(), config.CreationTime);
     }
 }

@@ -9,7 +9,7 @@ public abstract class SequentialState<TStep>(TStep[] steps) : UserState
 
     public bool Next()
     {
-        if (IsCompleted) 
+        if (IsCompleted)
             return false;
         Index++;
         return true;

@@ -23,9 +23,15 @@ public class User(long id) : Entity<long>(id)
     public IEnumerable<DateTime> ComparisonDates => CompareConfigs.Select(dto => dto.CreationTime);
     private List<CompareConfigDto> CompareConfigs { get; set; } = [];
 
-    public void AddModel(AiModel model) => Models.Add(model);
+    public void AddModel(AiModel model)
+    {
+        Models.Add(model);
+    }
 
-    public AiModel? GetModel(Guid id) => Models.FirstOrDefault(model => model.Id == id);
+    public AiModel? GetModel(Guid id)
+    {
+        return Models.FirstOrDefault(model => model.Id == id);
+    }
 
     public void DeleteModel(AiModel model)
     {
@@ -33,11 +39,20 @@ public class User(long id) : Entity<long>(id)
         CompareConfigs.RemoveAll(dto => dto.Elements.Any(elementDto => elementDto.ModelId == model.Id));
     }
 
-    public void ChooseModel(AiModel model) => ChosenModelId = model.Id;
+    public void ChooseModel(AiModel model)
+    {
+        ChosenModelId = model.Id;
+    }
 
-    public void AddPreset(Preset preset) => Presets.Add(preset);
+    public void AddPreset(Preset preset)
+    {
+        Presets.Add(preset);
+    }
 
-    public Preset? GetPreset(Guid id) => UserPresets.FirstOrDefault(preset => preset.Id == id);
+    public Preset? GetPreset(Guid id)
+    {
+        return UserPresets.FirstOrDefault(preset => preset.Id == id);
+    }
 
     public void DeletePreset(Preset preset)
     {
@@ -45,7 +60,10 @@ public class User(long id) : Entity<long>(id)
         CompareConfigs.RemoveAll(dto => dto.Elements.Any(elementDto => elementDto.PresetId == preset.Id));
     }
 
-    public void ChoosePreset(Preset preset) => ChosenPresetId = preset.Id;
+    public void ChoosePreset(Preset preset)
+    {
+        ChosenPresetId = preset.Id;
+    }
 
     public void AddComparison(CompareConfig config, int limit)
     {
@@ -60,7 +78,7 @@ public class User(long id) : Entity<long>(id)
             .Select(MapCompareElement)
             .ToArray();
         var orchestrator = MapCompareElement(dto.Orchestrator);
-        
+
         return new CompareConfig(elements, orchestrator, dto.CreationTime);
     }
 

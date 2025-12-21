@@ -8,7 +8,7 @@ public class HandledGenService<THandler, TProvider>(Func<TProvider, AiModel, THa
     where THandler : IGenerationHandler
     where TProvider : AiProvider
 {
-    public async Task<AiResponse> Generate(TProvider provider, AiModel model, 
+    public async Task<AiResponse> Generate(TProvider provider, AiModel model,
         AiMessage[] aiMessages, PromptSettings promptSettings, CancellationToken cancellationToken)
     {
         var handler = handlerFactory(provider, model);

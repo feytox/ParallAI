@@ -5,6 +5,6 @@ namespace ParallAI.Core.Services;
 
 public interface IGenerationService
 {
-    public Task<AiResponse> Generate(
-        AiModel model, AiMessage[] aiMessage, PromptSettings promptSettings, CancellationToken cancellationToken);
+    public Task<AiResponse> Generate(AiModel model, AiMessage[] aiMessage, PromptSettings promptSettings,
+        CancellationToken cancellationToken);
 }

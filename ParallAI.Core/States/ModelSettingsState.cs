@@ -10,7 +10,6 @@ public class ModelSettingsState(Guid? id) : SettingsState
     public string? ModelId { get; set; }
     public string? DisplayName { get; set; }
     public AiProvider? Provider { get; set; }
-    
 }
 
 public static class ModelSettingsStateExtensions
@@ -30,7 +29,7 @@ public static class ModelSettingsStateExtensions
             Provider = model.Provider
         };
     }
-    
+
     public static void ApplyChanges(this ModelSettingsState state, AiModel model)
     {
         model.ModelId = state.ModelId!;

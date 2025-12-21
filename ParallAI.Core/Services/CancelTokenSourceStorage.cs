@@ -6,9 +6,9 @@ public class CancelTokenSourceStorage
 
     public CancellationTokenSource GetSource(Guid token)
     {
-        if (!cancelTokenSources.TryGetValue(token, out CancellationTokenSource? source))
-            throw new KeyNotFoundException("The token was not found in the source storage.");
-        return source;
+        return cancelTokenSources.TryGetValue(token, out var source)
+            ? source
+            : throw new KeyNotFoundException("The token was not found in the source storage.");
     }
 
     public void DeleteSource(Guid token)
