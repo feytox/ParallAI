@@ -15,9 +15,10 @@ public class GeminiGenHandlerTests
 {
     protected override string ExpectedUrl =>
         $"https://generativelanguage.googleapis.com/v1beta/models/{ModelId}:generateContent";
+
     protected override string DefaultErrorContent =>
         """{"error":{"code":400,"message":"API key not valid. Please pass a valid API key.","status":"INVALID_ARGUMENT"}}""";
-    
+
     protected override GeminiGenHandler CreateHandler(HttpClient client, AiModel model, GeminiProvider provider)
     {
         return new GeminiGenHandler(provider, model, client, FakeFileService);
