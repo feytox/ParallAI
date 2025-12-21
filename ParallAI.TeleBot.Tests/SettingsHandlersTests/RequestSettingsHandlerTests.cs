@@ -23,7 +23,7 @@ public class RequestSettingsHandlerTests : SettingsHandlerTests<RequestSettingsH
     }
 
     [Test]
-    public async Task FinalizeSettings()
+    public async Task FinalizeSettings_CurrentStateIsRequest()
     {
         var handler = CreateHandler();
         User.StateMachine.Push(state);

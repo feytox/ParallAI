@@ -14,11 +14,12 @@ public abstract class SettingsHandlerTests<THandler, TState>
 {
     protected ITelegramBotClient Bot;
     protected User User;
-    private ChatId chatId;
 
+    private ChatId chatId;
     private Message message;
     private CallbackQuery query;
     private THandler handler;
+    private TState state;
 
     protected abstract THandler CreateHandler();
     protected abstract TState CreateInitialState();
@@ -28,18 +29,18 @@ public abstract class SettingsHandlerTests<THandler, TState>
     {
         Bot = A.Fake<ITelegramBotClient>();
         User = new User(1);
-        chatId = new ChatId(1);
 
+        chatId = new ChatId(1);
         message = new Message();
         query = new CallbackQuery { Message = message };
         handler = CreateHandler();
+        state = CreateInitialState();
     }
 
     [TestCase(-1)]
     [TestCase(int.MaxValue)]
     public void ActivatePart_IndexOutOfRangeException(int partIndex)
     {
-        var state = CreateInitialState();
         Assert.CatchAsync(typeof(IndexOutOfRangeException),
             async () => await handler.ActivatePart(state, partIndex, query, Bot, User));
     }
@@ -47,7 +48,6 @@ public abstract class SettingsHandlerTests<THandler, TState>
     [Test]
     public async Task ActivatePart_WhenNextStateIsNotNull()
     {
-        var state = CreateInitialState();
         await handler.ActivatePart(state, 0, query, Bot, User);
         Assert.That(state.CurrentPart, Is.EqualTo(0));
     }
@@ -55,7 +55,6 @@ public abstract class SettingsHandlerTests<THandler, TState>
     [Test]
     public async Task HandleMessage()
     {
-        var state = CreateInitialState();
         await handler.HandleMessage(state, message, Bot, User);
         Assert.That(state.Reactivated);
     }
@@ -63,9 +62,7 @@ public abstract class SettingsHandlerTests<THandler, TState>
     [Test]
     public async Task ExecuteAfter_StateIsNotReactivated()
     {
-        var state = CreateInitialState();
         state.Reactivated = false;
-
         var result = await handler.ExecuteAfter(state, chatId, message, Bot);
         Assert.That(result, Is.False);
     }
@@ -73,7 +70,6 @@ public abstract class SettingsHandlerTests<THandler, TState>
     [Test]
     public async Task ExecuteAfter_PrevStateIsNotNull()
     {
-        var state = CreateInitialState();
         state.AcceptPrevState(state.PrevState);
 
         var result = await handler.ExecuteAfter(state, chatId, message, Bot);

@@ -25,6 +25,7 @@ public static class ServiceCollectionExtensions
 
         services.AddTransient<IFileService, TgFileService>();
         services.AddSingleton<MediaGroupCollector>();
+        services.AddSingleton<IMediaGroupCollector, MediaGroupCollector>();
 
         services.AddScanned<ICommand>();
         services.AddAttribute<ICommand, CommandAttribute>();

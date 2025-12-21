@@ -13,6 +13,7 @@ public class CompareSettingsHandlerTests : SettingsHandlerTests<CompareSettingsH
     private CompareSettingsState state;
     private Message message;
     private CallbackQuery query;
+    private CompareSettingsHandler handler;
 
     protected override CompareSettingsHandler CreateHandler() => new();
     protected override CompareSettingsState CreateInitialState() => new();
@@ -23,16 +24,16 @@ public class CompareSettingsHandlerTests : SettingsHandlerTests<CompareSettingsH
         state = CreateInitialState();
         message = new Message();
         query = new CallbackQuery { Message = message };
+        handler = CreateHandler();
     }
 
     [Test]
     public void RemoveCompareElement()
     {
-        var handler = CreateHandler();
-        var fakePreset = A.Fake<Preset>();
-        var fakeModel = A.Fake<AiModel>();
-        state.ConfiguredElements.Add(new CompareElement(fakePreset, fakeModel));
-        state.ConfiguredElements.Add(new CompareElement(fakePreset, fakeModel));
+        var preset = A.Fake<Preset>();
+        var model = A.Fake<AiModel>();
+        state.ConfiguredElements.Add(new CompareElement(preset, model));
+        state.ConfiguredElements.Add(new CompareElement(preset, model));
         handler.RemoveCompareElement(state, 0);
 
         Assert.That(state.Reactivated);
@@ -40,9 +41,8 @@ public class CompareSettingsHandlerTests : SettingsHandlerTests<CompareSettingsH
     }
 
     [Test]
-    public async Task FinalizeSettings()
+    public async Task FinalizeSettings_CurrentStateIsOrchestratorSettings()
     {
-        var handler = CreateHandler();
         User.StateMachine.Push(state);
         await handler.FinalizeSettings(state, query, Bot, User);
         Assert.That(User.StateMachine.Current, Is.TypeOf(typeof(OrchestratorSettingsState)));

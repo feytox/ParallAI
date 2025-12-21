@@ -10,12 +10,14 @@ public class CommandHandlerTests
 {
     private ITelegramBotClient bot;
     private User user;
+    private ICommand command;
 
     [SetUp]
     public void Setup()
     {
         bot = A.Fake<ITelegramBotClient>();
-        user = new User { Id = 1 };
+        user = new User {Id = 1};
+        command = A.Fake<ICommand>();
     }
 
     [TestCase("/command")]
@@ -23,8 +25,7 @@ public class CommandHandlerTests
     [TestCase("/command some text")]
     public async Task HandleCommand_CommandIsExist(string commandName)
     {
-        var fakeCmd = A.Fake<ICommand>();
-        var commandHandler = CreateHandler((fakeCmd, new CommandAttribute("/command", "test command")));
+        var commandHandler = CreateHandler((command, new CommandAttribute("/command", "test command")));
         var message = new Message
         {
             From = user,
@@ -32,32 +33,30 @@ public class CommandHandlerTests
             Chat = new Chat()
         };
         await commandHandler.HandleCommand(message, bot);
-        A.CallTo(() => fakeCmd.Execute(message.Chat, message.From.Id, bot)).MustHaveHappened();
+        A.CallTo(() => command.Execute(message.Chat, message.From.Id, bot)).MustHaveHappened();
     }
 
     [TestCase("/fakecmd")]
     [TestCase("text /command")]
     public async Task HandleCommand_CommandIsWrong(string commandName)
     {
-        var fakeCmd = A.Fake<ICommand>();
-        var commandHandler = CreateHandler((fakeCmd, new CommandAttribute("/command", "test command")));
+        var commandHandler = CreateHandler((command, new CommandAttribute("/command", "test command")));
         var message = new Message
         {
             Text = commandName,
             From = user
         };
         await commandHandler.HandleCommand(message, bot);
-        A.CallTo(() => fakeCmd.Execute(message.Chat, message.From.Id, bot)).MustNotHaveHappened();
+        A.CallTo(() => command.Execute(message.Chat, message.From.Id, bot)).MustNotHaveHappened();
     }
 
     [Test]
     public void IsHighPriorityCommand_HighPriority()
     {
-        var highPriorityCmd = A.Fake<ICommand>();
         var commandHandler = CreateHandler(
-            (highPriorityCmd,
-                new CommandAttribute("/highprioritycmd", "команда с высоким приоритетом")
-                    { HighPriority = true }));
+            (command,
+            new CommandAttribute("/highprioritycmd", "команда с высоким приоритетом")
+                { HighPriority = true }));
         var highPriorityCmdMessage = new Message { Text = "/highprioritycmd", };
 
         Assert.That(commandHandler.IsHighPriorityCommand(highPriorityCmdMessage), Is.True);
@@ -66,11 +65,9 @@ public class CommandHandlerTests
     [Test]
     public void IsHighPriorityCommand_LowPriority()
     {
-        var lowPriorityCmd = A.Fake<ICommand>();
-
         var commandHandler = CreateHandler(
-            (lowPriorityCmd,
-                new CommandAttribute("/lowprioritycmd", "команда с низким приоритетом")));
+            (command,
+            new CommandAttribute("/lowprioritycmd", "команда с низким приоритетом")));
         var lowPriorityCmdMessage = new Message { Text = "/lowprioritycmd", };
 
         Assert.That(commandHandler.IsHighPriorityCommand(lowPriorityCmdMessage), Is.False);

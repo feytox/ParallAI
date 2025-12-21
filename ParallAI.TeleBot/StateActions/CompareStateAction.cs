@@ -16,7 +16,7 @@ namespace ParallAI.TeleBot.StateActions;
 
 public class CompareStateAction(
     ComparisonService compareService,
-    MediaGroupCollector groupCollector,
+    IMediaGroupCollector groupCollector,
     CancelTokenSourceStorage cancelTokenStorage)
     : StateAction<CompareState>
 {

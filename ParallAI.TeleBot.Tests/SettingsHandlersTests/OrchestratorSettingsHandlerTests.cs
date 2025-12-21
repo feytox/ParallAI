@@ -1,13 +1,12 @@
+using FakeItEasy;
 using ParallAI.Core.Entities;
-using ParallAI.Core.Providers;
 using ParallAI.Core.States;
-using ParallAI.Core.ValueTypes;
 using ParallAI.TeleBot.Settings;
 using Telegram.Bot.Types;
 
 namespace ParallAI.TeleBot.Tests.SettingsHandlersTests;
 
-public class OrchestratorSettingsHandlerTests 
+public class OrchestratorSettingsHandlerTests
     : SettingsHandlerTests<OrchestratorSettingsHandler, OrchestratorSettingsState>
 {
     protected override OrchestratorSettingsHandler CreateHandler() => new();
@@ -15,14 +14,14 @@ public class OrchestratorSettingsHandlerTests
     protected override OrchestratorSettingsState CreateInitialState() => new([]);
 
     [Test]
-    public async Task FinalizeSettings()
+    public async Task FinalizeSettings_CurrentStateIsCompare()
     {
         var handler = CreateHandler();
         var query = new CallbackQuery();
         var state = CreateInitialState();
 
-        var preset = new Preset(Guid.NewGuid(), "name", PromptSettings.Default);
-        var model = new AiModel(Guid.NewGuid(), "ID", "name", new GeminiProvider("token"));
+        var preset = A.Fake<Preset>();
+        var model = A.Fake<AiModel>();
         state.Preset = preset;
         state.Model = model;
 

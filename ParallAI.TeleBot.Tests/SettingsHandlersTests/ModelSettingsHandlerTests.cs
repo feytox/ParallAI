@@ -1,6 +1,7 @@
+using FakeItEasy;
 using ParallAI.Core.Entities;
-using ParallAI.Core.Providers;
 using ParallAI.Core.States;
+using ParallAI.Core.ValueTypes;
 using ParallAI.TeleBot.Settings;
 using Telegram.Bot.Types;
 
@@ -9,17 +10,16 @@ namespace ParallAI.TeleBot.Tests.SettingsHandlersTests;
 [TestFixture]
 public class ModelSettingsHandlerTests : SettingsHandlerTests<ModelSettingsHandler, ModelSettingsState>
 {
-    private Message message;
     private CallbackQuery query;
 
     protected override ModelSettingsHandler CreateHandler() => new();
 
-    protected override ModelSettingsState CreateInitialState() => new(Guid.NewGuid());
+    protected override ModelSettingsState CreateInitialState() => new (Guid.NewGuid());
 
     [SetUp]
     public void Setup()
     {
-        message = new Message();
+        var message = new Message();
         query = new CallbackQuery { Message = message };
     }
 
@@ -41,23 +41,20 @@ public class ModelSettingsHandlerTests : SettingsHandlerTests<ModelSettingsHandl
     {
         var guid = Guid.NewGuid();
         var state = new ModelSettingsState(guid);
-        var msg = new Message();
-        var callbackQuery = new CallbackQuery { Message = msg };
         var handler = CreateHandler();
 
-        var model = new AiModel(guid, "ID", "name", new GeminiProvider("token"));
+        var model = new AiModel(guid, "id", "name", A.Fake<AiProvider>());
         User.AddModel(model);
         User.StateMachine.Push(state);
 
         var newModelId = "new ID";
         var newDisplayName = "new name";
-        var newProvider = new GeminiProvider("new token");
-
+        var newProvider = A.Fake<AiProvider>();
         state.ModelId = newModelId;
         state.DisplayName = newDisplayName;
         state.Provider = newProvider;
 
-        await handler.FinalizeSettings(state, callbackQuery, Bot, User);
+        await handler.FinalizeSettings(state, query, Bot, User);
 
         var modelsCount = User.UserModels.Count;
         var expectedModel = new AiModel(guid, newModelId, newDisplayName, newProvider);

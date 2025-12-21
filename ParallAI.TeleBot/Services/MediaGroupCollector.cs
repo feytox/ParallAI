@@ -4,7 +4,7 @@ using Telegram.Bot.Types;
 
 namespace ParallAI.TeleBot.Services;
 
-public class MediaGroupCollector
+public class MediaGroupCollector : IMediaGroupCollector
 {
     private const int AllMessagesCooldown = 1000;
 

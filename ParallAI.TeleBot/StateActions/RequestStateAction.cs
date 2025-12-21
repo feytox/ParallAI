@@ -16,8 +16,8 @@ using User = ParallAI.Core.Entities.User;
 namespace ParallAI.TeleBot.StateActions;
 
 public class RequestStateAction(
-    GenerationService genService,
-    MediaGroupCollector groupCollector,
+    IGenerationService genService,
+    IMediaGroupCollector groupCollector,
     CancelTokenSourceStorage cancelTokenStorage)
     : StateAction<RequestState>
 {
