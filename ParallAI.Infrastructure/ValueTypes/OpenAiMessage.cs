@@ -34,10 +34,10 @@ public static class OpenAiMappings
             _ => throw new ArgumentException($"Unknown role: {role}")
         };
     }
-    
-    public static OpenAiMessage ToOpenAiMessage(this TextMessage message) 
-        => new OpenAiMessage(OpenAiContent.Create(message.Text), message.Role.ToOpenAiRole());
-    
+
+    public static OpenAiMessage ToOpenAiMessage(this TextMessage message) =>
+        new(OpenAiContent.Create(message.Text), message.Role.ToOpenAiRole());
+
     public static OpenAiMessage ToOpenAiMessage(this FileMessage message, IEnumerable<AiFile> files) =>
-        new OpenAiMessage(OpenAiContent.Create(message.Text, files), message.Role.ToOpenAiRole());
+        new(OpenAiContent.Create(message.Text, files), message.Role.ToOpenAiRole());
 }

@@ -18,12 +18,12 @@ public record OpenRouterRequest(
         var reasoning = new EffortReasoning(effort);
         return new OpenRouterRequest(modelId, messages.ToArray(), promptSettings.Temperature, reasoning);
     }
-    
+
     [JsonDerivedType(typeof(MaxTokensReasoning))]
     [JsonDerivedType(typeof(EffortReasoning))]
     public abstract record ReasoningConfig;
 
-    public record MaxTokensReasoning([property: JsonPropertyName("max_tokens")] int MaxTokens) : ReasoningConfig;
+    private record MaxTokensReasoning([property: JsonPropertyName("max_tokens")] int MaxTokens) : ReasoningConfig;
 
-    public record EffortReasoning(OpenAiReasoningEffort Effort) : ReasoningConfig;
+    private record EffortReasoning(OpenAiReasoningEffort Effort) : ReasoningConfig;
 }

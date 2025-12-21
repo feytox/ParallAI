@@ -82,7 +82,7 @@ public abstract class HttpGenHandler<TProvider, TRequest, TMessage, TResponse>(
 
     private GenerationException CreateDeserializeException(string content, Exception innerException)
     {
-        throw new GenerationException($"Unable to deserialize answer '{content}'", "Unable to deserialize answer", 
+        throw new GenerationException($"Unable to deserialize answer '{content}'", "Unable to deserialize answer",
             typeof(TProvider).Name, Model.DisplayName, innerException);
     }
 

@@ -21,7 +21,7 @@ public record OpenAiResponse(OpenAiResponse.Choice[] Choices) : IGenResponse
         if (content is not TextContentItem textContent)
             throw new ArgumentException(
                 $"Response should contain exactly 1 response text content. Actual: {items.Length}");
-        
+
         return new AiResponse(textContent.Text);
     }
 }

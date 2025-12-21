@@ -12,10 +12,8 @@ public record GeminiContent(GeminiContent.Part[] Parts, GeminiContent.MessageRol
     public string GetTextResponse()
     {
         var part = Parts.SingleOrDefault();
-        if (part is null)
-            throw new ArgumentException($"Content should contain exactly 1 part. Actual: {Parts.Length}");
-
-        return part.Text!;
+        return part?.Text
+               ?? throw new ArgumentException($"Content should contain exactly 1 part. Actual: {Parts.Length}");
     }
 
     public static GeminiContent CreateFromText(string text, MessageRole role)

@@ -8,7 +8,7 @@ namespace ParallAI.Infrastructure.ValueTypes;
 public record OpenAiContent
 {
     public ContentItem[] Items { get; }
-    
+
     public OpenAiContent(ContentItem[] items)
     {
         if (items.Length == 0)

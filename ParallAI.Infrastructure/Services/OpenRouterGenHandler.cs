@@ -36,7 +36,8 @@ public class OpenRouterGenHandler(
         return message.ToOpenAiMessage(files);
     }
 
-    protected override OpenRouterRequest CreateRequest(IEnumerable<OpenAiMessage> messages, PromptSettings promptSettings)
+    protected override OpenRouterRequest CreateRequest(IEnumerable<OpenAiMessage> messages,
+        PromptSettings promptSettings)
     {
         return OpenRouterRequest.Create(Model.ModelId, messages, promptSettings);
     }

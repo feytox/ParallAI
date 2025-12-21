@@ -11,7 +11,7 @@ public static class Program
     public static async Task Main(string[] args)
     {
         var host = Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder(args)
-            .ConfigureServices(services => 
+            .ConfigureServices(services =>
             {
                 services.AddCore();
                 services.AddTelebotCore();
