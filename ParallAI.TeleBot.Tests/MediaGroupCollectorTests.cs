@@ -11,7 +11,7 @@ public class MediaGroupCollectorTests
     {
         var mediaGroupCollector = new MediaGroupCollector();
         var testMessages = new Message { Text = "test message" };
-        var result =  await mediaGroupCollector.CollectMessages(testMessages);
+        var result = await mediaGroupCollector.CollectMessages(testMessages);
         var expected = new[] { testMessages };
         Assert.That(result, Is.EqualTo(expected));
     }
@@ -31,7 +31,7 @@ public class MediaGroupCollectorTests
         }, CancellationToken.None);
         return Task.CompletedTask;
     }
-    
+
     [Test]
     public Task CollectMessages_IsNotFirstMessage()
     {
@@ -51,10 +51,10 @@ public class MediaGroupCollectorTests
     public Task CollectMessages_MultipleMediaGroups()
     {
         var mediaGroupCollector = new MediaGroupCollector();
-        
+
         var firstMsgFirstGroup = new Message { MediaGroupId = "ID 1" };
         var secondMsgFirstGroup = new Message { MediaGroupId = "ID 1" };
-        
+
         var firstMsgSecondGroup = new Message { MediaGroupId = "ID 2" };
         var secondMsgSecondGroup = new Message { MediaGroupId = "ID 2" };
 

@@ -14,12 +14,12 @@ public abstract class SettingsHandlerTests<THandler, TState>
 {
     protected ITelegramBotClient Bot;
     protected User User;
-    protected ChatId ChatId;
-    
+    private ChatId chatId;
+
     private Message message;
     private CallbackQuery query;
     private THandler handler;
-    
+
     protected abstract THandler CreateHandler();
     protected abstract TState CreateInitialState();
 
@@ -28,8 +28,8 @@ public abstract class SettingsHandlerTests<THandler, TState>
     {
         Bot = A.Fake<ITelegramBotClient>();
         User = new User(1);
-        ChatId = new ChatId(1);
-        
+        chatId = new ChatId(1);
+
         message = new Message();
         query = new CallbackQuery { Message = message };
         handler = CreateHandler();
@@ -44,14 +44,14 @@ public abstract class SettingsHandlerTests<THandler, TState>
             async () => await handler.ActivatePart(state, partIndex, query, Bot, User));
     }
 
-    [Test] 
+    [Test]
     public async Task ActivatePart_WhenNextStateIsNotNull()
     {
         var state = CreateInitialState();
         await handler.ActivatePart(state, 0, query, Bot, User);
         Assert.That(state.CurrentPart, Is.EqualTo(0));
     }
-    
+
     [Test]
     public async Task HandleMessage()
     {
@@ -65,18 +65,18 @@ public abstract class SettingsHandlerTests<THandler, TState>
     {
         var state = CreateInitialState();
         state.Reactivated = false;
-        
-        var result = await handler.ExecuteAfter(state, ChatId, message, Bot);
+
+        var result = await handler.ExecuteAfter(state, chatId, message, Bot);
         Assert.That(result, Is.False);
     }
-    
+
     [Test]
     public async Task ExecuteAfter_PrevStateIsNotNull()
     {
         var state = CreateInitialState();
         state.AcceptPrevState(state.PrevState);
-        
-        var result = await handler.ExecuteAfter(state, ChatId, message, Bot);
+
+        var result = await handler.ExecuteAfter(state, chatId, message, Bot);
         Assert.That(result, Is.True);
         Assert.That(state.PrevState, Is.Null);
         Assert.That(state.CurrentPart, Is.Null);

@@ -9,7 +9,7 @@ namespace ParallAI.TeleBot.Tests;
 public class CallbackQueryHandlerTests
 {
     private ITelegramBotClient bot;
-    
+
     [SetUp]
     public void Setup()
     {
@@ -27,7 +27,7 @@ public class CallbackQueryHandlerTests
         A.CallTo(() => fakeClb.Handle(
             callbackQuery, A<CallbackData>.That.Matches(d => d.Key == key), bot)).MustHaveHappened();
     }
-    
+
     [Test]
     public async Task HandleCallbackQuery_WhenNotExists()
     {

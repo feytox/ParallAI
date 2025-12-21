@@ -13,7 +13,7 @@ public class CompareSettingsHandlerTests : SettingsHandlerTests<CompareSettingsH
     private CompareSettingsState state;
     private Message message;
     private CallbackQuery query;
-    
+
     protected override CompareSettingsHandler CreateHandler() => new();
     protected override CompareSettingsState CreateInitialState() => new();
 
@@ -24,7 +24,7 @@ public class CompareSettingsHandlerTests : SettingsHandlerTests<CompareSettingsH
         message = new Message();
         query = new CallbackQuery { Message = message };
     }
-    
+
     [Test]
     public void RemoveCompareElement()
     {
@@ -34,11 +34,11 @@ public class CompareSettingsHandlerTests : SettingsHandlerTests<CompareSettingsH
         state.ConfiguredElements.Add(new CompareElement(fakePreset, fakeModel));
         state.ConfiguredElements.Add(new CompareElement(fakePreset, fakeModel));
         handler.RemoveCompareElement(state, 0);
-        
+
         Assert.That(state.Reactivated);
         Assert.That(state.ConfiguredElements.Count == 1);
     }
-    
+
     [Test]
     public async Task FinalizeSettings()
     {

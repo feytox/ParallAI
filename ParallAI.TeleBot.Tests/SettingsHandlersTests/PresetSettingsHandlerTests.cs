@@ -11,7 +11,7 @@ public class PresetSettingsHandlerTests : SettingsHandlerTests<PresetSettingsHan
     private PresetSettingsHandler handler;
     private Message message;
     private CallbackQuery query;
-    
+
     protected override PresetSettingsHandler CreateHandler() => new();
 
     protected override PresetSettingsState CreateInitialState() => new(Guid.NewGuid());
@@ -23,7 +23,7 @@ public class PresetSettingsHandlerTests : SettingsHandlerTests<PresetSettingsHan
         message = new Message();
         query = new CallbackQuery { Message = message };
     }
-    
+
     [Test]
     public async Task FinalizeSettings_AddNewPreset()
     {
@@ -33,14 +33,14 @@ public class PresetSettingsHandlerTests : SettingsHandlerTests<PresetSettingsHan
         state.SystemPrompt = "prompt";
         state.Temperature = 1;
         state.ThinkingBudget = ThinkingBudget.None;
-        
+
         User.StateMachine.Push(state);
-        
+
         await handler.FinalizeSettings(state, query, Bot, User);
         var presetsCount = User.UserPresets.Count;
         Assert.That(presetsCount, Is.EqualTo(3));
     }
-    
+
     [Test]
     public async Task FinalizeSettings_ChangePreset()
     {
@@ -53,17 +53,17 @@ public class PresetSettingsHandlerTests : SettingsHandlerTests<PresetSettingsHan
 
         var newPresetName = "new name";
         var newPromptSettings = new PromptSettings("Системный промпт", 1, ThinkingBudget.Dynamic);
-        
+
         state.Name = newPresetName;
         state.SystemPrompt = newPromptSettings.SystemPrompt;
         state.Temperature = newPromptSettings.Temperature;
         state.ThinkingBudget = newPromptSettings.ThinkingBudget;
-        
+
         await handler.FinalizeSettings(state, query, Bot, User);
-        
+
         var presetsCount = User.UserPresets.Count;
         var expectedPreset = new Preset(guid, newPresetName, newPromptSettings);
-        
+
         Assert.That(presetsCount, Is.EqualTo(3));
         Assert.That(User.GetPreset(guid), Is.EqualTo(expectedPreset));
     }

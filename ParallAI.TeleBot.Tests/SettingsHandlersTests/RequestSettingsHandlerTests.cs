@@ -10,7 +10,7 @@ public class RequestSettingsHandlerTests : SettingsHandlerTests<RequestSettingsH
     private RequestSettingsState state;
     private Message message;
     private CallbackQuery query;
-    
+
     protected override RequestSettingsHandler CreateHandler() => new();
     protected override RequestSettingsState CreateInitialState() => new();
 
@@ -21,7 +21,7 @@ public class RequestSettingsHandlerTests : SettingsHandlerTests<RequestSettingsH
         message = new Message();
         query = new CallbackQuery { Message = message };
     }
-    
+
     [Test]
     public async Task FinalizeSettings()
     {
