@@ -38,7 +38,6 @@ public class CompareSettingsHandler() : SettingsHandler<CompareSettingsState>(Ca
         if (prevMessage is not null)
             await bot.DeleteMessageOptional(chatId, prevMessage.Id);
 
-        // TODO: rewrite text
         await bot.SendMessage(chatId,
             $"Для старта сравнения настройте как минимум {MinElements} элемента.\n\n" +
             "Для удаления элемента нажмите на него",
