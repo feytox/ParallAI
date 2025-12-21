@@ -11,7 +11,7 @@ public class CommandHandler
     public CommandHandler(IEnumerable<(ICommand command, CommandAttribute attribute)> commands)
     {
         var commandsAttributes = commands.ToArray();
-        
+
         this.commands = commandsAttributes
             .ToDictionary(t => t.attribute.Name, t => t.command, StringComparer.OrdinalIgnoreCase);
 

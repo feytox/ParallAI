@@ -20,11 +20,11 @@ public class CallbackQueryHandler
             await bot.AnswerCallbackQuery(callbackQuery.Id);
             return true;
         }
-        
+
         var data = new CallbackData(callbackQuery.Data);
         if (callbackQueries.TryGetValue(data.Key, out var callbackQueryObject))
             await callbackQueryObject.Handle(callbackQuery, data, bot);
-        
+
         await bot.AnswerCallbackQuery(callbackQuery.Id);
         return callbackQueryObject is not CancelTaskCallBack;
     }

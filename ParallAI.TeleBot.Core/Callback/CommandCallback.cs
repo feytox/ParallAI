@@ -25,7 +25,7 @@ public class CommandCallback(CommandHandler commandHandler) : TypedCallbackQuery
     public static InlineKeyboardButton Create<T>(string text) where T : ICommand
     {
         var type = typeof(T);
-        var attribute = type.GetCustomAttribute<CommandAttribute>() 
+        var attribute = type.GetCustomAttribute<CommandAttribute>()
                         ?? throw new ArgumentException($"{type} doesn't have CommandAttribute");
         return Create(text, attribute.Name);
     }

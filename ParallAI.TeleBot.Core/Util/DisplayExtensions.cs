@@ -10,6 +10,7 @@ namespace ParallAI.TeleBot.Core.Util;
 public static class DisplayExtensions
 {
     private const string EmptyPlaceholder = "(не задано)";
+
     private const string SelfHostInfo = "Боитесь за безопасность API-ключа? " +
                                         "<a href='https://github.com/feytox/ParallAI'><b>Захостите</b></a> бота сами!";
 

@@ -7,9 +7,9 @@ using User = ParallAI.Core.Entities.User;
 
 namespace ParallAI.TeleBot.Core.Callback.Common;
 
-public abstract class StandardSettingsStateCallback<TState, THandler>(IRepository<User, long> users, THandler handler) 
-    : SettingsStateCallback<TState, THandler>(users, handler) 
-    where TState : SettingsState 
+public abstract class StandardSettingsStateCallback<TState, THandler>(IRepository<User, long> users, THandler handler)
+    : SettingsStateCallback<TState, THandler>(users, handler)
+    where TState : SettingsState
     where THandler : StandardSettingsHandler<TState>
 {
     protected override async Task<bool> HandleDataContent(TState state, CallbackQuery query, string content,
@@ -17,7 +17,7 @@ public abstract class StandardSettingsStateCallback<TState, THandler>(IRepositor
     {
         if (content != "c")
             return false;
-        
+
         await Handler.FinalizeSettings(state, query, bot, user);
         return true;
     }

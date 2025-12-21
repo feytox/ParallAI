@@ -12,13 +12,13 @@ namespace ParallAI.TeleBot.Core.Callback;
 public class CancelCallback(IRepository<User, long> users) : UserCallbackQuery(users)
 {
     private const string Tag = "cancel";
-    
+
     protected override async Task Handle(CallbackQuery query, CallbackData data, ITelegramBotClient bot, User user)
     {
         await CancelHelper.Cancel(query.GetChatId(), query.Message, bot, user);
     }
 
     public static InlineKeyboardMarkup CreateMarkup(string text) => new(CreateButton(text));
-    
+
     public static InlineKeyboardButton CreateButton(string text) => InlineKeyboardButton.WithCallbackData(text, Tag);
 }

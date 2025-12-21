@@ -9,13 +9,13 @@ public abstract class StateAction<TState> : IStateAction where TState : UserStat
 {
     protected abstract Task<bool> Execute(TState state, Message message, ITelegramBotClient bot, User user);
 
-    protected virtual Task<bool> ExecuteAfter(TState state, ChatId chatId, Message? prevMessage, 
+    protected virtual Task<bool> ExecuteAfter(TState state, ChatId chatId, Message? prevMessage,
         ITelegramBotClient bot, User user)
     {
         return Task.FromResult(false);
     }
 
-    public Task<bool> ExecuteAfter(UserState state, ChatId chatId, Message? prevMessage, 
+    public Task<bool> ExecuteAfter(UserState state, ChatId chatId, Message? prevMessage,
         ITelegramBotClient bot, User user)
     {
         return ExecuteAfter((TState)state, chatId, prevMessage, bot, user);

@@ -8,7 +8,7 @@ public static class CallbackQueryExtensions
     {
         return query.Message ?? throw new NullReferenceException("Callback's message is null");
     }
-    
+
     public static ChatId GetChatId(this CallbackQuery query)
     {
         ChatId? chatId = query.Message?.Chat;

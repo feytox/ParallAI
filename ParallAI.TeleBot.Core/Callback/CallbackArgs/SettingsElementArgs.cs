@@ -20,10 +20,10 @@ public record SettingsElementArgs(int Index, SettingsElementAction Action) : ICa
         var index = int.TryParse(args[0], out var value)
             ? value
             : throw new Exception($"Argument {value} for settings element should be integer");
-        
-        if (args.Length != 2) 
+
+        if (args.Length != 2)
             return new SettingsElementArgs(index, SettingsElementAction.None);
-        
+
         var actionStr = args[1];
         var action = actionStr switch
         {

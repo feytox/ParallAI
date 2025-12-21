@@ -35,7 +35,7 @@ public class SequentialStateAction<TState, TStep> : StateAction<TState>
         var hasNext = state.Next();
         if (hasNext && !state.IsCompleted)
             return;
-            
+
         user.StateMachine.Pop(reactivate: !endSilently);
     }
 }

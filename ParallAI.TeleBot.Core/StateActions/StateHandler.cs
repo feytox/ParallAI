@@ -14,7 +14,7 @@ public class StateHandler(IEnumerable<IStateAction> actions, IRepository<User, l
         return await Execute(user, async (state, action) => await action.Execute(state, message, bot, user));
     }
 
-    public async Task<bool> HandlePostState(ChatId chatId, long userId, ITelegramBotClient bot, 
+    public async Task<bool> HandlePostState(ChatId chatId, long userId, ITelegramBotClient bot,
         Message? prevMessage = null)
     {
         var user = await userRepository.GetOrCreate(userId);

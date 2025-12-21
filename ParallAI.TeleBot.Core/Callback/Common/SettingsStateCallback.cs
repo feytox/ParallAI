@@ -14,17 +14,17 @@ public abstract class SettingsStateCallback<TState, THandler>(IRepository<User, 
     where THandler : SettingsHandler<TState>
 {
     protected readonly THandler Handler = handler;
-    
-    protected abstract Task<bool> HandleDataContent(TState state, CallbackQuery query, string content, 
+
+    protected abstract Task<bool> HandleDataContent(TState state, CallbackQuery query, string content,
         ITelegramBotClient bot, User user);
-    
+
     protected override async Task Handle(
         CallbackQuery query, CallbackData<SettingsStateArgs> data, ITelegramBotClient bot, User user)
     {
         var currentState = user.StateMachine.Current;
         if (currentState is not TState state)
             throw new InvalidOperationException($"{typeof(TState)} callback called for {currentState}");
-        
+
         if (await Handler.HandleCallBack(state, query, bot, user))
             return;
 

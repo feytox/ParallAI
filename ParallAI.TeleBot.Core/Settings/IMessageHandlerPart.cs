@@ -4,7 +4,7 @@ using Telegram.Bot.Types;
 
 namespace ParallAI.TeleBot.Core.Settings;
 
-public interface IMessageHandlerPart<in TState> where TState : SettingsState 
+public interface IMessageHandlerPart<in TState> where TState : SettingsState
 {
     Task<bool> HandleMessage(TState state, Message message, ITelegramBotClient bot);
 }

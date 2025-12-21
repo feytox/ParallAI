@@ -14,13 +14,13 @@ public class SettingsPartsBuilder<TState> where TState : SettingsState
     {
         var getter = propertySelector.Compile();
         var setter = CreateSetter(propertySelector);
-        
+
         var part = new SimpleSettingsPart<TValue, TState>(
             name, inputMessage, failMessage, parser, getter, setter);
         parts.Add(part);
         return this;
     }
-    
+
     public SettingsPartsBuilder<TState> AddEnum<TEnum>(string tag, string name, string inputMessage,
         Func<TEnum, bool> selector, Action<TState, TEnum> setter) where TEnum : struct, Enum
     {
@@ -35,8 +35,8 @@ public class SettingsPartsBuilder<TState> where TState : SettingsState
     {
         var getter = propertySelector.Compile();
         var setter = CreateSetter(propertySelector);
-        
-        var part = new SelectSettingsPart<TState, TValue>(tag, name, inputMessage, 
+
+        var part = new SelectSettingsPart<TState, TValue>(tag, name, inputMessage,
             elementsProvider, nameSelector, getter, setter);
         parts.Add(part);
         return this;
@@ -49,19 +49,19 @@ public class SettingsPartsBuilder<TState> where TState : SettingsState
     }
 
     public SettingsPart<TState>[] Build() => parts.ToArray();
-    
+
     private static Action<TState, TProperty> CreateSetter<TProperty>(
         Expression<Func<TState, TProperty?>> propertySelector)
     {
         var propertyInfo = GetPropertyInfo(propertySelector);
-        
+
         return (state, value) => propertyInfo.SetValue(state, value);
     }
-    
+
     private static PropertyInfo GetPropertyInfo<T>(Expression<Func<TState, T>> propertySelector)
     {
         var body = propertySelector.Body;
-        
+
         if (body is UnaryExpression unary)
             body = unary.Operand;
 

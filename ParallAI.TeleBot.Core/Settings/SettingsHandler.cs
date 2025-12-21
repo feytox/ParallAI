@@ -8,13 +8,14 @@ namespace ParallAI.TeleBot.Core.Settings;
 
 public abstract class SettingsHandler<TState> where TState : SettingsState
 {
-    protected abstract Task<bool> SaveSettingsToUser(TState state, CallbackQuery query, 
+    protected abstract Task<bool> SaveSettingsToUser(TState state, CallbackQuery query,
         ITelegramBotClient bot, User user);
+
     protected abstract Task SendPartsList(TState state, ChatId chatId, Message? prevMessage, ITelegramBotClient bot);
 
     protected readonly string Tag;
     protected readonly SettingsPart<TState>[] Parts;
-    
+
     protected SettingsHandler(string tag, Action<SettingsPartsBuilder<TState>> partsProvider)
     {
         Tag = tag;
@@ -76,7 +77,7 @@ public abstract class SettingsHandler<TState> where TState : SettingsState
         state.CurrentPart = null;
         return true;
     }
-    
+
     public async Task FinalizeSettings(TState state, CallbackQuery query, ITelegramBotClient bot, User user)
     {
         if (await SaveSettingsToUser(state, query, bot, user))
@@ -88,12 +89,12 @@ public abstract class SettingsHandler<TState> where TState : SettingsState
         return Parts.Select((part, i) =>
         {
             var icon = "";
-            
+
             if (part is IValidatablePart<TState> validatable)
                 icon = validatable.Validate(state) ? "✅" : "";
 
             return InlineKeyboardButton.WithCallbackData(
-                $"{icon}{part.Name}", 
+                $"{icon}{part.Name}",
                 $"{Tag}:{i}"
             );
         });

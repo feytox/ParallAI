@@ -14,15 +14,15 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<CommandHandler>();
         services.AddSingleton<CallbackQueryHandler>();
         services.AddSingleton<StateHandler>();
-        
+
         services.Scan(scan => scan
             .FromAssemblyOf<IStateAction>()
             .AddClasses(classes => classes.AssignableTo<IStateAction>())
-                .AsImplementedInterfaces()
-                .WithSingletonLifetime()
+            .AsImplementedInterfaces()
+            .WithSingletonLifetime()
         );
     }
-    
+
     public static void AddSequentialState<TState, TStep>(this IServiceCollection services, Assembly assembly,
         bool endSilently)
         where TState : SequentialState<TStep>

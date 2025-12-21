@@ -7,10 +7,11 @@ using User = ParallAI.Core.Entities.User;
 namespace ParallAI.TeleBot.Core.Callback.Common;
 
 [CallbackQuery(Tag)]
-public class CancelTaskCallBack(IRepository<User, long> users, CancelTokenSourceStorage storage) : UserCallbackQuery(users)
+public class CancelTaskCallBack(IRepository<User, long> users, CancelTokenSourceStorage storage)
+    : UserCallbackQuery(users)
 {
     public const string Tag = "cancelTask";
-    
+
     protected override Task Handle(CallbackQuery query, CallbackData data, ITelegramBotClient bot, User user)
     {
         if (!Guid.TryParse(data.Args[0], out var ctsId))

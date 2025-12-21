@@ -8,15 +8,13 @@ namespace ParallAI.TeleBot.Core.Callback.Common;
 
 public abstract class UserCallbackQuery(IRepository<User, long> users) : ICallbackQuery
 {
-    protected IRepository<User, long> Users { get; } = users;
-
     protected abstract Task Handle(CallbackQuery query, CallbackData data, ITelegramBotClient bot, User user);
 
     public async Task Handle(CallbackQuery query, CallbackData data, ITelegramBotClient bot)
     {
-        var user = await Users.GetOrCreate(query.Message!.Chat.Id);
+        var user = await users.GetOrCreate(query.Message!.Chat.Id);
         await Handle(query, data, bot, user);
-        await Users.Update(user);
+        await users.Update(user);
     }
 }
 

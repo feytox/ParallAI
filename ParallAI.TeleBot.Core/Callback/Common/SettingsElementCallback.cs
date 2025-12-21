@@ -44,7 +44,8 @@ public abstract class SettingsElementCallback(IRepository<User, long> users)
         await bot.EditCallbackMessage(query, info, replyMarkup: new InlineKeyboardMarkup(buttons));
     }
 
-    private IEnumerable<InlineKeyboardButton> CreateButtons(int index, CallbackData<SettingsElementArgs> data, User user)
+    private IEnumerable<InlineKeyboardButton> CreateButtons(int index, CallbackData<SettingsElementArgs> data,
+        User user)
     {
         yield return InlineKeyboardButton.WithCallbackData(
             "Выбрать", $"{data.Key}:{data.Args.Index}:choose");

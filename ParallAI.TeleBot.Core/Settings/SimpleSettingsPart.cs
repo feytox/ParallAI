@@ -16,7 +16,7 @@ public class SimpleSettingsPart<TValue, TState>(
     Func<string, TValue?> parser,
     Func<TState, TValue?> getter,
     Action<TState, TValue> setter
-    ) : SettingsPart<TState>(name), IMessageHandlerPart<TState>, IValidatablePart<TState>
+) : SettingsPart<TState>(name), IMessageHandlerPart<TState>, IValidatablePart<TState>
     where TState : SettingsState
 {
     public override async Task<UserState?> ActivatePart(TState state, CallbackQuery query, ITelegramBotClient bot,
