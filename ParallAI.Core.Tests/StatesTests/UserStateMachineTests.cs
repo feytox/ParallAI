@@ -16,7 +16,7 @@ public class UserStateMachineTests
         userStateMachine = new UserStateMachine();
         state = A.Fake<UserState>();
     }
-    
+
     [Test]
     public void Push_SingleState_CurrentStateIsPushedState()
     {
@@ -57,19 +57,19 @@ public class UserStateMachineTests
     public void TryPop_AcceptPrevState_MustHaveHappened()
     {
         var prevState = A.Fake<UserState>(options => options.Implements<IPrevStateHandler>());
-        
+
         userStateMachine.Push(prevState);
         userStateMachine.Push(state);
         var current = userStateMachine.Current;
         userStateMachine.TryPop();
         A.CallTo(() => ((IPrevStateHandler)prevState).AcceptPrevState(current)).MustHaveHappened();
     }
-    
+
     [Test]
     public void TryPop_AcceptPrevState_MustNotHaveHappened()
     {
         var prevState = A.Fake<UserState>(options => options.Implements<IPrevStateHandler>());
-        
+
         userStateMachine.Push(prevState);
         userStateMachine.Push(state);
         var current = userStateMachine.Current;
@@ -81,7 +81,7 @@ public class UserStateMachineTests
     public void TryPop_IsCancelled_AcceptPrevStateWithNull_MustHaveHappened()
     {
         var prevState = A.Fake<UserState>(options => options.Implements<IPrevStateHandler>());
-        
+
         userStateMachine.Push(prevState);
         userStateMachine.Push(state);
         userStateMachine.TryPop(cancelled: true);

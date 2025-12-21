@@ -13,7 +13,7 @@ public class ComparisonServiceTests
     private readonly AiMessage prompt = new TextMessage("Prompt");
     private Preset preset;
     private AiModel model;
-    
+
     [SetUp]
     public void Setup()
     {
@@ -26,18 +26,17 @@ public class ComparisonServiceTests
     [Test]
     public async Task Generate_TwoElements_ReturnCompareResult()
     {
-        var responses = new AiResponse[]{ new("Response 1"), new("Response 2") };
+        var responses = new AiResponse[] { new("Response 1"), new("Response 2") };
         var orchestratorResponse = new AiResponse("Comparison");
-        A.CallTo(() => 
-                genService.Generate(A<AiModel>._, A<AiMessage[]>._, A<PromptSettings>._, CancellationToken.None))
-                .ReturnsNextFromSequence(
-                    Task.FromResult(responses[0]), Task.FromResult(responses[1]), Task.FromResult(orchestratorResponse));
-        
+        A.CallTo(() => genService.Generate(A<AiModel>._, A<AiMessage[]>._, A<PromptSettings>._, CancellationToken.None))
+            .ReturnsNextFromSequence(
+                Task.FromResult(responses[0]), Task.FromResult(responses[1]), Task.FromResult(orchestratorResponse));
+
         var compElem1 = new CompareElement(preset, model);
         var compElem2 = new CompareElement(preset, model);
         var orchestrator = new CompareElement(preset, model);
         var config = new CompareConfig([compElem1, compElem2], orchestrator, DateTime.Now);
-        
+
         var result = await comparisonService.Generate(prompt, config, CancellationToken.None);
         Assert.That(result.Responses, Is.EquivalentTo(responses));
         Assert.That(result.OrchestratorResponse, Is.EqualTo(orchestratorResponse));
@@ -48,11 +47,11 @@ public class ComparisonServiceTests
     {
         var cts = new CancellationTokenSource();
         var config = A.Fake<CompareConfig>();
-        
+
         await comparisonService.Generate(prompt, config, cts.Token);
 
-        A.CallTo(() => 
-            genService.Generate(A<AiModel>._, A<AiMessage[]>._, A<PromptSettings>._, cts.Token))
+        A.CallTo(() =>
+                genService.Generate(A<AiModel>._, A<AiMessage[]>._, A<PromptSettings>._, cts.Token))
             .MustHaveHappened();
     }
 }

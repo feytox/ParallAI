@@ -13,7 +13,7 @@ public class AiFileTests
         var result = file.IsImage;
         Assert.That(result, Is.True);
     }
-    
+
     [Test]
     public void IsImage_MimeTypeIsNotImage()
     {

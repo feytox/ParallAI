@@ -20,7 +20,7 @@ public class CompareSettingsStateTests
         preset = A.Fake<Preset>();
         model = A.Fake<AiModel>();
     }
-    
+
     [Test]
     public void AddElement_Single()
     {
@@ -28,7 +28,7 @@ public class CompareSettingsStateTests
         state.AddElement(configElem);
         Assert.That(state.ConfiguredElements.Contains(configElem));
     }
-    
+
     [Test]
     public void RemoveAt_Single()
     {
@@ -54,7 +54,7 @@ public class CompareSettingsStateTests
         var expected = new OrchestratorSettingsState(state.ConfiguredElements.ToArray());
         result.Should().BeEquivalentTo(expected);
     }
-    
+
     [Test]
     public void ToOrchestratorState_ZeroElems()
     {

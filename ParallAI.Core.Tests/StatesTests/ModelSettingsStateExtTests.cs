@@ -36,7 +36,7 @@ public class ModelSettingsStateExtTests
             Assert.That(result.Provider, Is.EqualTo(state.Provider));
         });
     }
-    
+
     [Test]
     public void ToModel_WithoutDisplayName()
     {
@@ -72,7 +72,7 @@ public class ModelSettingsStateExtTests
         };
         result.Should().BeEquivalentTo(expected);
     }
-    
+
     [TestCase("id", "name")]
     [TestCase(null, null)]
     public void ApplyChanges_FieldsIsEquals(string? modelId, string? displayName)
@@ -88,7 +88,7 @@ public class ModelSettingsStateExtTests
 
         var model = new AiModel(modelGuid, "", "", null);
         state.ApplyChanges(model);
-        
+
         Assert.Multiple(() =>
         {
             Assert.That(model.Id, !Is.EqualTo(state.Id));

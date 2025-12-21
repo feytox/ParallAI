@@ -15,7 +15,7 @@ public class PresetSettingsStateExtTests
     {
         guid = Guid.NewGuid();
     }
-    
+
     [TestCase("name", "prompt", 1.0, ThinkingBudget.High)]
     [TestCase(null, null, 1.0, ThinkingBudget.None)]
     public void ToPreset(string? name, string? sysPrompt, decimal? temperature, ThinkingBudget budget)
@@ -37,13 +37,13 @@ public class PresetSettingsStateExtTests
             result.PromptSettings.Should().BeEquivalentTo(expectedPromptSettings);
         });
     }
-    
+
     [Test]
     public void ToState()
     {
         var name = "name";
         var preset = new Preset(guid, name, PromptSettings.Default);
-        
+
         var result = preset.ToState();
         var expected = new PresetSettingsState(guid)
         {

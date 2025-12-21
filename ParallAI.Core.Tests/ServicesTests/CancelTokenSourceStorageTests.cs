@@ -39,7 +39,7 @@ public class CancelTokenSourceStorageTests
         ctss.DeleteSource(token);
         Assert.Catch<KeyNotFoundException>(() => ctss.GetSource(token));
     }
-    
+
     [Test]
     public void DeleteSource_CtsIsNotContained()
     {

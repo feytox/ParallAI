@@ -20,7 +20,7 @@ public class OrchestratorSettingsStateExtTests
             Preset = preset,
             Model = model
         };
-        
+
         var result = state.Build();
         Assert.Multiple(() =>
         {

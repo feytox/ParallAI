@@ -18,7 +18,7 @@ public class UserRepositoryExtTests
         id = 1;
         user = new User(id);
     }
-    
+
     [Test]
     public async Task GetOrCreate_GetExistsUser()
     {
@@ -32,7 +32,7 @@ public class UserRepositoryExtTests
     {
         User? returnValue = null;
         A.CallTo(() => repository.GetById(A<long>._)).Returns(returnValue);
-        
+
         var createdUser = await repository.GetOrCreate(id);
         A.CallTo(() => repository.Add(createdUser)).MustHaveHappened();
         Assert.That(createdUser.Id, Is.EqualTo(id));

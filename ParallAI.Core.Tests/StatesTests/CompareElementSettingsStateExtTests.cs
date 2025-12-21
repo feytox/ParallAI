@@ -15,17 +15,17 @@ public class CompareElementSettingsStateExtTests
     {
         state = new CompareElementSettingsState();
     }
-    
+
     [Test]
     public void ToTextLines_StateElemsIsNotNull()
     {
         state.Model = A.Fake<AiModel>();
         state.Preset = A.Fake<Preset>();
         var textLines = state.ToTextLines();
-        
+
         var expectedModel = $"Модель: {state.Model.DisplayName}";
         var expectedPreset = $"Пресет: {state.Preset.Name}";
-        Assert.That(textLines, Is.EquivalentTo(new[] {expectedPreset, expectedModel} ));
+        Assert.That(textLines, Is.EquivalentTo(new[] { expectedPreset, expectedModel }));
     }
 
     [Test]
@@ -33,18 +33,18 @@ public class CompareElementSettingsStateExtTests
     {
         state.Model = A.Fake<AiModel>();
         var textLines = state.ToTextLines();
-        
+
         var expectedModel = $"Модель: {state.Model.DisplayName}";
-        Assert.That(textLines, Is.EquivalentTo(new[] {expectedModel} ));
+        Assert.That(textLines, Is.EquivalentTo(new[] { expectedModel }));
     }
-    
+
     [Test]
     public void ToTextLines_StateElemsIsNull()
     {
         var textLines = state.ToTextLines();
         Assert.That(textLines, Is.EquivalentTo(Array.Empty<string>()));
     }
-    
+
     [Test]
     public void ToElement_StateElemsIsNotNull()
     {
@@ -55,7 +55,7 @@ public class CompareElementSettingsStateExtTests
         var expected = new CompareElement(state.Preset, state.Model);
         Assert.That(result, Is.EqualTo(expected));
     }
-    
+
     [Test]
     public void ToElement_StateElemsIsNull()
     {
