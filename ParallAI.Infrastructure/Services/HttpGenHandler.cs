@@ -62,7 +62,7 @@ public abstract class HttpGenHandler<TProvider, TRequest, TMessage, TResponse>(
 
     private async Task<AiResponse> HandleResponse(HttpResponseMessage response, string content)
     {
-        if (IsClientError(response.StatusCode))
+        if (CanHandleError(response.StatusCode))
             await HandleErrorResponse(response, content);
         response.EnsureSuccessStatusCode();
 
@@ -86,5 +86,5 @@ public abstract class HttpGenHandler<TProvider, TRequest, TMessage, TResponse>(
             typeof(TProvider).Name, Model.DisplayName, innerException);
     }
 
-    private static bool IsClientError(HttpStatusCode statusCode) => (int)statusCode >= 400 && (int)statusCode < 500;
+    private static bool CanHandleError(HttpStatusCode statusCode) => (int)statusCode >= 400 && (int)statusCode < 600;
 }
