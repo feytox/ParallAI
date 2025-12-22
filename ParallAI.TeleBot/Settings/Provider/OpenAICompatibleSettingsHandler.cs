@@ -1,6 +1,7 @@
 using ParallAI.Core.States.Providers;
 using ParallAI.TeleBot.Core.Settings;
 using ParallAI.TeleBot.Core.Util;
+using ParallAI.TeleBot.Util;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using User = ParallAI.Core.Entities.User;
@@ -14,8 +15,8 @@ public class OpenAICompatibleSettingsHandler()
 
     private static void CreateParts(SettingsPartsBuilder<OpenAICompatibleSettingsState> builder)
     {
-        builder.AddSimple("API ключ", "Введите API ключ провайдера", "",
-            text => text, state => state.Token);
+        builder.AddSimple("API ключ", "Введите API ключ провайдера", "Ошибка: ключ должен содержать только ASCII",
+            text => text.ParseAscii(), state => state.Token);
         builder.AddSimple("Endpoint Url", "Введите Endpoint URL", "Это не похоже на URL. Попробуйте снова",
             text => Uri.TryCreate(text, UriKind.Absolute, out var uri) ? uri : null,
             state => state.Endpoint);
