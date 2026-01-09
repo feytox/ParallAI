@@ -8,13 +8,13 @@ namespace ParallAI.TeleBot.Core.StateActions;
 
 public class StateHandler(IEnumerable<IStateAction> actions, IRepository<User, long> userRepository)
 {
-    public async Task<bool> HandleState(Message message, ITelegramBotClient bot)
+    public async Task<ActionResult> HandleState(Message message, ITelegramBotClient bot)
     {
         var user = await userRepository.GetOrCreate(message.From!.Id);
         return await Execute(user, async (state, action) => await action.Execute(state, message, bot, user));
     }
 
-    public async Task<bool> HandlePostState(ChatId chatId, long userId, ITelegramBotClient bot,
+    public async Task<ActionResult> HandlePostState(ChatId chatId, long userId, ITelegramBotClient bot,
         Message? prevMessage = null)
     {
         var user = await userRepository.GetOrCreate(userId);

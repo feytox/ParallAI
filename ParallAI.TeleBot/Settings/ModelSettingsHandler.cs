@@ -1,5 +1,6 @@
 using ParallAI.Core.States;
 using ParallAI.TeleBot.Core.Settings;
+using ParallAI.TeleBot.Core.StateActions;
 using ParallAI.TeleBot.Core.Util;
 using ParallAI.TeleBot.Settings.Provider;
 using Telegram.Bot;
@@ -12,7 +13,7 @@ public class ModelSettingsHandler() : StandardSettingsHandler<ModelSettingsState
 {
     public const string CallbackTag = "model_settings";
 
-    protected override async Task<bool> SaveSettingsToUser(ModelSettingsState state, CallbackQuery query,
+    protected override async Task<ActionResult> SaveSettingsToUser(ModelSettingsState state, CallbackQuery query,
         ITelegramBotClient bot, User user)
     {
         if (state.Id is null)
@@ -20,7 +21,7 @@ public class ModelSettingsHandler() : StandardSettingsHandler<ModelSettingsState
         else
             ApplyChanges(state, user);
         await bot.EditCallbackMessage(query, "Модель сохранена");
-        return true;
+        return ActionResult.Handled;
     }
 
     protected override string GetPartsMessage(ModelSettingsState state)

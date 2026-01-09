@@ -1,5 +1,6 @@
 using ParallAI.Core.States.Providers;
 using ParallAI.TeleBot.Core.Settings;
+using ParallAI.TeleBot.Core.StateActions;
 using ParallAI.TeleBot.Core.Util;
 using ParallAI.TeleBot.Util;
 using Telegram.Bot;
@@ -19,10 +20,10 @@ public class GeminiProviderSettingsHandler()
             text => text.ParseAscii(), state => state.Token);
     }
 
-    protected override Task<bool> SaveSettingsToUser(GeminiProviderSettingsState state, CallbackQuery query,
+    protected override Task<ActionResult> SaveSettingsToUser(GeminiProviderSettingsState state, CallbackQuery query,
         ITelegramBotClient bot, User user)
     {
-        return Task.FromResult(true);
+        return Task.FromResult(ActionResult.Handled);
     }
 
     protected override string GetPartsMessage(GeminiProviderSettingsState state)

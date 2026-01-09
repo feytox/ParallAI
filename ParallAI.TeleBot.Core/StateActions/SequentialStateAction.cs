@@ -17,7 +17,7 @@ public class SequentialStateAction<TState, TStep> : StateAction<TState>
         this.endSilently = endSilently;
     }
 
-    protected override async Task<bool> Execute(TState state, Message message, ITelegramBotClient bot, User user)
+    protected override async Task<ActionResult> Execute(TState state, Message message, ITelegramBotClient bot, User user)
     {
         var currentStep = state.Current;
         if (!stepToAction.TryGetValue(currentStep, out var action))
@@ -27,7 +27,7 @@ public class SequentialStateAction<TState, TStep> : StateAction<TState>
         if (nextStep)
             NextStepOrEnd(state, user);
 
-        return true;
+        return ActionResult.Handled;
     }
 
     private void NextStepOrEnd(TState state, User user)

@@ -20,11 +20,11 @@ public class CompareStateAction(
     CancelTokenSourceStorage cancelTokenStorage)
     : StateAction<CompareState>
 {
-    protected override async Task<bool> Execute(CompareState state, Message message, ITelegramBotClient bot, User user)
+    protected override async Task<ActionResult> Execute(CompareState state, Message message, ITelegramBotClient bot, User user)
     {
         var messages = await groupCollector.CollectMessages(message);
         if (messages is null)
-            return false;
+            return ActionResult.HandledCompletely;
 
         var aiMessage = AiMessageHelper.CreateAiMessage(messages);
 
@@ -48,7 +48,7 @@ public class CompareStateAction(
             await bot.DeleteMessageOptional(sentMessage.Chat, sentMessage.Id);
         }
 
-        return true;
+        return ActionResult.Handled;
     }
 
     private async Task<Message> SendProcessingMessage(ITelegramBotClient bot, ChatId chatId, Guid ctsId)
@@ -73,11 +73,11 @@ public class CompareStateAction(
         await bot.SendMarkdown(chatId, $"**Ответ оркестратора:**\n\n{result.OrchestratorResponse.Text}");
     }
 
-    protected override async Task<bool> ExecuteAfter(CompareState state, ChatId chatId, Message? prevMessage,
+    protected override async Task<ActionResult> ExecuteAfter(CompareState state, ChatId chatId, Message? prevMessage,
         ITelegramBotClient bot, User user)
     {
         await bot.SendMessage(chatId, "Введи новый запрос. Также можешь прикрепить файл",
             replyMarkup: CancelCallback.CreateMarkup("Выйти из режима сравнения"));
-        return true;
+        return ActionResult.Handled;
     }
 }

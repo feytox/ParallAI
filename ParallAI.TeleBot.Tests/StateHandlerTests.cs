@@ -42,7 +42,8 @@ public class StateHandlerTests
 
         user.StateMachine.Push(state);
         A.CallTo(() => action.CanHandle(state)).Returns(true);
-        A.CallTo(() => action.Execute(state, msg, bot, user)).Returns(true);
+        A.CallTo(() => action.Execute(state, msg, bot, user))
+            .Returns(ActionResult.Handled);
 
         await stateHandler.HandleState(msg, bot);
         A.CallTo(() => action.Execute(state, msg, bot, user)).MustHaveHappened();
@@ -56,7 +57,8 @@ public class StateHandlerTests
 
         user.StateMachine.Push(state);
         A.CallTo(() => action.CanHandle(state)).Returns(true);
-        A.CallTo(() => action.ExecuteAfter(state, chatId, null, bot, user)).Returns(true);
+        A.CallTo(() => action.ExecuteAfter(state, chatId, null, bot, user))
+            .Returns(ActionResult.Handled);
 
         await stateHandler.HandlePostState(chatId, userId, bot);
         A.CallTo(() => action.ExecuteAfter(state, chatId, null, bot, user)).MustHaveHappened();

@@ -2,6 +2,7 @@
 using ParallAI.Core.States.Common;
 using ParallAI.TeleBot.Core.Callback.CallbackArgs;
 using ParallAI.TeleBot.Core.Settings;
+using ParallAI.TeleBot.Core.StateActions;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using User = ParallAI.Core.Entities.User;
@@ -15,7 +16,7 @@ public abstract class SettingsStateCallback<TState, THandler>(IRepository<User, 
 {
     protected readonly THandler Handler = handler;
 
-    protected abstract Task<bool> HandleDataContent(TState state, CallbackQuery query, string content,
+    protected abstract Task<ActionResult> HandleDataContent(TState state, CallbackQuery query, string content,
         ITelegramBotClient bot, User user);
 
     protected override async Task Handle(
@@ -25,11 +26,11 @@ public abstract class SettingsStateCallback<TState, THandler>(IRepository<User, 
         if (currentState is not TState state)
             throw new InvalidOperationException($"{typeof(TState)} callback called for {currentState}");
 
-        if (await Handler.HandleCallBack(state, query, bot, user))
+        if (await Handler.HandleCallBack(state, query, bot, user) == ActionResult.Handled)
             return;
 
         var content = data.Args.Content;
-        if (!await HandleDataContent(state, query, content, bot, user))
+        if (await HandleDataContent(state, query, content, bot, user) == ActionResult.Skipped)
             await Handler.ActivatePart(state, int.Parse(content), query, bot, user);
     }
 }

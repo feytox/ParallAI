@@ -1,6 +1,7 @@
 using ParallAI.Core.States;
 using ParallAI.Core.ValueTypes;
 using ParallAI.TeleBot.Core.Settings;
+using ParallAI.TeleBot.Core.StateActions;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using User = ParallAI.Core.Entities.User;
@@ -17,7 +18,7 @@ public class RequestSettingsHandler() : StandardSettingsHandler<RequestSettingsS
         return $"Текущие настройки:\n{stateInfo}";
     }
 
-    protected override Task<bool> SaveSettingsToUser(RequestSettingsState state, CallbackQuery query,
+    protected override Task<ActionResult> SaveSettingsToUser(RequestSettingsState state, CallbackQuery query,
         ITelegramBotClient bot, User user)
     {
         var config = new RequestConfig(state.Model!, state.Preset, RequestMode.Single);
@@ -25,7 +26,7 @@ public class RequestSettingsHandler() : StandardSettingsHandler<RequestSettingsS
 
         var requestState = new RequestState(config);
         user.StateMachine.Push(requestState);
-        return Task.FromResult(false);
+        return Task.FromResult(ActionResult.Skipped);
     }
 
     private static void CreateParts(SettingsPartsBuilder<RequestSettingsState> builder)

@@ -2,6 +2,7 @@
 using ParallAI.Core.States;
 using ParallAI.Core.ValueTypes;
 using ParallAI.TeleBot.Core.Settings;
+using ParallAI.TeleBot.Core.StateActions;
 using ParallAI.TeleBot.Core.Util;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -19,7 +20,7 @@ public class PresetSettingsHandler() : StandardSettingsHandler<PresetSettingsSta
                + state.ToFormattedString();
     }
 
-    protected override async Task<bool> SaveSettingsToUser(PresetSettingsState state, CallbackQuery query,
+    protected override async Task<ActionResult> SaveSettingsToUser(PresetSettingsState state, CallbackQuery query,
         ITelegramBotClient bot, User user)
     {
         if (state.PresetId is null)
@@ -27,7 +28,7 @@ public class PresetSettingsHandler() : StandardSettingsHandler<PresetSettingsSta
         else
             ApplyChanges(state, user);
         await bot.EditCallbackMessage(query, "Пресет сохранён");
-        return true;
+        return ActionResult.Handled;
     }
 
     private static void SaveNewPreset(PresetSettingsState state, User user)

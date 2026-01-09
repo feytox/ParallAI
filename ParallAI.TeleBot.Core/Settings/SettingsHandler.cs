@@ -1,4 +1,5 @@
 ﻿using ParallAI.Core.States.Common;
+using ParallAI.TeleBot.Core.StateActions;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -8,7 +9,7 @@ namespace ParallAI.TeleBot.Core.Settings;
 
 public abstract class SettingsHandler<TState> where TState : SettingsState
 {
-    protected abstract Task<bool> SaveSettingsToUser(TState state, CallbackQuery query,
+    protected abstract Task<ActionResult> SaveSettingsToUser(TState state, CallbackQuery query,
         ITelegramBotClient bot, User user);
 
     protected abstract Task SendPartsList(TState state, ChatId chatId, Message? prevMessage, ITelegramBotClient bot);
@@ -48,23 +49,23 @@ public abstract class SettingsHandler<TState> where TState : SettingsState
         state.Reactivated = true;
     }
 
-    public async Task<bool> HandleCallBack(TState state, CallbackQuery callback, ITelegramBotClient bot, User user)
+    public async Task<ActionResult> HandleCallBack(TState state, CallbackQuery callback, ITelegramBotClient bot, User user)
     {
         var currentPart = GetCurrentPart(state);
         if (currentPart is not ICallbackHandlerPart<TState> callbackHandler)
-            return false;
+            return ActionResult.Skipped;
 
         if (!await callbackHandler.HandleCallBack(state, callback, bot, user))
-            return false;
+            return ActionResult.Skipped;
 
         state.Reactivated = true;
-        return true;
+        return ActionResult.Handled;
     }
 
-    public async Task<bool> ExecuteAfter(TState state, ChatId chatId, Message? prevMessage, ITelegramBotClient bot)
+    public async Task<ActionResult> ExecuteAfter(TState state, ChatId chatId, Message? prevMessage, ITelegramBotClient bot)
     {
         if (!state.Reactivated)
-            return false;
+            return ActionResult.Skipped;
 
         if (state.PrevState is not null)
         {
@@ -75,12 +76,12 @@ public abstract class SettingsHandler<TState> where TState : SettingsState
         await SendPartsList(state, chatId, prevMessage, bot);
         state.Reactivated = false;
         state.CurrentPart = null;
-        return true;
+        return ActionResult.Handled;
     }
 
     public async Task FinalizeSettings(TState state, CallbackQuery query, ITelegramBotClient bot, User user)
     {
-        if (await SaveSettingsToUser(state, query, bot, user))
+        if (await SaveSettingsToUser(state, query, bot, user) == ActionResult.Handled)
             user.StateMachine.Pop();
     }
 

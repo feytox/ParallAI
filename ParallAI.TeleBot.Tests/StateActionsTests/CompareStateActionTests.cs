@@ -1,6 +1,7 @@
 using FakeItEasy;
 using ParallAI.Core.Services;
 using ParallAI.Core.States;
+using ParallAI.TeleBot.Core.StateActions;
 using ParallAI.TeleBot.Services;
 using ParallAI.TeleBot.StateActions;
 using Telegram.Bot;
@@ -32,7 +33,7 @@ public class CompareStateActionTests
     }
 
     [Test]
-    public async Task Execute_MessagesIsNull_ReturnFalse()
+    public async Task Execute_MessagesIsNull_ActionHandledCompletely()
     {
         var msg = new Message();
         var state = A.Fake<CompareState>();
@@ -41,17 +42,17 @@ public class CompareStateActionTests
         A.CallTo(() => mediaGroupCollector.CollectMessages(A<Message>._)).Returns(returnValue);
         var result = await action.Execute(state, msg, bot, user);
 
-        Assert.That(result, Is.False);
+        Assert.That(result, Is.EqualTo(ActionResult.HandledCompletely));
     }
 
     [Test]
-    public async Task Execute_MessagesIsNotNull_ReturnTrue()
+    public async Task Execute_MessagesIsNotNull_ActionHandled()
     {
         var msg = new Message { Text = "text" };
         var state = A.Fake<CompareState>();
 
         A.CallTo(() => mediaGroupCollector.CollectMessages(A<Message>._)).Returns([msg]);
         var result = await action.Execute(state, msg, bot, user);
-        Assert.That(result, Is.True);
+        Assert.That(result, Is.EqualTo(ActionResult.Handled));
     }
 }

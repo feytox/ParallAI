@@ -87,8 +87,13 @@ public class Bot(
             await commandHandler.HandleCommand(message, bot);
 
         var mainHandled = await stateHandler.HandleState(message, bot);
-        var postHandled = await stateHandler.HandlePostState(message.Chat, message.From!.Id, bot);
-        if (!mainHandled && !postHandled && !isHighPriorityCommand)
+        var postHandled = mainHandled == ActionResult.HandledCompletely
+            ? ActionResult.Skipped
+            : await stateHandler.HandlePostState(message.Chat, message.From!.Id, bot);
+        
+        if (mainHandled == ActionResult.Skipped 
+            && postHandled == ActionResult.Skipped 
+            && !isHighPriorityCommand)
             await commandHandler.HandleCommand(message, bot);
     }
 

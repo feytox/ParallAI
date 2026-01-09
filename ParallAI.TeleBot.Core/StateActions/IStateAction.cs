@@ -9,7 +9,7 @@ public interface IStateAction
 {
     bool CanHandle(UserState state);
 
-    Task<bool> Execute(UserState state, Message message, ITelegramBotClient bot, User user);
+    Task<ActionResult> Execute(UserState state, Message message, ITelegramBotClient bot, User user);
 
-    Task<bool> ExecuteAfter(UserState state, ChatId chatId, Message? prevMessage, ITelegramBotClient bot, User user);
+    Task<ActionResult> ExecuteAfter(UserState state, ChatId chatId, Message? prevMessage, ITelegramBotClient bot, User user);
 }

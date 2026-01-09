@@ -1,5 +1,6 @@
 ﻿using ParallAI.Core.States;
 using ParallAI.TeleBot.Core.Settings;
+using ParallAI.TeleBot.Core.StateActions;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using User = ParallAI.Core.Entities.User;
@@ -14,7 +15,7 @@ public class OrchestratorSettingsHandler()
 
     protected override string GetPartsMessage(OrchestratorSettingsState state) => "Настройки оркестратора:";
 
-    protected override Task<bool> SaveSettingsToUser(OrchestratorSettingsState state, CallbackQuery query,
+    protected override Task<ActionResult> SaveSettingsToUser(OrchestratorSettingsState state, CallbackQuery query,
         ITelegramBotClient bot, User user)
     {
         var config = state.Build();
@@ -23,7 +24,7 @@ public class OrchestratorSettingsHandler()
 
         var nextState = new CompareState(config);
         user.StateMachine.Push(nextState);
-        return Task.FromResult(false);
+        return Task.FromResult(ActionResult.Skipped);
     }
 
     private static void CreateParts(SettingsPartsBuilder<OrchestratorSettingsState> builder)

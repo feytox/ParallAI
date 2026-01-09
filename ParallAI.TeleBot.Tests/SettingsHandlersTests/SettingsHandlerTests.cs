@@ -1,6 +1,7 @@
 using FakeItEasy;
 using ParallAI.Core.States.Common;
 using ParallAI.TeleBot.Core.Settings;
+using ParallAI.TeleBot.Core.StateActions;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using User = ParallAI.Core.Entities.User;
@@ -64,7 +65,7 @@ public abstract class SettingsHandlerTests<THandler, TState>
     {
         state.Reactivated = false;
         var result = await handler.ExecuteAfter(state, chatId, message, Bot);
-        Assert.That(result, Is.False);
+        Assert.That(result, Is.EqualTo(ActionResult.Skipped));
     }
 
     [Test]
@@ -73,7 +74,7 @@ public abstract class SettingsHandlerTests<THandler, TState>
         state.AcceptPrevState(state.PrevState);
 
         var result = await handler.ExecuteAfter(state, chatId, message, Bot);
-        Assert.That(result, Is.True);
+        Assert.That(result, Is.EqualTo(ActionResult.Handled));
         Assert.That(state.PrevState, Is.Null);
         Assert.That(state.CurrentPart, Is.Null);
         Assert.That(state.Reactivated, Is.False);

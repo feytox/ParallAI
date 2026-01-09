@@ -1,6 +1,7 @@
 using FakeItEasy;
 using ParallAI.Core.States;
 using ParallAI.TeleBot.Commands.UI;
+using ParallAI.TeleBot.Core.StateActions;
 using ParallAI.TeleBot.StateActions;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -25,7 +26,7 @@ public class MainMenuStateActionTests
     }
 
     [Test]
-    public async Task Execute_CommandExecute_ReturnTrue()
+    public async Task Execute_CommandExecute_ActionHandled()
     {
         var state = new MainMenuState();
         var msg = new Message {Text = "command", Chat = new Chat(), From = new Telegram.Bot.Types.User()};
@@ -39,12 +40,12 @@ public class MainMenuStateActionTests
         var action = new MainMenuStateAction(commandStorage);
         var result = await action.Execute(state, msg, bot, user);
 
-        Assert.That(result, Is.True);
+        Assert.That(result, Is.EqualTo(ActionResult.Handled));
         A.CallTo(() => command.Execute(A<ChatId>._, A<long>._, A<ITelegramBotClient>._)).MustHaveHappened();
     }
 
     [Test]
-    public async Task Execute_CommandNotFound_ReturnFalse()
+    public async Task Execute_CommandNotFound_ActionSkipped()
     {
         var state = new MainMenuState();
         var msg = new Message {Text = "command", Chat = new Chat(), From = new Telegram.Bot.Types.User()};
@@ -56,11 +57,11 @@ public class MainMenuStateActionTests
         var action = new MainMenuStateAction(commandStorage);
         var result = await action.Execute(state, msg, bot, user);
 
-        Assert.That(result, Is.False);
+        Assert.That(result, Is.EqualTo(ActionResult.Skipped));
     }
 
     [Test]
-    public async Task Execute_TextIsNull_ReturnFalse()
+    public async Task Execute_TextIsNull_ActionSkipped()
     {
         var state = new MainMenuState();
         var msg = new Message {Chat = new Chat(), From = new Telegram.Bot.Types.User()};
@@ -69,28 +70,28 @@ public class MainMenuStateActionTests
         var action = new MainMenuStateAction(commandStorage);
         var result = await action.Execute(state, msg, bot, user);
 
-        Assert.That(result, Is.False);
+        Assert.That(result, Is.EqualTo(ActionResult.Skipped));
     }
 
     [Test]
-    public async Task ExecuteAfter_StateReactivated_ReturnTrue()
+    public async Task ExecuteAfter_StateReactivated_ActionHandled()
     {
         var state = new MainMenuState { Reactivated = true };
         var commandStorage = CreateMainMenuCommandsStorage();
         var action = new MainMenuStateAction(commandStorage);
         var result = await action.ExecuteAfter(state, chatId, null, bot, user);
-        Assert.That(result, Is.True);
+        Assert.That(result, Is.EqualTo(ActionResult.Handled));
         Assert.That(state.Reactivated, Is.False);
     }
     
     [Test]
-    public async Task ExecuteAfter_StateNotReactivated_ReturnTrue()
+    public async Task ExecuteAfter_StateNotReactivated_ActionSkipped()
     {
         var state = new MainMenuState { Reactivated = false };
         var commandStorage = CreateMainMenuCommandsStorage();
         var action = new MainMenuStateAction(commandStorage);
         var result = await action.ExecuteAfter(state, chatId, null, bot, user);
-        Assert.That(result, Is.False);
+        Assert.That(result, Is.EqualTo(ActionResult.Skipped));
     }
 
     private MainMenuCommandsStorage CreateMainMenuCommandsStorage(params IEnumerable<(ICommand command, MainMenuAttribute attribute)> commands)

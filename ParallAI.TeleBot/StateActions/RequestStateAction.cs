@@ -21,11 +21,11 @@ public class RequestStateAction(
     CancelTokenSourceStorage cancelTokenStorage)
     : StateAction<RequestState>
 {
-    protected override async Task<bool> Execute(RequestState state, Message message, ITelegramBotClient bot, User user)
+    protected override async Task<ActionResult> Execute(RequestState state, Message message, ITelegramBotClient bot, User user)
     {
         var messages = await groupCollector.CollectMessages(message);
         if (messages is null)
-            return false;
+            return ActionResult.HandledCompletely;
 
         var prompt = AiMessageHelper.CreateAiMessage(messages);
 
@@ -52,7 +52,7 @@ public class RequestStateAction(
         if (state.Config.RequestMode == RequestMode.Single)
             user.StateMachine.TryPop();
 
-        return true;
+        return ActionResult.Handled;
     }
 
     private async Task<Message> SendProcessingMessage(ITelegramBotClient bot, ChatId chatId, Guid ctsId)
@@ -74,7 +74,7 @@ public class RequestStateAction(
         await bot.SendMarkdown(chatId, response.Text);
     }
 
-    protected override async Task<bool> ExecuteAfter(RequestState state, ChatId chatId, Message? prevMessage,
+    protected override async Task<ActionResult> ExecuteAfter(RequestState state, ChatId chatId, Message? prevMessage,
         ITelegramBotClient bot, User user)
     {
         var presetText = state.Config.Preset?.Name ?? "не выбран";
@@ -87,6 +87,6 @@ public class RequestStateAction(
             parseMode: ParseMode.Html,
             replyMarkup: CancelCallback.CreateMarkup(cancelText));
 
-        return true;
+        return ActionResult.Handled;
     }
 }

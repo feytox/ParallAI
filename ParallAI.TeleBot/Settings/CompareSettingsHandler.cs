@@ -1,6 +1,7 @@
 ﻿using ParallAI.Core.States;
 using ParallAI.TeleBot.Core.Callback;
 using ParallAI.TeleBot.Core.Settings;
+using ParallAI.TeleBot.Core.StateActions;
 using ParallAI.TeleBot.Core.Util;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -44,7 +45,7 @@ public class CompareSettingsHandler() : SettingsHandler<CompareSettingsState>(Ca
             replyMarkup: new InlineKeyboardMarkup(buttons));
     }
 
-    protected override async Task<bool> SaveSettingsToUser(CompareSettingsState state, CallbackQuery query,
+    protected override async Task<ActionResult> SaveSettingsToUser(CompareSettingsState state, CallbackQuery query,
         ITelegramBotClient bot, User user)
     {
         user.StateMachine.Pop(reactivate: false);
@@ -52,7 +53,7 @@ public class CompareSettingsHandler() : SettingsHandler<CompareSettingsState>(Ca
         user.StateMachine.Push(nextState);
 
         await bot.EditCallbackMessage(query, "Теперь настройте оркестратора.");
-        return false;
+        return ActionResult.Skipped;
     }
 
     private static void CreateParts(SettingsPartsBuilder<CompareSettingsState> builder)

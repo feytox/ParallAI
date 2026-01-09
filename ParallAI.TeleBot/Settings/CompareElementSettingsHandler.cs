@@ -1,5 +1,6 @@
 ﻿using ParallAI.Core.States;
 using ParallAI.TeleBot.Core.Settings;
+using ParallAI.TeleBot.Core.StateActions;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using User = ParallAI.Core.Entities.User;
@@ -17,10 +18,10 @@ public class CompareElementSettingsHandler()
         return $"Текущие настройки:\n{stateInfo}";
     }
 
-    protected override Task<bool> SaveSettingsToUser(CompareElementSettingsState state, CallbackQuery query,
+    protected override Task<ActionResult> SaveSettingsToUser(CompareElementSettingsState state, CallbackQuery query,
         ITelegramBotClient bot, User user)
     {
-        return Task.FromResult(true);
+        return Task.FromResult(ActionResult.Handled);
     }
 
     private static void CreateParts(SettingsPartsBuilder<CompareElementSettingsState> builder)

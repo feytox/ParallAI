@@ -1,6 +1,7 @@
 ﻿using ParallAI.Core.Repositories;
 using ParallAI.Core.States.Common;
 using ParallAI.TeleBot.Core.Settings;
+using ParallAI.TeleBot.Core.StateActions;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using User = ParallAI.Core.Entities.User;
@@ -12,13 +13,13 @@ public abstract class StandardSettingsStateCallback<TState, THandler>(IRepositor
     where TState : SettingsState
     where THandler : StandardSettingsHandler<TState>
 {
-    protected override async Task<bool> HandleDataContent(TState state, CallbackQuery query, string content,
+    protected override async Task<ActionResult> HandleDataContent(TState state, CallbackQuery query, string content,
         ITelegramBotClient bot, User user)
     {
         if (content != "c")
-            return false;
+            return ActionResult.Skipped;
 
         await Handler.FinalizeSettings(state, query, bot, user);
-        return true;
+        return ActionResult.Handled;
     }
 }

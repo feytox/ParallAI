@@ -1,6 +1,7 @@
 using ParallAI.Core.Repositories;
 using ParallAI.Core.States;
 using ParallAI.TeleBot.Core.Callback.Common;
+using ParallAI.TeleBot.Core.StateActions;
 using ParallAI.TeleBot.Settings;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -12,14 +13,14 @@ namespace ParallAI.TeleBot.Callback;
 public class RequestSettingsStateCallback(IRepository<User, long> users, RequestSettingsHandler handler)
     : SettingsStateCallback<RequestSettingsState, RequestSettingsHandler>(users, handler)
 {
-    protected override async Task<bool> HandleDataContent(RequestSettingsState state, CallbackQuery query,
+    protected override async Task<ActionResult> HandleDataContent(RequestSettingsState state, CallbackQuery query,
         string content,
         ITelegramBotClient bot, User user)
     {
         if (content != "c")
-            return content.StartsWith('-');
+            return content.StartsWith('-') ? ActionResult.Handled : ActionResult.Skipped;
 
         await Handler.FinalizeSettings(state, query, bot, user);
-        return true;
+        return ActionResult.Handled;
     }
 }
